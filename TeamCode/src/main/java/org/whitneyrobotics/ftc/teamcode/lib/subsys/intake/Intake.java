@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.subsys.intake;
+package org.whitneyrobotics.ftc.teamcode.lib.subsys.intake;
 
 /**
  * Created by Jason on 10/20/2017.

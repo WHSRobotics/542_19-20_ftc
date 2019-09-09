@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.subsys.drivetrain;
+package org.whitneyrobotics.ftc.teamcode.lib.subsys.drivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
