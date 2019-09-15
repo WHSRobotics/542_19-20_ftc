@@ -4,7 +4,7 @@ public class SwerveToTarget {
 
     private Coordinate currentCoord;
 
-    private static final double MAXIMUM_ACCELERATION = 2000.0; // mm/s^2
+    private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
     public int lastClosestPointIndex = 0;
     private int lastIndex = 0;
     private double currentTValue = 0;
