@@ -1,6 +1,6 @@
 package org.whitneyrobotics.ftc.teamcode.lib.util;
 
-public class SwerveToTarget {
+public class StrafeToTarget {
 
     private Coordinate currentCoord;
 
@@ -24,7 +24,7 @@ public class SwerveToTarget {
 
     public double[] lookaheadPoint;
 
-    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, int numToInject, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double trackWidth) {
+    public StrafeToTarget(double kP, double kV, double kA, Position[] targetPositions, int numToInject, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double trackWidth) {
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
@@ -58,16 +58,29 @@ public class SwerveToTarget {
         lookaheadPoint = Functions.Vectors.add(calculatedTStartPoint, Functions.Vectors.scale(currentTValue, Functions.Vectors.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
-        double curvature = calculateCurvature(lookaheadDistance, lookaheadPoint);
-        double[] targetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], curvature);
+
+        double[] vectorToLookaheadPoint = {lookaheadPoint[0] - currentCoord.getX(), lookaheadPoint[0] - currentCoord.getX()};
+        double angleToLookaheadPoint = Math.atan2(vectorToLookaheadPoint[1], vectorToLookaheadPoint[0]);
+
+        double vFL = targetVelocities[indexOfClosestPoint] * Math.cos(angleToLookaheadPoint);
+        double vFR = targetVelocities[indexOfClosestPoint] * Math.sin(angleToLookaheadPoint);
+        double vBL = targetVelocities[indexOfClosestPoint] * Math.sin(angleToLookaheadPoint);
+        double vBR = targetVelocities[indexOfClosestPoint] * Math.cos(angleToLookaheadPoint);
+        double[] targetWheelVelocities = {vFL, vFR, vBL, vBR};
 
         double deltaTime = System.nanoTime() / 1E9 - lastTime;
-        double[] targetWheelAccelerations = {(targetWheelVelocities[0] - lastTargetWheelVelocities[0]) / deltaTime, (targetWheelVelocities[1] - lastTargetWheelVelocities[1]) / deltaTime};
+        double[] targetWheelAccelerations = new double[4];
+        for (int i = 0; i < targetWheelAccelerations.length; i++) {
+            targetWheelAccelerations[i] = (targetWheelVelocities[i] - lastTargetWheelVelocities[i]) / deltaTime;
+        }
 
         if (indexOfClosestPoint != smoothedPath.length - 1) {
             double[] feedBack = Functions.Vectors.scale(kP, Functions.Vectors.subtract(targetWheelVelocities, currentWheelVelocities));
             double[] feedForward = Functions.Vectors.add(Functions.Vectors.scale(kV, targetWheelVelocities), Functions.Vectors.scale(kA, targetWheelAccelerations));
-            double[] motorPowers = {Functions.constrain(feedBack[0] + feedForward[0], -1, 1), Functions.constrain(feedBack[1] + feedForward[1], -1, 1)};
+            double[] motorPowers = new double[4];
+            for (int i = 0; i < motorPowers.length; i++) {
+                motorPowers[i] = Functions.constrain(feedBack[i] + feedForward[i], -1, 1);
+              }
             lastTargetWheelVelocities = targetWheelVelocities;
             return motorPowers;
         }
@@ -246,38 +259,5 @@ public class SwerveToTarget {
         // calculates the index of value in the array with the smallest value and returns that index
         lastClosestPointIndex = Functions.calculateIndexOfSmallestValue(distances);
         return lastClosestPointIndex;
-    }
-
-    private double calculateCurvature(double lookaheadDistance, double[] lookaheadPoint) {
-        // robot line: ax + by + c = 0
-        double a = -Functions.tand(currentCoord.getHeading());
-        double b = 1;
-        double c = Functions.tand(currentCoord.getHeading()) * currentCoord.getX() - currentCoord.getY();
-
-        double[] R = {currentCoord.getX(), currentCoord.getY()};
-        double[] L = lookaheadPoint;
-        // generate point B on robot line (for calculating sign)
-        double[] B = {R[0] + Functions.cosd(currentCoord.getHeading()), R[1] + Functions.sind(currentCoord.getHeading())};
-
-        double[] RB = {B[0] - R[0], B[1] - R[1]};
-        double[] RL = {L[0] - R[0], L[1] - R[1]};
-
-        // calculate which side of the robot line the lookahead point is on
-        double side = Math.signum(Functions.Vectors.cross2D(RL, RB));
-
-        // distance from robot line to lookahead point: d = |ax + by + c| /√(a^2 + b^2)
-        double distance = Math.abs(a * lookaheadPoint[0] + b * lookaheadPoint[1] + c) / Math.sqrt(a * a + b * b);
-
-        double curvature = 2 * side * distance / (lookaheadDistance * lookaheadDistance);
-        return curvature;
-    }
-
-    private double[] calculateTargetWheelVelocities(double targetVelocity, double curvature) {
-        // calculates the wheel velocity at which the wheels should be
-        double leftVelocity = targetVelocity * (2 + curvature * trackWidth) / 2;
-        double rightVelocity = targetVelocity * (2 - curvature * trackWidth) / 2;
-
-        double[] wheelVelocities = {leftVelocity, rightVelocity};
-        return wheelVelocities;
     }
 }
