@@ -24,14 +24,14 @@ public class SwerveToTarget {
 
     public double[] lookaheadPoint;
 
-    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, int numToInject, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double trackWidth) {
+    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, int spacing, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double trackWidth) {
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
         this.lookaheadDistance = lookaheadDistance;
         this.trackWidth = trackWidth;
         double[][] targetDoubles = Functions.positionArrayToDoubleArray(targetPositions);
-        double[][] injectedPath = inject(targetDoubles, numToInject);
+        double[][] injectedPath = inject(targetDoubles, spacing);
         smoothedPath = smoothPath(injectedPath, 1 - weightSmooth, weightSmooth, tolerance);
         distances = calculateDistanceAtPoint(smoothedPath);
         targetCurvatures = calculateTargetCurvatures(smoothedPath);
@@ -74,33 +74,31 @@ public class SwerveToTarget {
         return new double[] {0.0, 0.0};
     }
 
-    private double[][] inject(double[][] orig, int numToInject) {
+    private double[][] inject(double[][] orig, int spacing) {
         // create extended 2 Dimensional array to hold additional points
-        double[][] morePoints = new double[orig.length + ((numToInject) * (orig.length - 1))][2];
+
+        int numToInject = 0;
+        for (int i = 0; i < orig.length - 1; i++) {
+            double distance = Functions.Vectors.magnitude(Functions.Vectors.subtract(orig[i+1], orig[i]));
+            numToInject += Math.ceil(distance / spacing) - 1;
+        }
+
+        double[][] morePoints = new double[orig.length + numToInject][2];
 
         int index = 0;
 
-        // loop through original array
         for (int i = 0; i < orig.length - 1; i++) {
-            // copy first
-            morePoints[index][0] = orig[i][0];
-            morePoints[index][1] = orig[i][1];
-            index++;
-
-            for (int j = 1; j < numToInject + 1; j++) {
-                // calculate intermediate x points between j and j+1 original points
-                morePoints[index][0] = j * ((orig[i + 1][0] - orig[i][0]) / (numToInject + 1)) + orig[i][0];
-
-                // calculate intermediate y points  between j and j+1 original points
-                morePoints[index][1] = j * ((orig[i + 1][1] - orig[i][1]) / (numToInject + 1)) + orig[i][1];
-
-                index++;
+            double[] vector = Functions.Vectors.subtract(orig[i+1], orig[i]);
+            double magnitude = Functions.Vectors.magnitude(vector);
+            int numPoints = (int) Math.ceil(magnitude / spacing);
+            double[] scaledVector = Functions.Vectors.scale(spacing / magnitude, vector);
+            for (int j = 0; j < numPoints; j++) {
+                morePoints[index] = Functions.Vectors.add(orig[i], Functions.Vectors.scale(j, scaledVector));
+                index += 1;
             }
         }
 
-        // copy last
-        morePoints[index][0] = orig[orig.length - 1][0];
-        morePoints[index][1] = orig[orig.length - 1][1];
+        morePoints[morePoints.length - 1] = orig[orig.length - 1];
 
         return morePoints;
     }

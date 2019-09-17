@@ -216,5 +216,12 @@ public class Functions {
             }
             return scaledVector;
         }
+
+        public static double magnitude(double[] vector) {
+            if (vector.length != 2) {
+                throw new IllegalArgumentException("input vector lengths not equal");
+            }
+            return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+        }
     }
 }
