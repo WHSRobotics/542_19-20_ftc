@@ -24,7 +24,7 @@ public class SwerveConstants {
         public static double velocityConstant = 0;
     }
 
-    public static class WallToSkystoneSweverConstants {
+    public static class WallToSkystoneSwerveConstants {
         public static double kP = 0;
         public static double kV = 0;
         public static double kA = 0;

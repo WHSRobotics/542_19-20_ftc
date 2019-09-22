@@ -23,12 +23,14 @@ public class SwerveToTarget {
     private double trackWidth;
 
     public double[] lookaheadPoint;
+    private boolean swerveToTargetInProgress;
 
-    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, int spacing, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double trackWidth) {
+    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, int spacing, double weightSmooth, double velocityConstant, double lookaheadDistance, double trackWidth) {
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
         this.lookaheadDistance = lookaheadDistance;
+        double tolerance =0.001;
         this.trackWidth = trackWidth;
         double[][] targetDoubles = Functions.positionArrayToDoubleArray(targetPositions);
         double[][] injectedPath = inject(targetDoubles, spacing);
@@ -69,10 +71,13 @@ public class SwerveToTarget {
             double[] feedForward = Functions.Vectors.add(Functions.Vectors.scale(kV, targetWheelVelocities), Functions.Vectors.scale(kA, targetWheelAccelerations));
             double[] motorPowers = {Functions.constrain(feedBack[0] + feedForward[0], -1, 1), Functions.constrain(feedBack[1] + feedForward[1], -1, 1)};
             lastTargetWheelVelocities = targetWheelVelocities;
+            swerveToTargetInProgress = true;
             return motorPowers;
+        }else {
+            swerveToTargetInProgress = false;
         }
         return new double[] {0.0, 0.0};
-    }
+        }
 
     private double[][] inject(double[][] orig, int spacing) {
         // create extended 2 Dimensional array to hold additional points
@@ -277,5 +282,8 @@ public class SwerveToTarget {
 
         double[] wheelVelocities = {leftVelocity, rightVelocity};
         return wheelVelocities;
+    }
+    public boolean swerveToTargetInProgress(){
+        return swerveToTargetInProgress;
     }
 }

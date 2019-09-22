@@ -55,7 +55,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
         //For 40s. TODO: Change this when we get more 20s.
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 

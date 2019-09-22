@@ -22,7 +22,7 @@ public class SwerveToTargetTest extends OpMode {
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
         robot.setInitialCoordinate(startingCoordinate);
-        swerve1 = new SwerveToTarget(0.005, 0.245 ,0.542, positions, 10, 0.8542, 0.001, 2, 50, robot.drivetrain.getTrackWidth());
+        swerve1 = new SwerveToTarget(0.005, 0.245 ,0.542, positions, 10, 0.8542,  2, 50, robot.drivetrain.getTrackWidth());
     }
 
     @Override

@@ -49,12 +49,88 @@ public class WHSAuto extends OpMode {
     Position[][] skybridgePositionArray = new Position[2][2];
 
     Position[] startToFoundationSwervePositions;
+    Position[] foundationToWallSwervePositions;
+    Position[] wallToSkystoneSwervePositions;
+    Position[] startToSkystoneSwervePositions;
+    Position[] skystoneToMovedFoundationSwervePositions;
+    Position[] skystoneToNotMovedSwervePositions;
+    Position[] movedFoundationToParkingSwervePositions;
 
-    SwerveToTarget startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
-            SwerveConstants.StartToFoundationSwerveConstants.kV,
-            SwerveConstants.StartToFoundationSwerveConstants.kA,
-            startToFoundationSwervePositions,
-            1,1,1,1,1,1);
+    /*
+    * Swerve to target instantiations
+    */
+    private void instantiateSwerveToTargets() {
+        SwerveToTarget startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
+                SwerveConstants.StartToFoundationSwerveConstants.kV,
+                SwerveConstants.StartToFoundationSwerveConstants.kA,
+                startToFoundationSwervePositions,
+                1,
+                1,
+                SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
+                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance,
+                robot.drivetrain.getTrackWidth());
+
+        SwerveToTarget foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
+                SwerveConstants.FoundationToWallSwerveConstants.kV,
+                SwerveConstants.FoundationToWallSwerveConstants.kA,
+                foundationToWallSwervePositions,
+                1,
+                1,
+                SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
+                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance,
+                robot.drivetrain.getTrackWidth());
+
+        SwerveToTarget wallToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
+                SwerveConstants.WallToSkystoneSwerveConstants.kV,
+                SwerveConstants.WallToSkystoneSwerveConstants.kA,
+                wallToSkystoneSwervePositions,
+                1,
+                1,
+                SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
+                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
+                robot.drivetrain.getTrackWidth());
+
+        SwerveToTarget startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
+                SwerveConstants.StartToSkystoneSwerveConstants.kV,
+                SwerveConstants.StartToSkystoneSwerveConstants.kA,
+                startToSkystoneSwervePositions,
+                1,
+                1,
+                SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
+                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
+                robot.drivetrain.getTrackWidth());
+
+        SwerveToTarget skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
+                skystoneToMovedFoundationSwervePositions,
+                1,
+                1,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
+                robot.drivetrain.getTrackWidth());
+
+        SwerveToTarget skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
+                skystoneToNotMovedSwervePositions,
+                1,
+                1,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
+                robot.drivetrain.getTrackWidth());
+
+        SwerveToTarget movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.kA,
+                movedFoundationToParkingSwervePositions,
+                1,
+                1,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
+                robot.drivetrain.getTrackWidth());
+    }
+
     /**
      * State Definitions
       */
@@ -162,6 +238,7 @@ public class WHSAuto extends OpMode {
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
         defineStateEnabledStatus();
+        instantiateSwerveToTargets();
 
         startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1500, 150,90);
         startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1500, 150, -90);
