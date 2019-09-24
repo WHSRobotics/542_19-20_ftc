@@ -12,7 +12,7 @@ public class Intake {
     private DcMotor lefIntake;
     private DcMotor rightIntake;
 
-    private static final double INTAKE_POWER = 0.8;
+    public static final double INTAKE_POWER = 0.8;
 
     private Toggler intakeToggler = new Toggler(2);
     public Intake(HardwareMap intakeMap){
@@ -35,5 +35,10 @@ public class Intake {
             lefIntake.setPower(0.0);
             rightIntake.setPower(0.0);
         }
+    }
+
+    public void setIntakeMotorPowers(double power){
+        lefIntake.setPower(power);
+        rightIntake.setPower(power);
     }
 }

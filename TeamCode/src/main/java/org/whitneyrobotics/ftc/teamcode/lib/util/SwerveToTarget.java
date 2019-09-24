@@ -14,6 +14,7 @@ public class SwerveToTarget {
     private double[] targetCurvatures;
     public double[] targetVelocities;
 
+    private double[] currentTargetWheelVelocities = {0.0, 0.0};
     private double[] lastTargetWheelVelocities = {0.0, 0.0};
     private double lastTime;
     private double kP;
@@ -23,7 +24,7 @@ public class SwerveToTarget {
     private double trackWidth;
 
     public double[] lookaheadPoint;
-    private boolean swerveToTargetInProgress;
+    private boolean inProgress = false;
 
     public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, int spacing, double weightSmooth, double velocityConstant, double lookaheadDistance, double trackWidth) {
         this.kP = kP;
@@ -61,20 +62,20 @@ public class SwerveToTarget {
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
         double curvature = calculateCurvature(lookaheadDistance, lookaheadPoint);
-        double[] targetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], curvature);
+        currentTargetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], curvature);
 
         double deltaTime = System.nanoTime() / 1E9 - lastTime;
-        double[] targetWheelAccelerations = {(targetWheelVelocities[0] - lastTargetWheelVelocities[0]) / deltaTime, (targetWheelVelocities[1] - lastTargetWheelVelocities[1]) / deltaTime};
+        double[] targetWheelAccelerations = {(currentTargetWheelVelocities[0] - lastTargetWheelVelocities[0]) / deltaTime, (currentTargetWheelVelocities[1] - lastTargetWheelVelocities[1]) / deltaTime};
 
         if (indexOfClosestPoint != smoothedPath.length - 1) {
-            double[] feedBack = Functions.Vectors.scale(kP, Functions.Vectors.subtract(targetWheelVelocities, currentWheelVelocities));
-            double[] feedForward = Functions.Vectors.add(Functions.Vectors.scale(kV, targetWheelVelocities), Functions.Vectors.scale(kA, targetWheelAccelerations));
+            double[] feedBack = Functions.Vectors.scale(kP, Functions.Vectors.subtract(currentTargetWheelVelocities, currentWheelVelocities));
+            double[] feedForward = Functions.Vectors.add(Functions.Vectors.scale(kV, currentTargetWheelVelocities), Functions.Vectors.scale(kA, targetWheelAccelerations));
             double[] motorPowers = {Functions.constrain(feedBack[0] + feedForward[0], -1, 1), Functions.constrain(feedBack[1] + feedForward[1], -1, 1)};
-            lastTargetWheelVelocities = targetWheelVelocities;
-            swerveToTargetInProgress = true;
+            lastTargetWheelVelocities = currentTargetWheelVelocities;
+            inProgress = true;
             return motorPowers;
         }else {
-            swerveToTargetInProgress = false;
+            inProgress = false;
         }
         return new double[] {0.0, 0.0};
         }
@@ -283,7 +284,12 @@ public class SwerveToTarget {
         double[] wheelVelocities = {leftVelocity, rightVelocity};
         return wheelVelocities;
     }
-    public boolean swerveToTargetInProgress(){
-        return swerveToTargetInProgress;
+
+    public boolean inProgress(){
+        return inProgress;
+    }
+
+    public double[] getCurrentTargetWheelVelocities() {
+        return currentTargetWheelVelocities;
     }
 }

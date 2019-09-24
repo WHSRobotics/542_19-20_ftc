@@ -10,8 +10,11 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
+import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
+import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
+import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 import java.util.List;
@@ -36,6 +39,8 @@ public class WHSAuto extends OpMode {
 
     static final int STARTING_COORDINATE_X = 0;
 
+    static final boolean PARTNER_MOVED_FOUNDATION = true;
+
     static final int LEFT = 0;
     static final int CENTER = 1;
     static final int RIGHT = 2;
@@ -53,13 +58,13 @@ public class WHSAuto extends OpMode {
     Position[] wallToSkystoneSwervePositions;
     Position[] startToSkystoneSwervePositions;
     Position[] skystoneToMovedFoundationSwervePositions;
-    Position[] skystoneToNotMovedSwervePositions;
+    Position[] skystoneToUnmovedSwervePositions;
     Position[] movedFoundationToParkingSwervePositions;
+    Position[] wallToParkingSwervePositions;
 
     /*
     * Swerve to target instantiations
     */
-    private void instantiateSwerveToTargets() {
         SwerveToTarget startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
                 SwerveConstants.StartToFoundationSwerveConstants.kV,
                 SwerveConstants.StartToFoundationSwerveConstants.kA,
@@ -104,32 +109,41 @@ public class WHSAuto extends OpMode {
                 SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
                 SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
                 skystoneToMovedFoundationSwervePositions,
-                1,
-                1,
-                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
-                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
-                robot.drivetrain.getTrackWidth());
+            1,
+            1,
+    SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
+    SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
+            robot.drivetrain.getTrackWidth());
 
-        SwerveToTarget skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
-                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
-                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
-                skystoneToNotMovedSwervePositions,
-                1,
-                1,
-                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
-                robot.drivetrain.getTrackWidth());
+    SwerveToTarget skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
+            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
+            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
+            skystoneToUnmovedSwervePositions,
+            1,
+            1,
+            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
+            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
+            robot.drivetrain.getTrackWidth());
 
-        SwerveToTarget movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.kA,
-                movedFoundationToParkingSwervePositions,
-                1,
-                1,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
-                robot.drivetrain.getTrackWidth());
-    }
+    SwerveToTarget movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
+            SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
+            SwerveConstants.MovedFoundationToParkingSwerveConstants.kA,
+            movedFoundationToParkingSwervePositions,
+            1,
+            1,
+            SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
+            SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
+            robot.drivetrain.getTrackWidth());
+
+    SwerveToTarget wallToParkSwerve = new SwerveToTarget(SwerveConstants.WallToParkingSwerveConstants.kP,
+            SwerveConstants.WallToParkingSwerveConstants.kV,
+            SwerveConstants.WallToParkingSwerveConstants.kA,
+            wallToParkingSwervePositions,
+            1,
+            1,
+            SwerveConstants.WallToParkingSwerveConstants.velocityConstant,
+            SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance,
+            robot.drivetrain.getTrackWidth());
 
     /**
      * State Definitions
@@ -154,6 +168,7 @@ public class WHSAuto extends OpMode {
     String stateDesc;
     String subStateDesc;
 
+
     /**
      * Advances the state, skipping ones that have been disabled.
      */
@@ -177,10 +192,22 @@ public class WHSAuto extends OpMode {
         stateEnabled[INTAKE_SKYSTONE] = true;
         stateEnabled[DRIVE_TO_FOUDNATION] = true;
         stateEnabled[OUTTAKE_SKYSTONE] = true;
-        stateEnabled[SECONDARY_MOVE_FOUNDATION] = (STARTING_POSITION == SKYSTONE);
+        stateEnabled[SECONDARY_MOVE_FOUNDATION] = (STARTING_POSITION == SKYSTONE && !PARTNER_MOVED_FOUNDATION);
         stateEnabled[PARK] = true;
         stateEnabled[END] = true;
     }
+
+    /**
+     * Timers
+     */
+    SimpleTimer foundationPullerUpToDownTimer = new SimpleTimer();
+    SimpleTimer foundationPullerDownToUpTimer = new SimpleTimer();
+    SimpleTimer intakeSystoneTimer = new SimpleTimer();
+
+    private final double GRAB_FOUNDATION_DELAY = 1;
+    private final double  INTAKE_SKYSTONE_DELAY = 4;
+
+    double[] motorPowers;
 
     /*Skystone Detection Tenserflow Variables*/
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
@@ -238,7 +265,6 @@ public class WHSAuto extends OpMode {
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
         defineStateEnabledStatus();
-        instantiateSwerveToTargets();
 
         startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1500, 150,90);
         startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1500, 150, -90);
@@ -273,7 +299,226 @@ public class WHSAuto extends OpMode {
     public void loop() {
         robot.estimateHeading();
         robot.estimatePosition();
+        switch (state) {
+            case INIT:
+                stateDesc = "Starting auto";
+                robot.setInitialCoordinate(startingCoordinateArray[STARTING_POSITION]);
+                advanceState();
+                break;
+            case INITIAL_MOVE_FOUNDATION:
+                stateDesc = "Moving Foundation";
+                switch (subState) {
+                    case 0:
+                        subStateDesc = "Entry";
+                        subState++;
+                        break;
+                    case 1:
+                        subStateDesc = "Driving to foundation";
+                        motorPowers = startToFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        robot.drivetrain.operate(motorPowers);
+                        if (!startToFoundationSwerve.inProgress()) {
+                            foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
+                            subState++;
+                        }
+                        break;
+                    case 2:
+                        subStateDesc = "Grabbing foundation";
+                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
+                        if (foundationPullerUpToDownTimer.isExpired()) {
+                            subState++;
+                        }
+                        break;
+                    case 3:
+                        subStateDesc = "Driving to wall";
+                        motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        robot.drivetrain.operate(motorPowers);
+                        if (!foundationToWallSwerve.inProgress()) {
+                            subState++;
+                            foundationPullerDownToUpTimer.set(GRAB_FOUNDATION_DELAY);
+                        }
+                        break;
+                    case 4:
+                        subStateDesc = "Releasing foundation";
+                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
+                        if (foundationPullerDownToUpTimer.isExpired()) {
+                            subState++;
+                        }
+                        break;
+                    case 5:
+                        subStateDesc = "Exit";
+                        advanceState();
+                        break;
+                }
+                break;
+            case SCAN_SKYSTONE:
+                stateDesc = "Scanning skystone";
+                switch (subState) {
+                    case 0:
+                        subStateDesc = "Entry";
+                        subState++;
+                        break;
+                    case 1:
+                        subStateDesc = "Moving to skystone";
+                        if (STARTING_POSITION == SKYSTONE) {
+                            motorPowers = startToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        } else {
+                            motorPowers = wallToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        }
+                        robot.drivetrain.operate(motorPowers);
+                        if (!startToSkystoneSwerve.inProgress() && !wallToSkystoneSwerve.inProgress()) {
+                            subState++;
+                        }
+                        break;
+                    case 2:
+                        subStateDesc = "Scanning skystone";
+                        /*
+                        scanning stuffs
+                         */
+                        subState++;
+                        break;
+                    case 3:
+                        subStateDesc = "Exit";
+                        advanceState();
+                        break;
+                }
+                break;
+            case INTAKE_SKYSTONE:
+                stateDesc = "Intaking skystone";
+                switch (subState) {
+                    case 0:
+                        subStateDesc = "Entry";
+                        intakeSystoneTimer.set(INTAKE_SKYSTONE_DELAY);
+                        subState++;
+                        break;
+                    case 1:
+                        subStateDesc = "Intaking skystone";
+                        robot.intake.setIntakeMotorPowers(Intake.INTAKE_POWER);
+                        if (intakeSystoneTimer.isExpired()) {
+                            robot.intake.setIntakeMotorPowers(0);
+                            subState++;
+                        }
+                        break;
+                    case 2:
+                        subStateDesc = "Exit";
+                        advanceState();
+                        break;
+                }
+                break;
+            case DRIVE_TO_FOUDNATION:
+                stateDesc = "Driving to foundation";
+                switch (subState) {
+                    case 0:
+                        subStateDesc = "Entry";
+                        subState++;
+                        break;
+                    case 1:
+                        subStateDesc = "Driving to foundation";
+                        if (stateEnabled[SECONDARY_MOVE_FOUNDATION]) {
+                            motorPowers = skystoneToUnmovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        } else {
+                            motorPowers = skystoneToMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        }
+                        robot.drivetrain.operate(motorPowers);
+                        if (!skystoneToUnmovedFoundationSwerve.inProgress() && !skystoneToMovedFoundationSwerve.inProgress()) {
+                            subState++;
+                        }
+                        break;
+                    case 2:
+                        subStateDesc = "Exit";
+                        advanceState();
+                        break;
+                }
+                break;
+            case OUTTAKE_SKYSTONE:
+                stateDesc = "Outtaking skystone";
+                switch (subState) {
+                    case 0:
+                        subStateDesc = "Entry";
+                        subState++;
+                        break;
+                    case 1:
+                        subStateDesc = "Outtaking skystone";
+                        robot.intake.setIntakeMotorPowers(-Intake.INTAKE_POWER);
+                        break;
+                    case 2:
+                        subStateDesc = "Exit";
+                        advanceState();
+                        break;
+                }
+                break;
+            case SECONDARY_MOVE_FOUNDATION:
+                stateDesc = "Secondary moving foundation";
+                switch (subState) {
+                    case 0:
+                        subStateDesc = "Entry";
+                        subState++;
+                        foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
+                        break;
+                    case 1:
+                        subStateDesc = "Grabbing foundation";
+                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
+                        if (foundationPullerUpToDownTimer.isExpired()) {
+                            subState++;
+                        }
+                        break;
+                    case 2:
+                        subStateDesc = "Moving foundation";
+                        motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        robot.drivetrain.operate(motorPowers);
+                        if (!foundationToWallSwerve.inProgress()) {
+                            foundationPullerDownToUpTimer.set(GRAB_FOUNDATION_DELAY);
+                            subState++;
+                        }
+                        break;
+                    case 3:
+                        subStateDesc = "Releasing foundation";
+                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
+                        if (foundationPullerDownToUpTimer.isExpired()) {
+                            subState++;
+                        }
+                        break;
+                    case 4:
+                        subStateDesc = "Exit";
+                        advanceState();
+                        break;
+                }
+                break;
+            case PARK:
+                stateDesc = "Parking";
+                switch (subState) {
+                    case 0:
+                        subStateDesc = "Entry";
+                        subState++;
+                        break;
+                    case 1:
+                        subStateDesc = "Parking";
+                        if (stateEnabled[SECONDARY_MOVE_FOUNDATION]) {
+                            motorPowers = wallToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        } else {
+                            motorPowers = movedFoundationToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        }
+                        robot.drivetrain.operate(motorPowers);
+                        if (!wallToParkSwerve.inProgress() && !movedFoundationToParkSwerve.inProgress()) {
+                            subState++;
+                        }
+                        break;
+                    case 2:
+                        subStateDesc = "Exit";
+                        advanceState();
+                        break;
+                }
+                break;
+            case END:
+                break;
+            default:
+                break;
+        }
 
-
+        telemetry.addData("State: ", stateDesc);
+        telemetry.addData("Substate: ", subStateDesc);
+        telemetry.addData("IMU", robot.imu.getHeading());
+        telemetry.addData("X", robot.getCoordinate().getX());
+        telemetry.addData("Y", robot.getCoordinate().getY());
+        telemetry.addData("Heading", robot.getCoordinate().getHeading());
     }
 }

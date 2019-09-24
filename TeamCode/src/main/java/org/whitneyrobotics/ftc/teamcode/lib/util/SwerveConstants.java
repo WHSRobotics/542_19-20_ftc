@@ -69,6 +69,14 @@ public class SwerveConstants {
         public static double velocityConstant = 0;
     }
 
+    public static class WallToParkingSwerveConstants {
+        public static double kP = 0;
+        public static double kV = 0;
+        public static double kA = 0;
+
+        public static double lookaheadDistance = 0;
+        public static double velocityConstant = 0;
+    }
 
 
 
