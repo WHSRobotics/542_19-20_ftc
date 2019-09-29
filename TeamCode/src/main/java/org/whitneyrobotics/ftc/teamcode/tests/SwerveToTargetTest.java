@@ -40,11 +40,11 @@ public class SwerveToTargetTest extends OpMode {
         telemetry.addData("left power", swerve1Powers[0]);
         telemetry.addData("right power", swerve1Powers[1]);
         for (int i = 0; i < swerve1.smoothedPath.length; i++) {
-            telemetry.addData("point" + i, swerve1.smoothedPath[i][0] + ", " + swerve1.smoothedPath[i][1]);
+            telemetry.addData("point" + i, swerve1.smoothedPath[i].getX() + ", " + swerve1.smoothedPath[i].getY());
         }
         for (int i = 0; i < swerve1.targetVelocities.length; i++) {
             telemetry.addData("velocity" + i, swerve1.targetVelocities[i]);
         }
-        telemetry.addData("lookahead point",  swerve1.lookaheadPoint[0] + ", " + swerve1.lookaheadPoint[1]);
+        telemetry.addData("lookahead point",  swerve1.lookaheadPoint.getX() + ", " + swerve1.lookaheadPoint.getY());
     }
 }
