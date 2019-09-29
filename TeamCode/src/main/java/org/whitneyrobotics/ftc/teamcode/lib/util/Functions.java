@@ -65,13 +65,7 @@ public class Functions {
         } else if (angle < -180) {
             angle = angle + 360;
         }
-        /*
-        else {
-            angle=angle;
-        }
-        */
         return angle;
-
     }
 
     public static Position transformCoordinates(double[][] dcm, Position vector) {
@@ -126,34 +120,6 @@ public class Functions {
         return Math.tan(rad);
     }
 
-    public static Position addPositions(Position pos1, Position pos2) {
-        Position sum;
-
-        double x = pos1.getX() + pos2.getX();
-        double y = pos1.getY() + pos2.getY();
-        double z = pos1.getZ() + pos2.getZ();
-
-        sum = new Position(x, y, z);
-        return sum;
-    }
-
-    public static Position subtractPositions(Position pos1, Position pos2) {
-        Position difference;
-
-        double x = pos1.getX() - pos2.getX();
-        double y = pos1.getY() - pos2.getY();
-        double z = pos1.getZ() - pos2.getZ();
-
-        difference = new Position(x, y, z);
-        return difference;
-    }
-
-    public static double calculateMagnitude(Position pos) {
-        double magnitude = Math.pow(pos.getX(), 2) + Math.pow(pos.getY(), 2);
-        magnitude = Math.sqrt(magnitude);
-        return magnitude;
-    }
-
     public static double map(double x, double in_min, double in_max, double out_min, double out_max) {
         if (x <= in_min) {
             return out_min;
@@ -171,57 +137,54 @@ public class Functions {
     }
 
 
-    public static class Vectors {
-        public static double[] add(double[] vector1, double[] vector2) {
-            if (vector1.length != vector2.length) {
-                throw new IllegalArgumentException("input vector lengths not equal");
-            }
-            double[] sumVector = new double[vector1.length];
-            for (int i = 0; i < vector1.length; i++) {
-                sumVector[i] = vector1[i] + vector2[i];
-            }
-            return sumVector;
+    public static class Positions {
+        public static Position add(Position pos1, Position pos2) {
+            Position sum;
+
+            double x = pos1.getX() + pos2.getX();
+            double y = pos1.getY() + pos2.getY();
+            double z = pos1.getZ() + pos2.getZ();
+
+            sum = new Position(x, y, z);
+            return sum;
         }
 
-        public static double[] subtract(double[] vector1, double[] vector2) {
-            if (vector1.length != vector2.length) {
-                throw new IllegalArgumentException("input vector lengths not equal");
-            }
-            double[] differenceVector = new double[vector1.length];
-            for (int i = 0; i < vector1.length; i++) {
-                differenceVector[i] = vector1[i] - vector2[i];
-            }
-            return differenceVector;
+        public static Position subtract(Position pos1, Position pos2) {
+            Position difference;
+
+            double x = pos1.getX() - pos2.getX();
+            double y = pos1.getY() - pos2.getY();
+            double z = pos1.getZ() - pos2.getZ();
+
+            difference = new Position(x, y, z);
+            return difference;
         }
 
-        public static double dot(double[] vector1, double[] vector2) {
-            if (vector1.length != vector2.length) {
-                throw new IllegalArgumentException("input vector lengths not equal");
-            }
-            double dotProduct = 0;
-            for (int i = 0; i < vector1.length; i++) {
-                dotProduct += vector1[i] * vector2[i];
-            }
+        public static double dot2D(Position pos1, Position pos2) {
+            double dotProduct = pos1.getX() * pos2.getX() + pos1.getY() * pos2.getY();
             return dotProduct;
         }
 
-        public static double cross2D(double[] vector1, double[] vector2) {
-            return vector1[0] * vector2[1] - vector1[1] * vector2[0];
+        public static Position cross2D(Position pos1, Position pos2) {
+            Position crossProduct2D;
+
+            double x = 0.0;
+            double y = 0.0;
+            double z = pos1.getX() * pos2.getY() - pos1.getY() * pos2.getX();
+
+            crossProduct2D = new Position(x, y, z);
+            return crossProduct2D;
         }
 
-        public static double[] scale(double scalar, double[] vector) {
-            double[] scaledVector = new double[vector.length];
-            for (int i = 0; i < vector.length; i++) {
-                scaledVector[i] = scalar * vector[i];
-            }
-            return scaledVector;
-        }
+        public static Position scale2D(double scaleFactor, Position pos) {
+            Position scaledPos;
 
-        public static double magnitude(double[] vector) {
-            if (vector.length != 2) {
-                throw new IllegalArgumentException("input vector lengths not equal");
-            }
-            return Math.sqrt(Math.pow(vector[0], 2) + Math.pow(vector[1], 2));
+            double x = scaleFactor * pos.getX();
+            double y = scaleFactor * pos.getY();
+            double z = pos.getZ();
+
+            scaledPos = new Position(x, y, z);
+            return scaledPos;
         }
     }
 }

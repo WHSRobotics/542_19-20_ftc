@@ -86,7 +86,7 @@ public class WHSRobotImpl implements WHSRobot {
 
     @Override
     public void driveToTarget(Position targetPos, boolean backwards) {
-        Position vectorToTarget = Functions.subtractPositions(targetPos, currentCoord.getPos()); //field frame
+        Position vectorToTarget = Functions.Positions.subtract(targetPos, currentCoord.getPos()); //field frame
         vectorToTarget = field2body(vectorToTarget); //body frame
         double distanceToTarget = vectorToTarget.getX()/*Functions.calculateMagnitude(vectorToTarget) * (vectorToTarget.getX() >= 0 ? 1 : -1)*/;
         distanceToTargetDebug = distanceToTarget;
