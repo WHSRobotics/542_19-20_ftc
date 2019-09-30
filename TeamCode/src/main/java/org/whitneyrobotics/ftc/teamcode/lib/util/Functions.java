@@ -29,7 +29,7 @@ public class Functions {
         return temp;
     }
 
-    public static double[][] positionArrayToDoubleArray(Position[] positions) {
+    public static double[][] posArrayTo2dDoubleArray(Position[] positions) {
         double[][] doublePositions = new double[positions.length][2];
         for (int i = 0; i < positions.length; i++) {
             doublePositions[i][0] = positions[i].getX();

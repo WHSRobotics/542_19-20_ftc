@@ -32,10 +32,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     private double[] encoderValues = {0.0, 0.0};
 
-    private double v1;
-    private double v2;
-    private double v3;
-    private double v4;
+    private double vFL;
+    private double vFR;
+    private double vBL;
+    private double vBR;
     private double rightX;
     private double robotAngle;
     private double r;
@@ -94,10 +94,21 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     @Override
     public void operate(double[] powers) {
-        frontLeft.setPower(powers[0]);
-        backLeft.setPower(powers[0]);
-        frontRight.setPower(powers[1]);
-        backRight.setPower(powers[1]);
+        if ((powers.length != 2) && (powers.length != 4)) {
+            throw new IllegalArgumentException("drivetrain power array not 2 or 4 in length");
+        }
+        if (powers.length == 2) {
+            frontLeft.setPower(powers[0]);
+            backLeft.setPower(powers[0]);
+            frontRight.setPower(powers[1]);
+            backRight.setPower(powers[1]);
+        }
+        else if (powers.length == 4) {
+            frontLeft.setPower(powers[0]);
+            frontRight.setPower(powers[1]);
+            backLeft.setPower(powers[2]);
+            backRight.setPower(powers[3]);
+        }
     }
 
     @Override
@@ -161,6 +172,11 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return wheelVelocities;
     }
 
+    public double[] getAllWheelVelocities() {
+        double[] wheelVelocities = {encToMM(frontLeft.getVelocity()), encToMM(frontRight.getVelocity()), encToMM(backLeft.getVelocity()), encToMM(backRight.getVelocity())};
+        return wheelVelocities;
+    }
+
     @Override
     public double encToMM(double encoderTicks) {
         return encoderTicks * (1/ENCODER_TICKS_PER_MM);
@@ -195,14 +211,14 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         }
 
         rightX = gamepadInputTurn;
-        v1 = r * Math.cos(robotAngle) + rightX;
-        v2 = r * Math.sin(robotAngle) - rightX;
-        v3 = r * Math.sin(robotAngle) + rightX;
-        v4 = r * Math.cos(robotAngle) - rightX;
-        frontLeft.setPower(v1);
-        frontRight.setPower(v2);
-        backLeft.setPower(v3);
-        backRight.setPower(v4);
+        vFL = r * Math.cos(robotAngle) + rightX;
+        vFR = r * Math.sin(robotAngle) - rightX;
+        vBL = r * Math.sin(robotAngle) + rightX;
+        vBR = r * Math.cos(robotAngle) - rightX;
+        frontLeft.setPower(vFL);
+        frontRight.setPower(vFR);
+        backLeft.setPower(vBL);
+        backRight.setPower(vBR);
     }
 
     @Override
