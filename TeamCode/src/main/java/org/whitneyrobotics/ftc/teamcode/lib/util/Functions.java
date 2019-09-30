@@ -160,23 +160,23 @@ public class Functions {
             return difference;
         }
 
-        public static double dot2D(Position pos1, Position pos2) {
+        public static double dot2d(Position pos1, Position pos2) {
             double dotProduct = pos1.getX() * pos2.getX() + pos1.getY() * pos2.getY();
             return dotProduct;
         }
 
-        public static Position cross2D(Position pos1, Position pos2) {
-            Position crossProduct2D;
+        public static Position cross2d(Position pos1, Position pos2) {
+            Position crossProduct2d;
 
             double x = 0.0;
             double y = 0.0;
             double z = pos1.getX() * pos2.getY() - pos1.getY() * pos2.getX();
 
-            crossProduct2D = new Position(x, y, z);
-            return crossProduct2D;
+            crossProduct2d = new Position(x, y, z);
+            return crossProduct2d;
         }
 
-        public static Position scale2D(double scaleFactor, Position pos) {
+        public static Position scale2d(double scaleFactor, Position pos) {
             Position scaledPos;
 
             double x = scaleFactor * pos.getX();

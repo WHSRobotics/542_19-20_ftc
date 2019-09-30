@@ -24,7 +24,7 @@ public class PathGenerator {
             segment.scale(spacing / magnitude);
             morePoints.add(orig[i]);
             for (int j = 1; j <= numPointsBetween; j++) {
-                morePoints.add(Functions.Positions.add(orig[i], Functions.Positions.scale2D(j, segment)));
+                morePoints.add(Functions.Positions.add(orig[i], Functions.Positions.scale2d(j, segment)));
             }
         }
 

@@ -53,7 +53,7 @@ public class SwerveToTarget {
 
         Position calculatedTStartPoint = smoothedPath[lastIndex];
         Position calculatedTEndPoint = smoothedPath[lastIndex + 1];
-        lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale2D(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
+        lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale2d(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
         double curvature = calculateCurvature(lookaheadDistance, lookaheadPoint);
@@ -143,9 +143,9 @@ public class SwerveToTarget {
         Position f = Functions.Positions.subtract(lineStart, currentCoord);
         double r = lookaheadDistance;
 
-        double a = Functions.Positions.dot2D(d, d);
-        double b = 2 * Functions.Positions.dot2D(f, d);
-        double c = Functions.Positions.dot2D(f, f) - r * r;
+        double a = Functions.Positions.dot2d(d, d);
+        double b = 2 * Functions.Positions.dot2d(f, d);
+        double c = Functions.Positions.dot2d(f, f) - r * r;
 
         double discriminant = b * b - 4 * a * c;
         if (discriminant < 0) {
@@ -207,7 +207,7 @@ public class SwerveToTarget {
         Position RL = Functions.Positions.subtract(L, R);
 
         // calculate which side of the robot line the lookahead point is on
-        double side = Math.signum(Functions.Positions.cross2D(RL, RB).get2dMagnitude());
+        double side = Math.signum(Functions.Positions.cross2d(RL, RB).get2dMagnitude());
 
         // distance from robot line to lookahead point: d = |ax + by + c| /√(a^2 + b^2)
         double distance = Math.abs(a * lookaheadPoint.getX() + b * lookaheadPoint.getY() + c) / Math.sqrt(a * a + b * b);
