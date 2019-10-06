@@ -24,6 +24,9 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private Toggler fieldCentricSwitch = new Toggler(2);
 
     private static final double TRACK_WIDTH = 470;
+
+    //TODO: measure actual wheel base
+    private static final double WHEEL_BASE = 470;
     private static final double RADIUS_OF_WHEEL = 50;               //in mm
     private static final double CIRC_OF_WHEEL = RADIUS_OF_WHEEL * 2 * Math.PI;
     private static final double ENCODER_TICKS_PER_REV = 1120;      //Neverest 40 TODO: Change when we get 20s.
@@ -32,10 +35,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     private double[] encoderValues = {0.0, 0.0};
 
-    private double v1;
-    private double v2;
-    private double v3;
-    private double v4;
+    private double vFL;
+    private double vFR;
+    private double vBL;
+    private double vBR;
     private double rightX;
     private double robotAngle;
     private double r;
@@ -94,10 +97,21 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     @Override
     public void operate(double[] powers) {
-        frontLeft.setPower(powers[0]);
-        backLeft.setPower(powers[0]);
-        frontRight.setPower(powers[1]);
-        backRight.setPower(powers[1]);
+        if ((powers.length != 2) && (powers.length != 4)) {
+            throw new IllegalArgumentException("drivetrain power array not 2 or 4 in length");
+        }
+        if (powers.length == 2) {
+            frontLeft.setPower(powers[0]);
+            backLeft.setPower(powers[0]);
+            frontRight.setPower(powers[1]);
+            backRight.setPower(powers[1]);
+        }
+        else if (powers.length == 4) {
+            frontLeft.setPower(powers[0]);
+            frontRight.setPower(powers[1]);
+            backLeft.setPower(powers[2]);
+            backRight.setPower(powers[3]);
+        }
     }
 
     @Override
@@ -122,8 +136,12 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return orientationSwitch.currentState() == 0 ? "normal" : "reversed";
     }
 
-    public double getTrackWidth() {
+    public static double getTrackWidth() {
         return TRACK_WIDTH;
+    }
+
+    public static double getWheelBase() {
+        return WHEEL_BASE;
     }
 
     public double getRightEncoderPosition()
@@ -144,6 +162,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         double position = frontRight.getCurrentPosition() + frontLeft.getCurrentPosition() + backRight.getCurrentPosition() + backLeft.getCurrentPosition();
         return position * 0.25;
     }
+
     public double[] getEncoderDelta() {
         double currentLeft = getLeftEncoderPosition();
         double currentRight = getRightEncoderPosition();
@@ -158,6 +177,11 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     public double[] getWheelVelocities() {
         double[] wheelVelocities = {encToMM(backLeft.getVelocity()), encToMM(frontRight.getVelocity())};
+        return wheelVelocities;
+    }
+
+    public double[] getAllWheelVelocities() {
+        double[] wheelVelocities = {encToMM(frontLeft.getVelocity()), encToMM(frontRight.getVelocity()), encToMM(backLeft.getVelocity()), encToMM(backRight.getVelocity())};
         return wheelVelocities;
     }
 
@@ -195,14 +219,14 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         }
 
         rightX = gamepadInputTurn;
-        v1 = r * Math.cos(robotAngle) + rightX;
-        v2 = r * Math.sin(robotAngle) - rightX;
-        v3 = r * Math.sin(robotAngle) + rightX;
-        v4 = r * Math.cos(robotAngle) - rightX;
-        frontLeft.setPower(v1);
-        frontRight.setPower(v2);
-        backLeft.setPower(v3);
-        backRight.setPower(v4);
+        vFL = r * Math.cos(robotAngle) + rightX;
+        vFR = r * Math.sin(robotAngle) - rightX;
+        vBL = r * Math.sin(robotAngle) + rightX;
+        vBR = r * Math.cos(robotAngle) - rightX;
+        frontLeft.setPower(vFL);
+        frontRight.setPower(vFR);
+        backLeft.setPower(vBL);
+        backRight.setPower(vBR);
     }
 
     @Override

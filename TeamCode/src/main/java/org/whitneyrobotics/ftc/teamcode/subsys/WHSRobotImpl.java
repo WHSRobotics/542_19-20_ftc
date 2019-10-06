@@ -87,7 +87,7 @@ public class WHSRobotImpl implements WHSRobot {
     @Override
     public void driveToTarget(Position targetPos, boolean backwards) {
         Position vectorToTarget = Functions.Positions.subtract(targetPos, currentCoord.getPos()); //field frame
-        vectorToTarget = field2body(vectorToTarget); //body frame
+        vectorToTarget = Functions.field2body(vectorToTarget, currentCoord); //body frame
         double distanceToTarget = vectorToTarget.getX()/*Functions.calculateMagnitude(vectorToTarget) * (vectorToTarget.getX() >= 0 ? 1 : -1)*/;
         distanceToTargetDebug = distanceToTarget;
 
@@ -230,43 +230,4 @@ public class WHSRobotImpl implements WHSRobot {
     public Coordinate getCoordinate() {
         return currentCoord;
     }
-
-    public Position body2field(Position bodyVector) {
-        Position fieldVector;
-        double heading = currentCoord.getHeading();
-
-        double[][] C_b2f = {{Functions.cosd(heading), -Functions.sind(heading), 0},
-                {Functions.sind(heading), Functions.cosd(heading), 0},
-                {0, 0, 1}};
-
-        fieldVector = Functions.transformCoordinates(C_b2f, bodyVector);
-        return fieldVector;
-
-    }
-
-    public Position field2body(Position fieldVector) {
-        Position bodyVector;
-        double heading = currentCoord.getHeading();
-
-        double[][] C_f2b = {{Functions.cosd(heading), Functions.sind(heading), 0},
-                {-Functions.sind(heading), Functions.cosd(heading), 0},
-                {0, 0, 1}};
-
-        bodyVector = Functions.transformCoordinates(C_f2b, fieldVector);
-        return bodyVector;
-
-    }
-
-    public Position front2back(Position frontVector) {
-        Position backVector;
-        double heading = 180;
-
-        double[][] C_f2b = {{-1, 0, 0},
-                {0, -1, 0},
-                {0, 0, 1}};
-
-        backVector = Functions.transformCoordinates(C_f2b, frontVector);
-        return backVector;
-    }
-
 }
