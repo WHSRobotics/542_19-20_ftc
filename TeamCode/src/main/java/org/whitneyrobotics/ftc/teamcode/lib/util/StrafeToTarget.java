@@ -2,8 +2,6 @@ package org.whitneyrobotics.ftc.teamcode.lib.util;
 
 import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 
-import java.nio.file.Path;
-
 public class StrafeToTarget {
 
     private Coordinate currentCoord;
@@ -156,9 +154,9 @@ public class StrafeToTarget {
         Position f = Functions.Positions.subtract(lineStart, currentCoord);
         double r = lookaheadDistance;
 
-        double a = Functions.Positions.dot2d(d, d);
-        double b = 2 * Functions.Positions.dot2d(f, d);
-        double c = Functions.Positions.dot2d(f, f) - r * r;
+        double a = Functions.Positions.dot(d, d);
+        double b = 2 * Functions.Positions.dot(f, d);
+        double c = Functions.Positions.dot(f, f) - r * r;
 
         double discriminant = b * b - 4 * a * c;
         if (discriminant < 0) {
@@ -197,7 +195,7 @@ public class StrafeToTarget {
         // creates array in which we store the current distance to each point in our path
         double[] distances = new double[smoothedPath.length];
         for (int i = 0/*lastClosestPointIndex*/; i < smoothedPath.length; i++) {
-            distances[i] = Functions.Positions.subtract(smoothedPath[i], currentCoord).get2dMagnitude();
+            distances[i] = Functions.Positions.subtract(smoothedPath[i], currentCoord).getMagnitude();
         }
 
         // calculates the index of value in the array with the smallest value and returns that index

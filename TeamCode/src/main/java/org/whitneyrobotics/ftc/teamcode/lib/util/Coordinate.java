@@ -9,13 +9,13 @@ public class Coordinate extends Position {
 
     private double orientation;
 
-    public Coordinate(double xPosition, double yPosition, double zPosition, double orientationInput) {
-        super(xPosition, yPosition, zPosition);
+    public Coordinate(double xPosition, double yPosition, double orientationInput) {
+        super(xPosition, yPosition);
         orientation = orientationInput;
     }
 
     public Coordinate(Position pos, double heading) {
-        super(pos.getX(), pos.getY(), pos.getZ());
+        super(pos.getX(), pos.getY());
         orientation = heading;
     }
 
@@ -28,7 +28,7 @@ public class Coordinate extends Position {
     }
 
     public Position getPos() {
-        Position pos = new Position(xPos, yPos, zPos);
+        Position pos = new Position(xPos, yPos);
         return pos;
     }
 
@@ -39,6 +39,5 @@ public class Coordinate extends Position {
     public void setPos(Position pos) {
         xPos = pos.getX();
         yPos = pos.getY();
-        zPos = pos.getZ();
     }
 }

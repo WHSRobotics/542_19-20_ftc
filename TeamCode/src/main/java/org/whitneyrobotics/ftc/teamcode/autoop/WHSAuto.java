@@ -72,8 +72,7 @@ public class WHSAuto extends OpMode {
                 1,
                 1,
                 SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
-                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance,
-                robot.drivetrain.getTrackWidth());
+                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance);
 
         SwerveToTarget foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
                 SwerveConstants.FoundationToWallSwerveConstants.kV,
@@ -82,8 +81,7 @@ public class WHSAuto extends OpMode {
                 1,
                 1,
                 SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance,
-                robot.drivetrain.getTrackWidth());
+                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance);
 
         SwerveToTarget wallToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
                 SwerveConstants.WallToSkystoneSwerveConstants.kV,
@@ -92,8 +90,7 @@ public class WHSAuto extends OpMode {
                 1,
                 1,
                 SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
-                robot.drivetrain.getTrackWidth());
+                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance);
 
         SwerveToTarget startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
                 SwerveConstants.StartToSkystoneSwerveConstants.kV,
@@ -102,18 +99,16 @@ public class WHSAuto extends OpMode {
                 1,
                 1,
                 SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
-                robot.drivetrain.getTrackWidth());
+                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance);
 
         SwerveToTarget skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
                 SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
                 SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
                 skystoneToMovedFoundationSwervePositions,
-            1,
-            1,
-    SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
-    SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
-            robot.drivetrain.getTrackWidth());
+                1,
+                1,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance);
 
     SwerveToTarget skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
@@ -122,8 +117,7 @@ public class WHSAuto extends OpMode {
             1,
             1,
             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
-            robot.drivetrain.getTrackWidth());
+            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance);
 
     SwerveToTarget movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
             SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
@@ -132,8 +126,7 @@ public class WHSAuto extends OpMode {
             1,
             1,
             SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
-            SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
-            robot.drivetrain.getTrackWidth());
+            SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance);
 
     SwerveToTarget wallToParkSwerve = new SwerveToTarget(SwerveConstants.WallToParkingSwerveConstants.kP,
             SwerveConstants.WallToParkingSwerveConstants.kV,
@@ -142,9 +135,7 @@ public class WHSAuto extends OpMode {
             1,
             1,
             SwerveConstants.WallToParkingSwerveConstants.velocityConstant,
-            SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance,
-            robot.drivetrain.getTrackWidth());
-
+            SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance);
     /**
      * State Definitions
       */
@@ -266,33 +257,31 @@ public class WHSAuto extends OpMode {
         robot = new WHSRobotImpl(hardwareMap);
         defineStateEnabledStatus();
 
-        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1500, 150,90);
-        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1500, 150, -90);
+        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1500, 190);
+        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1500,  -90);
 
-        skystonePositionArray[RED][LEFT] = new Position(-1088, -606, 150);
-        skystonePositionArray[RED][CENTER] = new Position(-885,-606,150);
-        skystonePositionArray[RED][RIGHT] = new Position(-682,-606,150);
+        skystonePositionArray[RED][LEFT] = new Position(-1088, -606);
+        skystonePositionArray[RED][CENTER] = new Position(-885,-60);
+        skystonePositionArray[RED][RIGHT] = new Position(-682,-606);
 
-        skystonePositionArray[BLUE][LEFT] = new Position(-682,606,150);
-        skystonePositionArray[BLUE][CENTER] = new Position(-885,606,150);
-        skystonePositionArray[BLUE][RIGHT] = new Position(-1088,606,150);
+        skystonePositionArray[BLUE][LEFT] = new Position(-682,606);
+        skystonePositionArray[BLUE][CENTER] = new Position(-885,606);
+        skystonePositionArray[BLUE][RIGHT] = new Position(-1088,606);
 
-        foundationStartingPositionArray[RED] = new Position(STARTING_COORDINATE_X, -600, 150);
-        foundationStartingPositionArray[BLUE] = new Position(STARTING_COORDINATE_X,600,150);
+        foundationStartingPositionArray[RED] = new Position(STARTING_COORDINATE_X, -600);
+        foundationStartingPositionArray[BLUE] = new Position(STARTING_COORDINATE_X,600);
 
-        foundationMovedToPositionArray[RED] = new Position(STARTING_COORDINATE_X, -1571, 150);
-        foundationMovedToPositionArray[BLUE] = new Position(STARTING_COORDINATE_X, 1571, 150);
+        foundationMovedToPositionArray[RED] = new Position(STARTING_COORDINATE_X, -1571);
+        foundationMovedToPositionArray[BLUE] = new Position(STARTING_COORDINATE_X, 1571);
 
-        foundationMovedPositionArray[RED] = new Position(1024,-1108,150);
-        foundationMovedPositionArray[BLUE] = new Position(1024, 1108, 150);
+        foundationMovedPositionArray[RED] = new Position(1024,-1108);
+        foundationMovedPositionArray[BLUE] = new Position(1024, 1108);
 
-        skybridgePositionArray[RED][INSIDE] = new Position(0,-900,150);
-        skybridgePositionArray[RED][OUTSIDE] = new Position(0,-1500,150);
+        skybridgePositionArray[RED][INSIDE] = new Position(0,-900);
+        skybridgePositionArray[RED][OUTSIDE] = new Position(0,-1500);
 
-        skybridgePositionArray[BLUE][INSIDE] = new Position(0,900,150);
-        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1500,150);
-
-
+        skybridgePositionArray[BLUE][INSIDE] = new Position(0,900);
+        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1500);
     }
 
     @Override

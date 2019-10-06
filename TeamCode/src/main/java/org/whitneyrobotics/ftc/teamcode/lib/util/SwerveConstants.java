@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class SwerveConstants {
 
-    public static double MAX_ACCELERATION = 0;
+    public static double MAX_ACCELERATION = 2000.0; // mm/s^2
 
     public static class StartToFoundationSwerveConstants {
         public static double kP = 0;

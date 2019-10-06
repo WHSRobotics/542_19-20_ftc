@@ -29,15 +29,6 @@ public class Functions {
         return temp;
     }
 
-    public static double[][] posArrayTo2dDoubleArray(Position[] positions) {
-        double[][] doublePositions = new double[positions.length][2];
-        for (int i = 0; i < positions.length; i++) {
-            doublePositions[i][0] = positions[i].getX();
-            doublePositions[i][1] = positions[i].getY();
-        }
-        return doublePositions;
-    }
-
     public static int calculateIndexOfSmallestValue(double[] array) {
         double smallest = array[0];
         int posInArray = 0;
@@ -71,11 +62,10 @@ public class Functions {
     public static Position transformCoordinates(double[][] dcm, Position vector) {
         Position transformedVector;
 
-        double x = dcm[0][0] * vector.getX() + dcm[0][1] * vector.getY() + dcm[0][2] * vector.getZ();
-        double y = dcm[1][0] * vector.getX() + dcm[1][1] * vector.getY() + dcm[1][2] * vector.getZ();
-        double z = dcm[2][0] * vector.getX() + dcm[2][1] * vector.getY() + dcm[2][2] * vector.getZ();
+        double x = dcm[0][0] * vector.getX() + dcm[0][1] * vector.getY();
+        double y = dcm[1][0] * vector.getX() + dcm[1][1] * vector.getY();
 
-        transformedVector = new Position(x, y, z);
+        transformedVector = new Position(x, y);
         return transformedVector;
     }
 
@@ -140,9 +130,8 @@ public class Functions {
         Position fieldVector;
         double heading = currentCoord.getHeading();
 
-        double[][] C_b2f = {{Functions.cosd(heading), -Functions.sind(heading), 0},
-                {Functions.sind(heading), Functions.cosd(heading), 0},
-                {0, 0, 1}};
+        double[][] C_b2f = {{Functions.cosd(heading), -Functions.sind(heading)},
+                {Functions.sind(heading), Functions.cosd(heading)}};
 
         fieldVector = Functions.transformCoordinates(C_b2f, bodyVector);
         return fieldVector;
@@ -153,10 +142,8 @@ public class Functions {
         Position bodyVector;
         double heading = currentCoord.getHeading();
 
-        double[][] C_f2b = {{Functions.cosd(heading), Functions.sind(heading), 0},
-                {-Functions.sind(heading), Functions.cosd(heading), 0},
-                {0, 0, 1}};
-
+        double[][] C_f2b = {{Functions.cosd(heading), Functions.sind(heading)},
+                {-Functions.sind(heading), Functions.cosd(heading)}};
         bodyVector = Functions.transformCoordinates(C_f2b, fieldVector);
         return bodyVector;
 
@@ -166,10 +153,8 @@ public class Functions {
         Position backVector;
         double heading = 180;
 
-        double[][] C_f2b = {{-1, 0, 0},
-                {0, -1, 0},
-                {0, 0, 1}};
-
+        double[][] C_f2b = {{-1, 0},
+                {0, -1}};
         backVector = Functions.transformCoordinates(C_f2b, frontVector);
         return backVector;
     }
@@ -180,9 +165,8 @@ public class Functions {
 
             double x = pos1.getX() + pos2.getX();
             double y = pos1.getY() + pos2.getY();
-            double z = pos1.getZ() + pos2.getZ();
 
-            sum = new Position(x, y, z);
+            sum = new Position(x, y);
             return sum;
         }
 
@@ -191,26 +175,19 @@ public class Functions {
 
             double x = pos1.getX() - pos2.getX();
             double y = pos1.getY() - pos2.getY();
-            double z = pos1.getZ() - pos2.getZ();
 
-            difference = new Position(x, y, z);
+            difference = new Position(x, y);
             return difference;
         }
 
-        public static double dot2d(Position pos1, Position pos2) {
+        public static double dot(Position pos1, Position pos2) {
             double dotProduct = pos1.getX() * pos2.getX() + pos1.getY() * pos2.getY();
             return dotProduct;
         }
 
-        public static Position cross2d(Position pos1, Position pos2) {
-            Position crossProduct2d;
-
-            double x = 0.0;
-            double y = 0.0;
+        public static double getCross3dMagnitude(Position pos1, Position pos2) {
             double z = pos1.getX() * pos2.getY() - pos1.getY() * pos2.getX();
-
-            crossProduct2d = new Position(x, y, z);
-            return crossProduct2d;
+            return z;
         }
 
         public static Position scale2d(double scaleFactor, Position pos) {
@@ -218,9 +195,8 @@ public class Functions {
 
             double x = scaleFactor * pos.getX();
             double y = scaleFactor * pos.getY();
-            double z = pos.getZ();
 
-            scaledPos = new Position(x, y, z);
+            scaledPos = new Position(x, y);
             return scaledPos;
         }
     }

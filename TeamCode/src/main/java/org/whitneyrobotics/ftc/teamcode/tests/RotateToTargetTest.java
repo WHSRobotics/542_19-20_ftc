@@ -26,7 +26,7 @@ public class RotateToTargetTest extends OpMode {
         // dashboard.sendTelemetryPacket(packet);
 
         robot = new WHSRobotImpl(hardwareMap);
-        robot.setInitialCoordinate(new Coordinate(0, 0, 150, 0));
+        robot.setInitialCoordinate(new Coordinate(0, 0, 0));
         telemetry.setMsTransmissionInterval(10);
     }
 
@@ -50,7 +50,6 @@ public class RotateToTargetTest extends OpMode {
         telemetry.addData("IMU", robot.imu.getHeading());
         telemetry.addData("X", robot.getCoordinate().getX());
         telemetry.addData("Y", robot.getCoordinate().getY());
-        telemetry.addData("Z", robot.getCoordinate().getZ());
         telemetry.addData("Heading", robot.getCoordinate().getHeading());
         telemetry.addData("FL Power", robot.drivetrain.frontLeft.getPower());
         telemetry.addData("BL Power", robot.drivetrain.backLeft.getPower());
