@@ -136,6 +136,43 @@ public class Functions {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
+    public static Position body2field(Position bodyVector, Coordinate currentCoord) {
+        Position fieldVector;
+        double heading = currentCoord.getHeading();
+
+        double[][] C_b2f = {{Functions.cosd(heading), -Functions.sind(heading), 0},
+                {Functions.sind(heading), Functions.cosd(heading), 0},
+                {0, 0, 1}};
+
+        fieldVector = Functions.transformCoordinates(C_b2f, bodyVector);
+        return fieldVector;
+
+    }
+
+    public static Position field2body(Position fieldVector, Coordinate currentCoord) {
+        Position bodyVector;
+        double heading = currentCoord.getHeading();
+
+        double[][] C_f2b = {{Functions.cosd(heading), Functions.sind(heading), 0},
+                {-Functions.sind(heading), Functions.cosd(heading), 0},
+                {0, 0, 1}};
+
+        bodyVector = Functions.transformCoordinates(C_f2b, fieldVector);
+        return bodyVector;
+
+    }
+
+    public static Position front2back(Position frontVector) {
+        Position backVector;
+        double heading = 180;
+
+        double[][] C_f2b = {{-1, 0, 0},
+                {0, -1, 0},
+                {0, 0, 1}};
+
+        backVector = Functions.transformCoordinates(C_f2b, frontVector);
+        return backVector;
+    }
 
     public static class Positions {
         public static Position add(Position pos1, Position pos2) {

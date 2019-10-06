@@ -221,8 +221,7 @@ public class SwerveToTarget {
         double leftVelocity = targetVelocity * (2 + curvature * trackWidth) / 2;
         double rightVelocity = targetVelocity * (2 - curvature * trackWidth) / 2;
 
-        double[] wheelVelocities = {leftVelocity, rightVelocity};
-        return wheelVelocities;
+        return new double[]{leftVelocity, rightVelocity};
     }
 
     public boolean inProgress() {

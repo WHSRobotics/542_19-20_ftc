@@ -24,6 +24,9 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private Toggler fieldCentricSwitch = new Toggler(2);
 
     private static final double TRACK_WIDTH = 470;
+
+    //TODO: measure actual wheel base
+    private static final double WHEEL_BASE = 470;
     private static final double RADIUS_OF_WHEEL = 50;               //in mm
     private static final double CIRC_OF_WHEEL = RADIUS_OF_WHEEL * 2 * Math.PI;
     private static final double ENCODER_TICKS_PER_REV = 1120;      //Neverest 40 TODO: Change when we get 20s.
@@ -133,8 +136,12 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return orientationSwitch.currentState() == 0 ? "normal" : "reversed";
     }
 
-    public double getTrackWidth() {
+    public static double getTrackWidth() {
         return TRACK_WIDTH;
+    }
+
+    public static double getWheelBase() {
+        return WHEEL_BASE;
     }
 
     public double getRightEncoderPosition()
@@ -155,6 +162,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         double position = frontRight.getCurrentPosition() + frontLeft.getCurrentPosition() + backRight.getCurrentPosition() + backLeft.getCurrentPosition();
         return position * 0.25;
     }
+
     public double[] getEncoderDelta() {
         double currentLeft = getLeftEncoderPosition();
         double currentRight = getRightEncoderPosition();

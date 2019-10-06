@@ -1,5 +1,9 @@
 package org.whitneyrobotics.ftc.teamcode.lib.util;
 
+import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
+
+import java.nio.file.Path;
+
 public class StrafeToTarget {
 
     private Coordinate currentCoord;
@@ -9,31 +13,31 @@ public class StrafeToTarget {
     private int lastIndex = 0;
     private double currentTValue = 0;
 
-    public double[][] smoothedPath;
-    private double[] distances;
+    public Position[] smoothedPath;
     private double[] targetCurvatures;
     public double[] targetVelocities;
 
-    private double[] lastTargetWheelVelocities = {0.0, 0.0};
+    private double[] currentTargetWheelVelocities = {0.0, 0.0, 0.0, 0.0};
+    private double[] lastTargetWheelVelocities = {0.0, 0.0, 0.0, 0.0};
     private double lastTime;
     private double kP;
     private double kV;
     private double kA;
     private double lookaheadDistance;
     private double trackWidth;
+    private double wheelBase;
 
-    public double[] lookaheadPoint;
+    public Position lookaheadPoint;
+    private boolean inProgress;
 
-    public StrafeToTarget(double kP, double kV, double kA, Position[] targetPositions, int numToInject, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double trackWidth) {
+    public StrafeToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance) {
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
         this.lookaheadDistance = lookaheadDistance;
-        this.trackWidth = trackWidth;
-        double[][] targetDoubles = Functions.posArrayTo2dDoubleArray(targetPositions);
-        double[][] injectedPath = inject(targetDoubles, numToInject);
-        smoothedPath = smoothPath(injectedPath, 1 - weightSmooth, weightSmooth, tolerance);
-        distances = calculateDistanceAtPoint(smoothedPath);
+        trackWidth = Drivetrain.getTrackWidth();
+        wheelBase = Drivetrain.getWheelBase();
+        smoothedPath = PathGenerator.generatePath(targetPositions, spacing, weightSmooth);
         targetCurvatures = calculateTargetCurvatures(smoothedPath);
         targetVelocities = calculateTargetVelocities(smoothedPath, velocityConstant);
         lastTime = System.nanoTime() / 1E9;
@@ -53,101 +57,44 @@ public class StrafeToTarget {
             }
         }
 
-        double[] calculatedTStartPoint = {smoothedPath[lastIndex][0], smoothedPath[lastIndex][1]};
-        double[] calculatedTEndPoint = {smoothedPath[lastIndex + 1][0], smoothedPath[lastIndex + 1][1]};
-        lookaheadPoint = Functions.Vectors.add(calculatedTStartPoint, Functions.Vectors.scale(currentTValue, Functions.Vectors.subtract(calculatedTEndPoint, calculatedTStartPoint)));
+        Position calculatedTStartPoint = smoothedPath[lastIndex];
+        Position calculatedTEndPoint = smoothedPath[lastIndex + 1];
+        lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale2d(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
 
-        double[] vectorToLookaheadPoint = {lookaheadPoint[0] - currentCoord.getX(), lookaheadPoint[0] - currentCoord.getX()};
-        double angleToLookaheadPoint = Math.atan2(vectorToLookaheadPoint[1], vectorToLookaheadPoint[0]);
+        Position vectorToLookaheadPoint = Functions.Positions.subtract(lookaheadPoint, currentCoord);
+        vectorToLookaheadPoint = Functions.field2body(vectorToLookaheadPoint, currentCoord);
+        double angleToLookaheadPoint = Math.atan2(vectorToLookaheadPoint.getY(), vectorToLookaheadPoint.getX());
 
-        double vFL = targetVelocities[indexOfClosestPoint] * Math.cos(angleToLookaheadPoint);
-        double vFR = targetVelocities[indexOfClosestPoint] * Math.sin(angleToLookaheadPoint);
-        double vBL = targetVelocities[indexOfClosestPoint] * Math.sin(angleToLookaheadPoint);
-        double vBR = targetVelocities[indexOfClosestPoint] * Math.cos(angleToLookaheadPoint);
-        double[] targetWheelVelocities = {vFL, vFR, vBL, vBR};
+        currentTargetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], angleToLookaheadPoint);
 
         double deltaTime = System.nanoTime() / 1E9 - lastTime;
         double[] targetWheelAccelerations = new double[4];
         for (int i = 0; i < targetWheelAccelerations.length; i++) {
-            targetWheelAccelerations[i] = (targetWheelVelocities[i] - lastTargetWheelVelocities[i]) / deltaTime;
+            targetWheelAccelerations[i] = (currentTargetWheelVelocities[i] - lastTargetWheelVelocities[i]) / deltaTime;
         }
 
         if (indexOfClosestPoint != smoothedPath.length - 1) {
-            double[] feedBack = Functions.Vectors.scale(kP, Functions.Vectors.subtract(targetWheelVelocities, currentWheelVelocities));
-            double[] feedForward = Functions.Vectors.add(Functions.Vectors.scale(kV, targetWheelVelocities), Functions.Vectors.scale(kA, targetWheelAccelerations));
-            double[] motorPowers = new double[4];
-            for (int i = 0; i < motorPowers.length; i++) {
-                motorPowers[i] = Functions.constrain(feedBack[i] + feedForward[i], -1, 1);
-              }
-            lastTargetWheelVelocities = targetWheelVelocities;
+            double[] feedBack = {currentTargetWheelVelocities[0] - currentWheelVelocities[0], currentTargetWheelVelocities[1] - currentWheelVelocities[1], currentTargetWheelVelocities[2] - currentWheelVelocities[2], currentTargetWheelVelocities[3] - currentWheelVelocities[3]};
+            for (int i = 0; i < feedBack.length; i++) {
+                feedBack[i] *= kP;
+            }
+
+            double[] feedForwardVel = {kV * currentTargetWheelVelocities[0], kV * currentTargetWheelVelocities[1], kV * currentTargetWheelVelocities[2], kV * currentTargetWheelVelocities[3]};
+            double[] feedForwardAccel = {kA * targetWheelAccelerations[0], kA * targetWheelAccelerations[1], kA * targetWheelAccelerations[2], kA * targetWheelAccelerations[3]};
+            double[] feedForward = {feedForwardVel[0] + feedForwardAccel[0], feedForwardVel[1] + feedForwardAccel[1]};
+            double[] motorPowers = {Functions.constrain(feedBack[0] + feedForward[0], -1, 1), Functions.constrain(feedBack[1] + feedForward[1], -1, 1), Functions.constrain(feedBack[2] + feedForward[2], -1, 1), Functions.constrain(feedBack[3] + feedForward[3], -1, 1)};
+            lastTargetWheelVelocities = currentTargetWheelVelocities;
+            inProgress = true;
             return motorPowers;
+        } else {
+            inProgress = false;
         }
-        return new double[] {0.0, 0.0};
+        return new double[] {0.0, 0.0, 0.0, 0.0};
     }
 
-    private double[][] inject(double[][] orig, int numToInject) {
-        // create extended 2 Dimensional array to hold additional points
-        double[][] morePoints = new double[orig.length + ((numToInject) * (orig.length - 1))][2];
-
-        int index = 0;
-
-        // loop through original array
-        for (int i = 0; i < orig.length - 1; i++) {
-            // copy first
-            morePoints[index][0] = orig[i][0];
-            morePoints[index][1] = orig[i][1];
-            index++;
-
-            for (int j = 1; j < numToInject + 1; j++) {
-                // calculate intermediate x points between j and j+1 original points
-                morePoints[index][0] = j * ((orig[i + 1][0] - orig[i][0]) / (numToInject + 1)) + orig[i][0];
-
-                // calculate intermediate y points  between j and j+1 original points
-                morePoints[index][1] = j * ((orig[i + 1][1] - orig[i][1]) / (numToInject + 1)) + orig[i][1];
-
-                index++;
-            }
-        }
-
-        // copy last
-        morePoints[index][0] = orig[orig.length - 1][0];
-        morePoints[index][1] = orig[orig.length - 1][1];
-
-        return morePoints;
-    }
-
-    private double[][] smoothPath(double[][] path, double weight_data, double weight_smooth, double tolerance) {
-        // copy array
-        double[][] newPath = Functions.doubleArrayCopy(path);
-
-        double change = tolerance;
-        while (change >= tolerance) {
-            change = 0.0;
-            for (int i = 1; i < path.length - 1; i++) {
-                for (int j = 0; j < path[i].length; j++) {
-                    double aux = newPath[i][j];
-                    newPath[i][j] += weight_data * (path[i][j] - newPath[i][j]) + weight_smooth * (newPath[i - 1][j] + newPath[i + 1][j] - (2.0 * newPath[i][j]));
-                    change += Math.abs(aux - newPath[i][j]);
-                }
-            }
-        }
-        return newPath;
-    }
-
-    private double[] calculateDistanceAtPoint(double[][] smoothedPath) {
-        // creates array to store the total distance that the robot should have traveled at that point
-        double[] distanceArray = new double[smoothedPath.length];
-        distanceArray[0] = 0;
-
-        for (int i = 1; i < smoothedPath.length; i++) {
-            distanceArray[i] = distanceArray[i - 1] + Math.hypot(Math.abs(smoothedPath[i][0] - smoothedPath[i - 1][0]), Math.abs(smoothedPath[i - 1][1] - smoothedPath[i][1]));
-        }
-        return distanceArray;
-    }
-
-    private double[] calculateTargetCurvatures(double[][] smoothedPath) {
+    private double[] calculateTargetCurvatures(Position[] smoothedPath) {
         // creates an array to store all the curvatures
         double[] curvatureArray = new double[smoothedPath.length];
 
@@ -159,14 +106,14 @@ public class StrafeToTarget {
         for (int i = 1; i < (smoothedPath.length - 2); i++) {
 
             // calculates the coordinates of the points directly ahead and behind point i
-            double x1 = smoothedPath[i][0] + 0.0001;
-            double y1 = smoothedPath[i][1];
+            double x1 = smoothedPath[i].getX() + 0.0001;
+            double y1 = smoothedPath[i].getY();
 
-            double x2 = smoothedPath[i - 1][0];
-            double y2 = smoothedPath[i - 1][1];
+            double x2 = smoothedPath[i - 1].getX();
+            double y2 = smoothedPath[i - 1].getY();
 
-            double x3 = smoothedPath[i + 1][0];
-            double y3 = smoothedPath[i + 1][1];
+            double x3 = smoothedPath[i + 1].getX();
+            double y3 = smoothedPath[i + 1].getY();
 
             // calculates the curvatures and returns the array
             double k1 = 0.5 * (Math.pow(x1, 2) + Math.pow(y1, 2) - Math.pow(x2, 2) - Math.pow(y2, 2)) / (x1 - x2);
@@ -185,7 +132,7 @@ public class StrafeToTarget {
         return curvatureArray;
     }
 
-    private double[] calculateTargetVelocities(double[][] smoothedPath, double k) {
+    private double[] calculateTargetVelocities(Position[] smoothedPath, double k) {
         // creates array that holds all of the target velocities
         double[] targetVelocities = new double[smoothedPath.length];
 
@@ -194,7 +141,7 @@ public class StrafeToTarget {
         for (int i = smoothedPath.length - 2; i >= 0; i--) { // works backwards as we need to know last point's velocity to calculate current point's
 
             // distance from this current point to next point
-            double distance = Functions.distanceFormula(smoothedPath[i][0], smoothedPath[i][1], smoothedPath[i + 1][0], smoothedPath[i + 1][1]);
+            double distance = Functions.distanceFormula(smoothedPath[i].getX(), smoothedPath[i].getY(), smoothedPath[i + 1].getX(), smoothedPath[i + 1].getY());
 
             // finds the smaller value between the velocity constant / the curvature and a new target velocity
             double targetVelocity = Math.min(k / targetCurvatures[i], Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
@@ -203,18 +150,15 @@ public class StrafeToTarget {
         return targetVelocities;
     }
 
-    private double calculateT(double[] lineStart, double[] lineEnd, double lookaheadDistance) {
-        // current coordinate of the robot
-        double[] robotVector = {currentCoord.getX(), currentCoord.getY()};
-
+    private double calculateT(Position lineStart, Position lineEnd, double lookaheadDistance) {
         // constants used throughout the method
-        double[] d = Functions.Vectors.subtract(lineStart, lineEnd);
-        double[] f = Functions.Vectors.subtract(lineStart, robotVector);
+        Position d = Functions.Positions.subtract(lineEnd, lineStart);
+        Position f = Functions.Positions.subtract(lineStart, currentCoord);
         double r = lookaheadDistance;
 
-        double a = Functions.Vectors.dot(d, d);
-        double b = 2 * Functions.Vectors.dot(f, d);
-        double c = Functions.Vectors.dot(f, f) - r * r;
+        double a = Functions.Positions.dot2d(d, d);
+        double b = 2 * Functions.Positions.dot2d(f, d);
+        double c = Functions.Positions.dot2d(f, f) - r * r;
 
         double discriminant = b * b - 4 * a * c;
         if (discriminant < 0) {
@@ -249,15 +193,27 @@ public class StrafeToTarget {
         return Double.NaN;
     }
 
-    private int calculateIndexOfClosestPoint(double[][] smoothedPath) {
+    private int calculateIndexOfClosestPoint(Position[] smoothedPath) {
         // creates array in which we store the current distance to each point in our path
         double[] distances = new double[smoothedPath.length];
         for (int i = 0/*lastClosestPointIndex*/; i < smoothedPath.length; i++) {
-            distances[i] = Functions.distanceFormula(smoothedPath[i][0], smoothedPath[i][1], currentCoord.getX(), currentCoord.getY());
+            distances[i] = Functions.Positions.subtract(smoothedPath[i], currentCoord).get2dMagnitude();
         }
 
         // calculates the index of value in the array with the smallest value and returns that index
         lastClosestPointIndex = Functions.calculateIndexOfSmallestValue(distances);
         return lastClosestPointIndex;
+    }
+
+    private double[] calculateTargetWheelVelocities(double targetVelocity, double angleToLookaheadPoint) {
+        double targetVelocityX = targetVelocity * Functions.cosd(angleToLookaheadPoint);
+        double targetVelocityY = targetVelocity * Functions.sind(angleToLookaheadPoint);
+
+        double vFL = targetVelocityX + targetVelocityY;
+        double vFR = targetVelocityX - targetVelocityY;
+        double vBL = targetVelocityX - targetVelocityY;
+        double vBR = targetVelocityX + targetVelocityY;
+
+        return new double[]{vFL, vFR, vBL, vBR};
     }
 }
