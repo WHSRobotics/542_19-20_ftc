@@ -78,10 +78,10 @@ public class WHSRobotImpl implements WHSRobot {
 
         drivetrain = new Drivetrain(hardwareMap);
         imu = new IMU(hardwareMap);
-        // lift = new Lift(hardwareMap);
-        intake = new Intake(hardwareMap);
+        //intake = new Intake(hardwareMap);
+        //foundationPuller = new FoundationPuller(hardwareMap);
 
-        currentCoord = new Coordinate(0.0, 0.0, 150.0, 0.0);
+        currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }
 
     @Override

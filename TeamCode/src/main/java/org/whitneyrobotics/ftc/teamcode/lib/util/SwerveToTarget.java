@@ -1,5 +1,7 @@
 package org.whitneyrobotics.ftc.teamcode.lib.util;
 
+import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
+
 public class SwerveToTarget {
 
     private Coordinate currentCoord;
@@ -25,12 +27,12 @@ public class SwerveToTarget {
     public Position lookaheadPoint;
     private boolean inProgress = false;
 
-    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double velocityConstant, double lookaheadDistance, double trackWidth) {
+    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double velocityConstant, double lookaheadDistance) {
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
         this.lookaheadDistance = lookaheadDistance;
-        this.trackWidth = trackWidth;
+        trackWidth = Drivetrain.getTrackWidth();
         smoothedPath = PathGenerator.generatePath(targetPositions, spacing, weightSmooth);
         targetCurvatures = calculateTargetCurvatures(smoothedPath);
         targetVelocities = calculateTargetVelocities(smoothedPath, velocityConstant);
@@ -128,7 +130,7 @@ public class SwerveToTarget {
         for (int i = smoothedPath.length - 2; i >= 0; i--) { // works backwards as we need to know last point's velocity to calculate current point's
 
             // distance from this current point to next point
-            double distance = Functions.Positions.subtract(smoothedPath[i+1], smoothedPath[i]).get2dMagnitude();
+            double distance = Functions.Positions.subtract(smoothedPath[i+1], smoothedPath[i]).getMagnitude();
 
             // finds the smaller value between the velocity constant / the curvature and a new target velocity
             double targetVelocity = Math.min(k / targetCurvatures[i], Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
@@ -143,9 +145,9 @@ public class SwerveToTarget {
         Position f = Functions.Positions.subtract(lineStart, currentCoord);
         double r = lookaheadDistance;
 
-        double a = Functions.Positions.dot2d(d, d);
-        double b = 2 * Functions.Positions.dot2d(f, d);
-        double c = Functions.Positions.dot2d(f, f) - r * r;
+        double a = Functions.Positions.dot(d, d);
+        double b = 2 * Functions.Positions.dot(f, d);
+        double c = Functions.Positions.dot(f, f) - r * r;
 
         double discriminant = b * b - 4 * a * c;
         if (discriminant < 0) {
@@ -184,7 +186,7 @@ public class SwerveToTarget {
         // creates array in which we store the current distance to each point in our path
         double[] distances = new double[smoothedPath.length];
         for (int i = 0/*lastClosestPointIndex*/; i < smoothedPath.length; i++) {
-            distances[i] = Functions.Positions.subtract(smoothedPath[i], currentCoord).get2dMagnitude();
+            distances[i] = Functions.Positions.subtract(smoothedPath[i], currentCoord).getMagnitude();
         }
 
         // calculates the index of value in the array with the smallest value and returns that index
@@ -201,13 +203,13 @@ public class SwerveToTarget {
         Position R = currentCoord.getPos();
         Position L = lookaheadPoint;
         // generate point B on robot line (for calculating sign)
-        Position B = new Position(R.getX() + Functions.cosd(currentCoord.getHeading()), R.getY() + Functions.sind(currentCoord.getHeading()), 150);
+        Position B = new Position(R.getX() + Functions.cosd(currentCoord.getHeading()), R.getY() + Functions.sind(currentCoord.getHeading()));
 
         Position RB = Functions.Positions.subtract(B, R);
         Position RL = Functions.Positions.subtract(L, R);
 
         // calculate which side of the robot line the lookahead point is on
-        double side = Math.signum(Functions.Positions.cross2d(RL, RB).get2dMagnitude());
+        double side = Math.signum(Functions.Positions.getCross3dMagnitude(RL, RB));
 
         // distance from robot line to lookahead point: d = |ax + by + c| /√(a^2 + b^2)
         double distance = Math.abs(a * lookaheadPoint.getX() + b * lookaheadPoint.getY() + c) / Math.sqrt(a * a + b * b);

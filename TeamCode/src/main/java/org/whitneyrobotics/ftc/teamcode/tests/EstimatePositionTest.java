@@ -17,7 +17,7 @@ public class EstimatePositionTest extends OpMode {
     @Override
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
-        robot.setInitialCoordinate(new Coordinate(0, 0, 0, 90));
+        robot.setInitialCoordinate(new Coordinate(0, 0, 90));
     }
 
     @Override
@@ -32,7 +32,6 @@ public class EstimatePositionTest extends OpMode {
         telemetry.addData("IMU", robot.imu.getHeading());
         telemetry.addData("X", robot.getCoordinate().getX());
         telemetry.addData("Y", robot.getCoordinate().getY());
-        telemetry.addData("Z", robot.getCoordinate().getZ());
         telemetry.addData("Heading", robot.getCoordinate().getHeading());
         telemetry.addData("FL Position", robot.drivetrain.frontLeft.getCurrentPosition());
         telemetry.addData("BL Position", robot.drivetrain.backLeft.getCurrentPosition());

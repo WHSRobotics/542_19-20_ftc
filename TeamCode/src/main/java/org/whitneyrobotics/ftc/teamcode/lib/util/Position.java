@@ -9,18 +9,15 @@ package org.whitneyrobotics.ftc.teamcode.lib.util;
 public class Position {
     protected double xPos;
     protected double yPos;
-    protected double zPos;
 
-    public Position(double x, double y, double z) {
+    public Position(double x, double y) {
         xPos = x;
         yPos = y;
-        zPos = z;
     }
 
     public void scale(double scaleFactor) {
-        xPos *= scaleFactor;
-        yPos *= scaleFactor;
-        zPos *= scaleFactor;
+        xPos = xPos* scaleFactor;
+        yPos = yPos*scaleFactor;
     }
 
     public void addX(double x) {
@@ -31,7 +28,7 @@ public class Position {
         yPos += y;
     }
 
-    public double get2dMagnitude() {
+    public double getMagnitude() {
         return Math.hypot(xPos, yPos);
     }
 
@@ -43,10 +40,6 @@ public class Position {
         return yPos;
     }
 
-    public double getZ() {
-        return zPos;
-    }
-
     public void setX(double x) {
         xPos = x;
     }
@@ -54,9 +47,4 @@ public class Position {
     public void setY(double y) {
         yPos = y;
     }
-
-    public void setZ(double z) {
-        zPos = z;
-    }
-
 }
