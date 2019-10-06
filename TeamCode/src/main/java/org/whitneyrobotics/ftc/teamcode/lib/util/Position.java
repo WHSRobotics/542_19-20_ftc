@@ -7,8 +7,8 @@ package org.whitneyrobotics.ftc.teamcode.lib.util;
  */
 
 public class Position {
-    protected double xPos;
-    protected double yPos;
+    private double xPos;
+    private double yPos;
 
     public Position(double x, double y) {
         xPos = x;

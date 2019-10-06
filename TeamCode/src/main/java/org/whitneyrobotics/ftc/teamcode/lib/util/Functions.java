@@ -4,29 +4,13 @@ package org.whitneyrobotics.ftc.teamcode.lib.util;
  * General purpose functions class
  */
 public class Functions {
-    public static double lastKnownRate = 0;
-    public static double limitedRate;
+    public static double lastKnownOutput = 0;
+    public static double rateLimitedOutput;
 
     public static double calculateDistance(Position current, Position target) {
         double distance;
-        distance = Math.sqrt(Math.pow(target.getX() - current.getX(), 2) +
-                Math.pow(target.getY() - current.getY(), 2));
+        distance = Math.sqrt(Math.pow(target.getX() - current.getX(), 2) + Math.pow(target.getY() - current.getY(), 2));
         return distance;
-    }
-
-    public static double[][] doubleArrayCopy(double[][] arr) {
-        //size first dimension of array
-        double[][] temp = new double[arr.length][arr[0].length];
-
-        for (int i = 0; i < arr.length; i++) {
-            //Resize second dimension of array
-            temp[i] = new double[arr[i].length];
-
-            //Copy Contents
-            for (int j = 0; j < arr[i].length; j++)
-                temp[i][j] = arr[i][j];
-        }
-        return temp;
     }
 
     public static int calculateIndexOfSmallestValue(double[] array) {
@@ -73,16 +57,16 @@ public class Functions {
      * limits how fast the input can change
      *
      * @param input                   the thing you want to limit
-     * @param maxRateOfChange         the max speed at which it should change
+     * @param maxRate                 the max speed at which it should change
      * @param time                    the time at which you are calling the method
-     * @param lastRateLimiterCallTime the time at which you last called this method
+     * @param lastCallTime            the time at which you last called this method
      * @return Returns the new limited rate
      */
-    public static double rateLimiter(double input, double maxRateOfChange, double time, double lastRateLimiterCallTime) {
-        double maxChange = (time - lastRateLimiterCallTime) * maxRateOfChange;
-        limitedRate += constrain(input - lastKnownRate, -maxChange, maxChange);
-        lastKnownRate = limitedRate;
-        return limitedRate;
+    public static double rateLimiter(double input, double maxRate, double time, double lastCallTime) {
+        double maxChange = (time - lastCallTime) * maxRate;
+        rateLimitedOutput += constrain(input - lastKnownOutput, -maxChange, maxChange);
+        lastKnownOutput = rateLimitedOutput;
+        return rateLimitedOutput;
     }
 
     public static double constrain(double input, double min, double max) {
@@ -180,6 +164,16 @@ public class Functions {
             return difference;
         }
 
+        public static Position scale(double scaleFactor, Position pos) {
+            Position scaledPos;
+
+            double x = scaleFactor * pos.getX();
+            double y = scaleFactor * pos.getY();
+
+            scaledPos = new Position(x, y);
+            return scaledPos;
+        }
+
         public static double dot(Position pos1, Position pos2) {
             double dotProduct = pos1.getX() * pos2.getX() + pos1.getY() * pos2.getY();
             return dotProduct;
@@ -188,16 +182,6 @@ public class Functions {
         public static double getCross3dMagnitude(Position pos1, Position pos2) {
             double z = pos1.getX() * pos2.getY() - pos1.getY() * pos2.getX();
             return z;
-        }
-
-        public static Position scale2d(double scaleFactor, Position pos) {
-            Position scaledPos;
-
-            double x = scaleFactor * pos.getX();
-            double y = scaleFactor * pos.getY();
-
-            scaledPos = new Position(x, y);
-            return scaledPos;
         }
     }
 }

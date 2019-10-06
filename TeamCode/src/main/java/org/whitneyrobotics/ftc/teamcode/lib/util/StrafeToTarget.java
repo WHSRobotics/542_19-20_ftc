@@ -57,7 +57,7 @@ public class StrafeToTarget {
 
         Position calculatedTStartPoint = smoothedPath[lastIndex];
         Position calculatedTEndPoint = smoothedPath[lastIndex + 1];
-        lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale2d(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
+        lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
 

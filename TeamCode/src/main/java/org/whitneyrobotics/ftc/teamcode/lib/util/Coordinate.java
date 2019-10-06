@@ -28,7 +28,7 @@ public class Coordinate extends Position {
     }
 
     public Position getPos() {
-        Position pos = new Position(xPos, yPos);
+        Position pos = new Position(getX(), getY());
         return pos;
     }
 
@@ -37,7 +37,7 @@ public class Coordinate extends Position {
     }
 
     public void setPos(Position pos) {
-        xPos = pos.getX();
-        yPos = pos.getY();
+        setX(pos.getX());
+        setY(pos.getY());
     }
 }

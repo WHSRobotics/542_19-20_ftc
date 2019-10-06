@@ -27,7 +27,18 @@ public class SwerveToTarget {
     public Position lookaheadPoint;
     private boolean inProgress = false;
 
-    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double velocityConstant, double lookaheadDistance) {
+    /**
+     *
+     * @param kP                   Proportional constant for feedback loop
+     * @param kV                   Velocity constant for feedforward loop
+     * @param kA                   Acceleration constant for feedforward loop
+     * @param targetPositions      Array of Positions to follow
+     * @param spacing              Space between each injected point on the path (in mm)
+     * @param weightSmooth         Determines the extent of smoothing done on the path (from 0-1)
+     * @param turnSpeed            Determines the speed of the robot around turns (recommended 1-5)
+     * @param lookaheadDistance    How far ahead along the path the robot will be "looking" (in mm)
+     */
+    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double turnSpeed, double lookaheadDistance) {
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
@@ -35,7 +46,7 @@ public class SwerveToTarget {
         trackWidth = Drivetrain.getTrackWidth();
         smoothedPath = PathGenerator.generatePath(targetPositions, spacing, weightSmooth);
         targetCurvatures = calculateTargetCurvatures(smoothedPath);
-        targetVelocities = calculateTargetVelocities(smoothedPath, velocityConstant);
+        targetVelocities = calculateTargetVelocities(smoothedPath, turnSpeed);
         lastTime = System.nanoTime() / 1E9;
     }
 
@@ -55,7 +66,7 @@ public class SwerveToTarget {
 
         Position calculatedTStartPoint = smoothedPath[lastIndex];
         Position calculatedTEndPoint = smoothedPath[lastIndex + 1];
-        lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale2d(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
+        lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
         double curvature = calculateCurvature(lookaheadDistance, lookaheadPoint);

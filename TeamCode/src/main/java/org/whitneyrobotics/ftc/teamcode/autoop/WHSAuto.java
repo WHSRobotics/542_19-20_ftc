@@ -25,20 +25,15 @@ public class WHSAuto extends OpMode {
 
     static final int FOUNDATION = 0;
     static final int SKYSTONE = 1;
-
     static final int RED = 0;
     static final int BLUE = 1;
-
     static final int INSIDE = 0;
     static final int OUTSIDE = 1;
 
     static final int STARTING_POSITION = FOUNDATION;
     static final int STARTING_ALLIANCE = RED;
-
     static final int SKYBRIDGE_CROSSING_POSITION = OUTSIDE;
-
     static final int STARTING_COORDINATE_X = 0;
-
     static final boolean PARTNER_MOVED_FOUNDATION = true;
 
     static final int LEFT = 0;
@@ -65,50 +60,50 @@ public class WHSAuto extends OpMode {
     /*
     * Swerve to target instantiations
     */
-        SwerveToTarget startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
-                SwerveConstants.StartToFoundationSwerveConstants.kV,
-                SwerveConstants.StartToFoundationSwerveConstants.kA,
-                startToFoundationSwervePositions,
-                1,
-                1,
-                SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
-                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance);
+    SwerveToTarget startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
+            SwerveConstants.StartToFoundationSwerveConstants.kV,
+            SwerveConstants.StartToFoundationSwerveConstants.kA,
+            startToFoundationSwervePositions,
+            1,
+            1,
+            SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
+            SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance);
 
-        SwerveToTarget foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
-                SwerveConstants.FoundationToWallSwerveConstants.kV,
-                SwerveConstants.FoundationToWallSwerveConstants.kA,
-                foundationToWallSwervePositions,
-                1,
-                1,
-                SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance);
+    SwerveToTarget foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
+            SwerveConstants.FoundationToWallSwerveConstants.kV,
+            SwerveConstants.FoundationToWallSwerveConstants.kA,
+            foundationToWallSwervePositions,
+            1,
+            1,
+            SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
+            SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance);
 
-        SwerveToTarget wallToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
-                SwerveConstants.WallToSkystoneSwerveConstants.kV,
-                SwerveConstants.WallToSkystoneSwerveConstants.kA,
-                wallToSkystoneSwervePositions,
-                1,
-                1,
-                SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance);
+    SwerveToTarget wallToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
+            SwerveConstants.WallToSkystoneSwerveConstants.kV,
+            SwerveConstants.WallToSkystoneSwerveConstants.kA,
+            wallToSkystoneSwervePositions,
+            1,
+            1,
+            SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
+            SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance);
 
-        SwerveToTarget startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
-                SwerveConstants.StartToSkystoneSwerveConstants.kV,
-                SwerveConstants.StartToSkystoneSwerveConstants.kA,
-                startToSkystoneSwervePositions,
-                1,
-                1,
-                SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance);
+    SwerveToTarget startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
+            SwerveConstants.StartToSkystoneSwerveConstants.kV,
+            SwerveConstants.StartToSkystoneSwerveConstants.kA,
+            startToSkystoneSwervePositions,
+            1,
+            1,
+            SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
+            SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance);
 
-        SwerveToTarget skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
-                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
-                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
-                skystoneToMovedFoundationSwervePositions,
-                1,
-                1,
-                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
-                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance);
+    SwerveToTarget skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
+            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
+            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
+            skystoneToMovedFoundationSwervePositions,
+            1,
+            1,
+            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
+            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance);
 
     SwerveToTarget skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
@@ -136,6 +131,7 @@ public class WHSAuto extends OpMode {
             1,
             SwerveConstants.WallToParkingSwerveConstants.velocityConstant,
             SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance);
+
     /**
      * State Definitions
       */
@@ -200,7 +196,7 @@ public class WHSAuto extends OpMode {
 
     double[] motorPowers;
 
-    /*Skystone Detection Tenserflow Variables*/
+    /*Skystone Detection Tensorflow Variables*/
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
