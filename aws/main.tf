@@ -35,11 +35,83 @@ resource "aws_s3_bucket" "ftc" {
   }
 }
 
+resource "aws_iam_role" "codebuild" {
+  name               = "codebuild-FTC-19-20-service-role"
+  path               = "/service-role/"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "codebuild.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "codebuild" {
+  name   = "codebuild-FTC-19-20"
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:logs:us-east-1:970908632829:log-group:/aws/codebuild/FTC-542-19-20",
+                "arn:aws:logs:us-east-1:970908632829:log-group:/aws/codebuild/FTC-542-19-20:*"
+            ],
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::codepipeline-us-east-1-*"
+            ],
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:GetBucketAcl",
+                "s3:GetBucketLocation"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::ftc-542-android-1",
+                "arn:aws:s3:::ftc-542-android-1/*"
+            ],
+            "Action": [
+                "s3:PutObject",
+                "s3:GetBucketAcl",
+                "s3:GetBucketLocation"
+            ]
+        }
+    ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "test-attach" {
+  role       = "${aws_iam_role.codebuild.name}"
+  policy_arn = "${aws_iam_policy.codebuild.arn}"
+}
+
 resource "aws_codebuild_project" "ftc-codebuild" {
   name          = "FTC-542-19-20"
   description   = "2019-2020 Season"
   build_timeout = "60"
-  service_role  = "arn:aws:iam::970908632829:role/service-role/FTC-542-19-20"
+  service_role  = "arn:aws:iam::970908632829:role/service-role/codebuild-FTC-19-20-service-role"
 
   artifacts {
     encryption_disabled    = true
@@ -84,6 +156,7 @@ resource "aws_codebuild_project" "ftc-codebuild" {
     type                = "GITHUB"
   }
 
+  depends_on = [aws_iam_role.codebuild]
   tags = {
     Name = "FTC-542-19-20"
   }
@@ -91,7 +164,7 @@ resource "aws_codebuild_project" "ftc-codebuild" {
 
 resource "aws_codebuild_webhook" "ftc" {
   project_name = "FTC-542-19-20"
-
+  depends_on   = [aws_codebuild_project.ftc-codebuild]
   filter_group {
     filter {
       type    = "EVENT"
