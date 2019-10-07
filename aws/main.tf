@@ -1,8 +1,8 @@
 provider "aws" {
   region     = "us-east-1"
   profile    = "ftc"
-  access_key = "AKIA6EDVKA367IKLHXS4"                     #var.access_key
-  secret_key = "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" #var.secret_key
+  access_key = var.access_key
+  secret_key = var.secret_key
 }
 
 terraform {
@@ -39,7 +39,7 @@ resource "aws_codebuild_project" "ftc-codebuild" {
   name          = "FTC-542-19-20"
   description   = "2019-2020 Season"
   build_timeout = "60"
-  service_role  = "arn:aws:iam::970908632829:role/service-role/FTS-542-19-20"
+  service_role  = "arn:aws:iam::970908632829:role/service-role/FTC-542-19-20"
 
   artifacts {
     encryption_disabled    = true
@@ -54,7 +54,7 @@ resource "aws_codebuild_project" "ftc-codebuild" {
 
   cache {
     modes = []
-    type = "NO_CACHE"
+    type  = "NO_CACHE"
   }
 
   environment {
@@ -94,12 +94,12 @@ resource "aws_codebuild_webhook" "ftc" {
 
   filter_group {
     filter {
-      type = "EVENT"
+      type    = "EVENT"
       pattern = "PUSH"
     }
 
     filter {
-      type = "HEAD_REF"
+      type    = "HEAD_REF"
       pattern = "master"
     }
   }
