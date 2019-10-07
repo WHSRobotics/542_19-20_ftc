@@ -7,6 +7,6 @@ phases:
 artifacts:
   files:
     - '**/*TeamCode-debug.apk'
-  base-directory: 'TeamCode/build/outputs/apk/debug/*'
+  base-directory: 'TeamCode'
   discard-paths: yes
     
