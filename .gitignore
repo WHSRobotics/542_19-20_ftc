@@ -26,3 +26,15 @@ build/
 
 *ASUS_PC_01*
 
+*.tfvars
+*.tfstate*
+.terraform
+**/inspec.lock
+*.gem
+.kitchen
+.kitchen.local.yml
+Gemfile.lock
+.envrc
+.vagrant
+Vagrantfile
+*/.terraform/
