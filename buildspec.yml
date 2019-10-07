@@ -6,6 +6,7 @@ phases:
       - ./gradlew assembleDebug
 artifacts:
   files:
-    - TeamCode/build/outputs/apk/debug/TeamCode-debug.apk
+    - '**/*TeamCode-debug.apk'
+  base-directory: 'TeamCode/build/outputs/apk/debug/*'
   discard-paths: yes
     
