@@ -7,4 +7,5 @@ phases:
 artifacts:
   files:
     - TeamCode/build/outputs/apk/debug/TeamCode-debug.apk
+  discard-paths: yes
     

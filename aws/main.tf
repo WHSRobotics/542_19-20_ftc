@@ -116,11 +116,10 @@ resource "aws_codebuild_project" "ftc-codebuild" {
   artifacts {
     encryption_disabled    = true
     location               = "ftc-542-android-1"
-    name                   = "FTC-542-19-20"
+    name                   = "FTC-542-19-20-artifacts"
     namespace_type         = "NONE"
     override_artifact_name = true
     packaging              = "NONE"
-    path                   = "apk"
     type                   = "S3"
   }
 
