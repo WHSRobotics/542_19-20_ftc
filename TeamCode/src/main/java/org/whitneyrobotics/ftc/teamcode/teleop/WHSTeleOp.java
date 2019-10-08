@@ -2,8 +2,8 @@ package org.whitneyrobotics.ftc.teamcode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.robot.Robot;
 
+import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 @TeleOp(name = "WHS TeleOp")
 public class WHSTeleOp extends OpMode {
@@ -15,8 +15,23 @@ public class WHSTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        //Drivetrain
         robot.estimateHeading();
-        robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x,robot.getCoordinate().getHeading());
+        robot.drivetrain.switchFieldCentric(gamepad1.b);
+        if (gamepad1.left_bumper){
+            robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x/2.54, gamepad1.left_stick_y/2.54, gamepad1.right_stick_x/2.54, robot.getCoordinate().getHeading());
+        }else{
+            robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
+        }
+
+        //Intake
         robot.intake.operateIntake(gamepad1.right_bumper, gamepad1.left_bumper);
+
+        //Extension
+        robot.extension.operateExtension(gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.x);
+        //TODO: Add in stuff for the actual grabber
+
+        //Foundation Puller
+        robot.foundationPuller.operate(gamepad1.a);
     }
 }

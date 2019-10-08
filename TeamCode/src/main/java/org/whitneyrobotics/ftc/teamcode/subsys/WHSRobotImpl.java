@@ -19,6 +19,7 @@ public class WHSRobotImpl implements WHSRobot {
     public IMU imu;
     public Intake intake;
     public FoundationPuller foundationPuller;
+    public Extension extension;
 
     Coordinate currentCoord;
     private double targetHeading; //field frame
@@ -79,7 +80,7 @@ public class WHSRobotImpl implements WHSRobot {
         drivetrain = new Drivetrain(hardwareMap);
         imu = new IMU(hardwareMap);
         //intake = new Intake(hardwareMap);
-        //foundationPuller = new FoundationPuller(hardwareMap);
+        foundationPuller = new FoundationPuller(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }

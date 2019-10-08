@@ -16,8 +16,8 @@ public class Intake {
 
     private Toggler intakeToggler = new Toggler(2);
     public Intake(HardwareMap intakeMap){
-        lefIntake = intakeMap.dcMotor.get("leftIntake");
-        rightIntake = intakeMap.dcMotor.get("rightIntake");
+        //lefIntake = intakeMap.dcMotor.get("leftIntake");
+       // rightIntake = intakeMap.dcMotor.get("rightIntake");
         rightIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 

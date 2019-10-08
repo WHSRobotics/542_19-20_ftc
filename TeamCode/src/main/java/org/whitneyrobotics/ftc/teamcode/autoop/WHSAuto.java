@@ -308,7 +308,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Grabbing foundation";
-                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
+                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
                         if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
                         }
@@ -324,7 +324,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 4:
                         subStateDesc = "Releasing foundation";
-                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
+                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         if (foundationPullerDownToUpTimer.isExpired()) {
                             subState++;
                         }
@@ -441,7 +441,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Grabbing foundation";
-                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
+                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
                         if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
                         }
@@ -457,7 +457,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 3:
                         subStateDesc = "Releasing foundation";
-                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
+                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         if (foundationPullerDownToUpTimer.isExpired()) {
                             subState++;
                         }

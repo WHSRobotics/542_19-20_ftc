@@ -14,6 +14,8 @@ public class Extension {
     private Servo switchServo;
     private Servo clampServo;
 
+    private Toggler shouldExtendToggler = new Toggler(2);
+
     private int[] extensionMotorPositions = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     public enum PivotPosition{
@@ -51,25 +53,31 @@ public class Extension {
     private final double SWITCH_INTAKE_POSITION = SWITCH_POSITIONS[SwitchPosition.INTAKE.ordinal()];
     private final double SWITCH_OUTTAKE_POSITION = SWITCH_POSITIONS[SwitchPosition.OUTTAKE.ordinal()];
 
+    /*Linear Slides Part of Extension*/
     public Extension(HardwareMap extensionMap){
         operateExtensionToggler = new Toggler(11);
         leftExtension = extensionMap.dcMotor.get("leftExtension");
         rightExtension = extensionMap.dcMotor.get("rightExtension");
     }
 
-    public void operateExtension(boolean gamepadInputUp, boolean gamepadInputDown){
-        operateExtensionToggler.changeState(gamepadInputUp,gamepadInputDown);
-        leftExtension.setTargetPosition(extensionMotorPositions[operateExtensionToggler.currentState()]);
-        rightExtension.setTargetPosition(extensionMotorPositions[operateExtensionToggler.currentState()]);
+    public void operateExtension(boolean gamepadInputUp, boolean gamepadInputDown, boolean gamepadInputGo) {
+        operateExtensionToggler.changeState(gamepadInputUp, gamepadInputDown);
+        shouldExtendToggler.changeState(gamepadInputGo);
+
+        if (shouldExtendToggler.currentState() == 0) {
+            setExtensionPosition(operateExtensionToggler.currentState());
+        }else if (shouldExtendToggler.currentState() ==1){
+            setExtensionPosition(0);
+        }
     }
 
     public void setExtensionPosition (int extensionPosition){
         operateExtensionToggler.setState(extensionPosition);
         leftExtension.setTargetPosition(extensionMotorPositions[operateExtensionToggler.currentState()]);
         rightExtension.setTargetPosition(extensionMotorPositions[operateExtensionToggler.currentState()]);
-
     }
 
+    /*Grabber Part of Extension*/
     public void setPivotServoPosition (PivotPosition pivotPosition){
         rightPivotServo.setPosition(RIGHT_PIVOT_POSITIONS[pivotPosition.ordinal()]);
         leftPivotServo.setPosition(LEFT_PIVOT_POSITION[pivotPosition.ordinal()]);

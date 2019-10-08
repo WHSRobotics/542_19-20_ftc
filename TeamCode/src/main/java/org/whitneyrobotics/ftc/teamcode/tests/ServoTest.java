@@ -9,8 +9,8 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 public class ServoTest extends OpMode {
     Servo[] servos = new Servo[6];
     Toggler servoSelectionTog = new Toggler(6);
-    Toggler servoPosition = new Toggler(200);
-    int i;
+    Toggler servoPositionTog = new Toggler(200);
+    int i = 0;
     @Override
     public void init() {
         for (int i = 0; i<servos.length; i++) {
@@ -21,13 +21,13 @@ public class ServoTest extends OpMode {
     @Override
     public void loop() {
         i++;
-        servoSelectionTog.changeState(gamepad1.dpad_up, gamepad1.dpad_down);
-        servoPosition.changeState(gamepad1.dpad_up, gamepad1.dpad_down);
+        servoPositionTog.changeState(gamepad1.a, gamepad1.b);
+        servoSelectionTog.changeState(gamepad1.dpad_left, gamepad1.dpad_right);
+        servos[servoSelectionTog.currentState()].setPosition(servoPositionTog.currentState()/200f);
         if (i%10 == 0) {
-            if (gamepad1.b) servoPosition.setState(servoPosition.currentState() - 1);
-            if (gamepad1.a) servoPosition.setState(servoPosition.currentState() + 1);
+            if (gamepad1.x) servoPositionTog.setState(servoPositionTog.currentState() + 1);
+            if (gamepad1.y) servoPositionTog.setState(servoPositionTog.currentState() - 1);
         }
-        servos[servoSelectionTog.currentState()].setPosition(servoPosition.currentState()/200);
 
         for(int i = 0; i<servos.length; i++){
             telemetry.addData("Servo" + i + "Current Pos: ", servos[i].getPosition());
