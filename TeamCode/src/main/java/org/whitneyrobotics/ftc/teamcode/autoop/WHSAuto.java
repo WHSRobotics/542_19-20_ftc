@@ -33,7 +33,7 @@ public class WHSAuto extends OpMode {
     static final int STARTING_POSITION = FOUNDATION;
     static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = OUTSIDE;
-    static final int STARTING_COORDINATE_X = 0;
+    static final int STARTING_COORDINATE_X = 600;
     static final boolean PARTNER_MOVED_FOUNDATION = true;
 
     static final int LEFT = 0;
