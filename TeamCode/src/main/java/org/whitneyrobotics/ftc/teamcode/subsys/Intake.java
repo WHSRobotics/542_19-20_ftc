@@ -12,12 +12,12 @@ public class Intake {
     private DcMotor lefIntake;
     private DcMotor rightIntake;
 
-    public static final double INTAKE_POWER = 0.8;
+    public static final double INTAKE_POWER = 1.0;
 
     private Toggler intakeToggler = new Toggler(2);
     public Intake(HardwareMap intakeMap){
-        //lefIntake = intakeMap.dcMotor.get("leftIntake");
-       // rightIntake = intakeMap.dcMotor.get("rightIntake");
+        lefIntake = intakeMap.dcMotor.get("leftIntake");
+        rightIntake = intakeMap.dcMotor.get("rightIntake");
         rightIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 

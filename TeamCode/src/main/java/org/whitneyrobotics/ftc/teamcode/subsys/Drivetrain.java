@@ -26,10 +26,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private static final double TRACK_WIDTH = 470;
 
     //TODO: measure actual wheel base
-    private static final double WHEEL_BASE = 470;
+    private static final double WHEEL_BASE = 354;
     private static final double RADIUS_OF_WHEEL = 50;               //in mm
     private static final double CIRC_OF_WHEEL = RADIUS_OF_WHEEL * 2 * Math.PI;
-    private static final double ENCODER_TICKS_PER_REV = 537.6;      //Orbital 20
+    private static final double ENCODER_TICKS_PER_REV = 1075.2;      //Orbital 20
     private static final double GEAR_RATIO = 1.0;
     private static final double ENCODER_TICKS_PER_MM = ENCODER_TICKS_PER_REV / (CIRC_OF_WHEEL * GEAR_RATIO);
 
@@ -59,7 +59,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         //For 40s. TODO: Change this when we get more 20s.
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         orientationSwitch.setState(1);

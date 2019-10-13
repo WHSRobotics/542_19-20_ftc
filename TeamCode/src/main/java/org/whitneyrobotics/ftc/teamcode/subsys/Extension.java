@@ -56,8 +56,8 @@ public class Extension {
     /*Linear Slides Part of Extension*/
     public Extension(HardwareMap extensionMap){
         operateExtensionToggler = new Toggler(11);
-        leftExtension = extensionMap.dcMotor.get("leftExtension");
-        rightExtension = extensionMap.dcMotor.get("rightExtension");
+        /*leftExtension = extensionMap.dcMotor.get("leftExtension");
+        rightExtension = extensionMap.dcMotor.get("rightExtension");*/
     }
 
     public void operateExtension(boolean gamepadInputUp, boolean gamepadInputDown, boolean gamepadInputGo) {

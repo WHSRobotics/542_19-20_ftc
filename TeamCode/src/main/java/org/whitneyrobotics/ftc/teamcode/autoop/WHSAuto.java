@@ -48,8 +48,8 @@ public class WHSAuto extends OpMode {
     Position[] /*whitney*/foundationStartingPositionArray = new Position[2];
     Position[][] skybridgePositionArray = new Position[2][2];
 
-    Position[] startToFoundationSwervePositions;
-    Position[] foundationToWallSwervePositions;
+    Position[] startToFoundationSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE].getPos(), foundationStartingPositionArray[STARTING_ALLIANCE]};
+    Position[] foundationToWallSwervePositions = {foundationStartingPositionArray[STARTING_ALLIANCE], startingCoordinateArray[STARTING_ALLIANCE]};
     Position[] wallToSkystoneSwervePositions;
     Position[] startToSkystoneSwervePositions;
     Position[] skystoneToMovedFoundationSwervePositions;
@@ -253,7 +253,7 @@ public class WHSAuto extends OpMode {
         robot = new WHSRobotImpl(hardwareMap);
         defineStateEnabledStatus();
 
-        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1500, 190);
+        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1500, 90);
         startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1500,  -90);
 
         skystonePositionArray[RED][LEFT] = new Position(-1088, -606);

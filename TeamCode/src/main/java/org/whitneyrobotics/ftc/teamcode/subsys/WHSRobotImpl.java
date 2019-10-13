@@ -79,8 +79,8 @@ public class WHSRobotImpl implements WHSRobot {
 
         drivetrain = new Drivetrain(hardwareMap);
         imu = new IMU(hardwareMap);
-        //intake = new Intake(hardwareMap);
-        foundationPuller = new FoundationPuller(hardwareMap);
+        intake = new Intake(hardwareMap);
+        //foundationPuller = new FoundationPuller(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }

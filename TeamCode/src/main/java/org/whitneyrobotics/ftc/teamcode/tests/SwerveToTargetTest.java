@@ -13,28 +13,13 @@ import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 public class SwerveToTargetTest extends OpMode {
     WHSRobotImpl robot;
     Coordinate startingCoordinate = new Coordinate(0,0,90);
-    Position p05 = new Position(800, 152.786);
-    Position p1 = new Position(1200, 600);
-    Position p2 = new Position(800,1047.2);
-    Position p3 = new Position(0, 1200);
+    static Position p1 = new Position(0, 0);
+    static Position p2 = new Position(1800, 0);
+    static Position p3 = new Position(1800, 2700);
+    static Position p4 = new Position(-1800, 2700);
+    static Position p5 = new Position(-1800, 0);
 
-
-    Position p4 = new Position(-800, 1352.786);
-    Position p45 = new Position(-1200, 1800);
-    Position p5 = new Position(-800, 2247.2);
-    Position p6 = new Position(0, 2400);
-
-    Position p13 = new Position(-800, 152.786);
-    Position p12 = new Position(-1200, 600);
-    Position p11 = new Position(-800,1047.2);
-    Position p10 = new Position(0, 1200);
-
-
-    Position p9 = new Position(800, 1352.786);
-    Position p8 = new Position(1200, 1800);
-    Position p7 = new Position(800, 2247.2);
-    Position[] positions1 = {startingCoordinate.getPos(), p05, p1, p2, p3, p4, p45, p5, p6};
-    Position[] positions2 = {p6,p7, p8, p9, p10, p11,p12,p13, startingCoordinate.getPos()};
+    Position[] positions1 = {startingCoordinate.getPos(),p1,p2,p3,p4,p5};
     SwerveToTarget swerve1;
     SwerveToTarget swerve2;
     int state = 1;
@@ -46,7 +31,6 @@ public class SwerveToTargetTest extends OpMode {
         robot = new WHSRobotImpl(hardwareMap);
         robot.setInitialCoordinate(startingCoordinate);
         swerve1 = new SwerveToTarget(0.001, 0,0, positions1, 80, 0.99, 3, 250);
-        swerve2 = new SwerveToTarget(0.001, 0,0, positions2, 80, 0.99, 3, 250);
 
     }
 
@@ -54,19 +38,9 @@ public class SwerveToTargetTest extends OpMode {
     public void loop() {
         robot.estimateHeading();
         robot.estimatePosition();
+        swervePowers = swerve1.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
 
-        switch(state) {
-            case 1:
-                swervePowers = swerve1.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
-                if (!swerve1.inProgress()) {
-                    state++;
-                }
-                break;
-            case 2:
-                swervePowers = swerve2.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
-
-        }
-        robot.drivetrain.operate(swervePowers);
+     robot.drivetrain.operate(swervePowers[0], swervePowers[1]);
 
         telemetry.addData("x", robot.getCoordinate().getX());
         telemetry.addData("y", robot.getCoordinate().getY());
