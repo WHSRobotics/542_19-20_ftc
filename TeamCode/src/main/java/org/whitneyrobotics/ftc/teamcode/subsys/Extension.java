@@ -30,6 +30,7 @@ public class Extension {
         UP, DOWN, OUTTAKE
     }
     private Toggler operateExtensionToggler;
+    private Toggler extensionTog = new Toggler (5);
 
     //INTAKE, OUTTAKE
     private final double[] LEFT_ELBOW_POSITION = {0.130, 0.950};
@@ -91,5 +92,27 @@ public class Extension {
 
     public void setHandServoPosition(HandPosition handPosition) {
         handServo.setPosition(HAND_POSITIONS[handPosition.ordinal()]);
+    }
+
+    public void operateOuttake (boolean gamepadInput){
+        extensionTog.changeState(gamepadInput);
+        if (extensionTog.currentState() == 0){
+            setHandServoPosition(Extension.HandPosition.UP);
+            setWristServoPosition(Extension.WristPosition.INTAKE);
+            setElbowServoPosition(Extension.ElbowPosition.INTAKE);
+        }else if(extensionTog.currentState() == 1){
+            setHandServoPosition(Extension.HandPosition.DOWN);
+            setWristServoPosition(Extension.WristPosition.OUTTAKE);
+            setElbowServoPosition(Extension.ElbowPosition.INTAKE);
+        }else if (extensionTog.currentState() == 2){
+            setHandServoPosition(Extension.HandPosition.DOWN);
+            setWristServoPosition(Extension.WristPosition.OUTTAKE);
+            setElbowServoPosition(Extension.ElbowPosition.OUTTAKE);
+        }else if (extensionTog.currentState() == 3){
+            setHandServoPosition(Extension.HandPosition.OUTTAKE);
+            setElbowServoPosition(Extension.ElbowPosition.OUTTAKE);
+        }else{
+            setWristServoPosition(Extension.WristPosition.INTAKE);
+        }
     }
 }
