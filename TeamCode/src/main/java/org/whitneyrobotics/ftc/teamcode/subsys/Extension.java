@@ -9,55 +9,57 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 public class Extension {
     private DcMotor leftExtension;
     private DcMotor rightExtension;
-    private Servo rightPivotServo;
-    private Servo leftPivotServo;
-    private Servo switchServo;
-    private Servo clampServo;
+    private Servo leftElbowServo;
+    private Servo rightElbowServo;
+    private Servo wristServo;
+    private Servo handServo;
 
     private Toggler shouldExtendToggler = new Toggler(2);
 
     private int[] extensionMotorPositions = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-    public enum PivotPosition{
+    public enum ElbowPosition {
         INTAKE, OUTTAKE
     }
 
-    public enum SwitchPosition{
+    public enum WristPosition {
         INTAKE, OUTTAKE
     }
 
-    public enum ClampPosition{
-        UP, DOWN
+    public enum HandPosition {
+        UP, DOWN, OUTTAKE
     }
     private Toggler operateExtensionToggler;
 
-    //UP, DOWN
-    private final double[] CLAMP_POSITIONS = {0.0, 0.0, 0.0};
-    private final double CLAMP_UP_POSITION = CLAMP_POSITIONS[ClampPosition.UP.ordinal()];
-    private final double CLAMP_DOWN_POSITION = CLAMP_POSITIONS[ClampPosition.DOWN.ordinal()];
+    //INTAKE, OUTTAKE
+    private final double[] LEFT_ELBOW_POSITION = {0.130, 0.950};
+    private final double LEFT_ELBOW_INTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.INTAKE.ordinal()];
+    private final double LEFT_ELBOW_OUTTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.OUTTAKE.ordinal()];
 
+    //INTAKE, OUTTAKE
+    private final double[] RIGHT_ELBOW_POSITIONS = {0.935, 0.115};
+    private final double RIGHT_ELBOW_INTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.INTAKE.ordinal()];
+    private final double RIGHT_ELBOW_OUTTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.OUTTAKE.ordinal()];
 
-    //INTAKE, OUTTAKE, REST
-    private final double[] RIGHT_PIVOT_POSITIONS = {0.0, 0.0, 0.0};
-    private final double RIGHT_INTAKE_POSITION = RIGHT_PIVOT_POSITIONS[PivotPosition.INTAKE.ordinal()];
-    private final double RIGHT_OUTTAKE_POSITION = RIGHT_PIVOT_POSITIONS[PivotPosition.OUTTAKE.ordinal()];
+    //INTAKE, OUTTAKE
+    private final double[] WRIST_POSITIONS = {0.120, 0.370};
+    private final double WRIST_INTAKE_POSITION = WRIST_POSITIONS[WristPosition.INTAKE.ordinal()];
+    private final double WRIST_OUTTAKE_POSITION = WRIST_POSITIONS[WristPosition.OUTTAKE.ordinal()];
 
-    //INTAKE, OUTTAKE, REST
-    private final double[] LEFT_PIVOT_POSITION = {0.0, 0.0, 0.0};
-    private final double LEFT_INTAKE_POSITION = LEFT_PIVOT_POSITION[PivotPosition.INTAKE.ordinal()];
-    private final double LEFT_OUTTAKE_POSITION = LEFT_PIVOT_POSITION[PivotPosition.OUTTAKE.ordinal()];
-
-
-    //INTAKE, OUTTAKE, REST
-    private final double[] SWITCH_POSITIONS = {0.0, 0.0, 0.0};
-    private final double SWITCH_INTAKE_POSITION = SWITCH_POSITIONS[SwitchPosition.INTAKE.ordinal()];
-    private final double SWITCH_OUTTAKE_POSITION = SWITCH_POSITIONS[SwitchPosition.OUTTAKE.ordinal()];
+    //UP, DOWN, OUTTAKE
+    private final double[] HAND_POSITIONS = {0.240, 0.135, 0.995};
+    private final double HAND_UP_POSITION = HAND_POSITIONS[HandPosition.UP.ordinal()];
+    private final double HAND_DOWN_POSITION = HAND_POSITIONS[HandPosition.DOWN.ordinal()];
 
     /*Linear Slides Part of Extension*/
     public Extension(HardwareMap extensionMap){
         operateExtensionToggler = new Toggler(11);
-        /*leftExtension = extensionMap.dcMotor.get("leftExtension");
-        rightExtension = extensionMap.dcMotor.get("rightExtension");*/
+        leftExtension = extensionMap.dcMotor.get("leftExtension");
+        rightExtension = extensionMap.dcMotor.get("rightExtension");
+        leftElbowServo = extensionMap.servo.get("leftElbowServo");
+        rightElbowServo = extensionMap.servo.get("rightElbowServo");
+        wristServo = extensionMap.servo.get("wristServo");
+        handServo = extensionMap.servo.get("handServo");
     }
 
     public void operateExtension(boolean gamepadInputUp, boolean gamepadInputDown, boolean gamepadInputGo) {
@@ -78,16 +80,16 @@ public class Extension {
     }
 
     /*Grabber Part of Extension*/
-    public void setPivotServoPosition (PivotPosition pivotPosition){
-        rightPivotServo.setPosition(RIGHT_PIVOT_POSITIONS[pivotPosition.ordinal()]);
-        leftPivotServo.setPosition(LEFT_PIVOT_POSITION[pivotPosition.ordinal()]);
+    public void setElbowServoPosition(ElbowPosition elbowPosition){
+        leftElbowServo.setPosition(LEFT_ELBOW_POSITION[elbowPosition.ordinal()]);
+        rightElbowServo.setPosition(RIGHT_ELBOW_POSITIONS[elbowPosition.ordinal()]);
     }
 
-    public void setSwitchServoPosition (SwitchPosition switchPosition){
-        switchServo.setPosition(SWITCH_POSITIONS[switchPosition.ordinal()]);
+    public void setWristServoPosition(WristPosition wristPosition){
+        wristServo.setPosition(WRIST_POSITIONS[wristPosition.ordinal()]);
     }
 
-    public void setClampServoPosition (ClampPosition clampPosition) {
-        clampServo.setPosition(CLAMP_POSITIONS[clampPosition.ordinal()]);
+    public void setHandServoPosition(HandPosition handPosition) {
+        handServo.setPosition(HAND_POSITIONS[handPosition.ordinal()]);
     }
 }
