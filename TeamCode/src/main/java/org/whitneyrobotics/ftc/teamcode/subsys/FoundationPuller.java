@@ -26,8 +26,8 @@ public class FoundationPuller {
     private final double RIGHT_PULLER_DOWN = RIGHT_PULLER_POSITIONS[PullerPosition.DOWN.ordinal()];
 
     public FoundationPuller(HardwareMap pullerMap){
-    //    leftServo = pullerMap.servo.get("foundationPullerLeft");
-      //  rightServo = pullerMap.servo.get("foundationPullerRight");
+          leftServo = pullerMap.servo.get("foundationPullerLeft");
+          rightServo = pullerMap.servo.get("foundationPullerRight");
     }
 
     //For Use in Auto
