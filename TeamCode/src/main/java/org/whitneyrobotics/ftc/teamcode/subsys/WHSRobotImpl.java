@@ -2,6 +2,8 @@ package org.whitneyrobotics.ftc.teamcode.subsys;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Function;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.robot.WHSRobot;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
@@ -79,7 +81,7 @@ public class WHSRobotImpl implements WHSRobot {
 
         drivetrain = new Drivetrain(hardwareMap);
         imu = new IMU(hardwareMap);
-        intake = new Intake(hardwareMap);
+       // intake = new Intake(hardwareMap);
         //foundationPuller = new FoundationPuller(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
@@ -205,14 +207,23 @@ public class WHSRobotImpl implements WHSRobot {
         currentCoord.setY(robotY);
     }
 
+    public void deadWheelEstimatePosition() {
+        encoderDeltas = drivetrain.getEncoderDelta();
+        double angleDelta = currentCoord.getHeading() - lastKnownHeading;
+        double deltaX = drivetrain.encToMM(encoderDeltas[0]);
+        double deltaY = drivetrain.encToMM(encoderDeltas[1]);
+
+        Position bodyVector = new Position(deltaX,deltaY);
+        Position fieldVector = Functions.body2field(bodyVector, currentCoord);
+        currentCoord.setPos(Functions.Positions.add(fieldVector,currentCoord));
+    }
+
     @Override
     public void estimateHeading() {
         double currentHeading;
         currentHeading = Functions.normalizeAngle(imu.getHeading() + imu.getImuBias()); //-180 to 180 deg
-        if (currentHeading != 0.0) {
-            lastKnownHeading = currentHeading;
-        }
-        currentCoord.setHeading(lastKnownHeading); //updates global variable
+
+        currentCoord.setHeading(currentHeading); //updates global variable
     }
 
     @Override
