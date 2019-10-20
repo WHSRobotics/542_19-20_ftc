@@ -32,6 +32,8 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private static final double ENCODER_TICKS_PER_REV = 1075.2;      //Orbital 20
     private static final double GEAR_RATIO = 1.0;
     private static final double ENCODER_TICKS_PER_MM = ENCODER_TICKS_PER_REV / (CIRC_OF_WHEEL * GEAR_RATIO);
+    public static final double X_WHEEL_TO_ROBOT_CENTER = 100.0;
+    public static final double Y_WHEEL_TO_ROBOT_CENTER = 100.0;
 
     private double[] encoderValues = {0.0, 0.0};
 
@@ -59,7 +61,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         //For 40s. TODO: Change this when we get more 20s.
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         orientationSwitch.setState(1);
@@ -169,8 +171,8 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
         double[] encoderDistances = {currentLeft - encoderValues[0], currentRight - encoderValues[1]};
 
-        encoderValues[0] = currentLeft;
-        encoderValues[1] = currentRight;
+        encoderValues[0] = currentLeft; //Change in the X Odometry Wheel
+        encoderValues[1] = currentRight; //Change in the Y Odometry wheel
 
         return encoderDistances;
     }

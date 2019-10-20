@@ -49,89 +49,99 @@ public class WHSAuto extends OpMode {
     Position[] slideOutFromFoundationMidpointArray = new Position[2];
     Position[][] skybridgePositionArray = new Position[2][2];
 
-    Position[] startToFoundationSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
-    Position[] foundationToWallSwervePositions = {foundationStartingPositionArray[STARTING_ALLIANCE], startingCoordinateArray[STARTING_ALLIANCE]};
-    Position[] wallToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], slideOutFromFoundationMidpointArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
-    Position[] startToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
-    Position[] skystoneToMovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
-    Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationStartingPositionArray[STARTING_ALLIANCE]};
-    Position[] movedFoundationToParkingSwervePositions = {foundationMovedPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
-    Position[] wallToParkingSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
-
+    SwerveToTarget startToFoundationSwerve;
+    SwerveToTarget foundationToWallSwerve;
+    SwerveToTarget wallToSkystoneSwerve;
+    SwerveToTarget startToSkystoneSwerve;
+    SwerveToTarget skystoneToMovedFoundationSwerve;
+    SwerveToTarget skystoneToUnmovedFoundationSwerve;
+    SwerveToTarget movedFoundationToParkSwerve;
+    SwerveToTarget wallToParkSwerve;
     /*
     * Swerve to target instantiations
     */
-    SwerveToTarget startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
-            SwerveConstants.StartToFoundationSwerveConstants.kV,
-            SwerveConstants.StartToFoundationSwerveConstants.kA,
-            startToFoundationSwervePositions,
-            80,
-            .5,
-            SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
-            SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance);
+    private void instantiateSwerveToTargets() {
+        Position[] startToFoundationSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
+        Position[] foundationToWallSwervePositions = {foundationStartingPositionArray[STARTING_ALLIANCE], startingCoordinateArray[STARTING_ALLIANCE]};
+        Position[] wallToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], slideOutFromFoundationMidpointArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
+        Position[] startToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
+        Position[] skystoneToMovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
+        Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationStartingPositionArray[STARTING_ALLIANCE]};
+        Position[] movedFoundationToParkingSwervePositions = {foundationMovedPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
+        Position[] wallToParkingSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
 
-    SwerveToTarget foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
-            SwerveConstants.FoundationToWallSwerveConstants.kV,
-            SwerveConstants.FoundationToWallSwerveConstants.kA,
-            foundationToWallSwervePositions,
-            80,
-            .5,
-            SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-            SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance);
+        startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
+                SwerveConstants.StartToFoundationSwerveConstants.kV,
+                SwerveConstants.StartToFoundationSwerveConstants.kA,
+                startToFoundationSwervePositions,
+                80,
+                .5,
+                SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
+                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance);
 
-    SwerveToTarget wallToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
-            SwerveConstants.WallToSkystoneSwerveConstants.kV,
-            SwerveConstants.WallToSkystoneSwerveConstants.kA,
-            wallToSkystoneSwervePositions,
-            80,
-            .8,
-            SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
-            SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance);
+        foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
+                SwerveConstants.FoundationToWallSwerveConstants.kV,
+                SwerveConstants.FoundationToWallSwerveConstants.kA,
+                foundationToWallSwervePositions,
+                80,
+                .5,
+                SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
+                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance);
 
-    SwerveToTarget startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
-            SwerveConstants.StartToSkystoneSwerveConstants.kV,
-            SwerveConstants.StartToSkystoneSwerveConstants.kA,
-            startToSkystoneSwervePositions,
-            80,
-            .5,
-            SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
-            SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance);
+        wallToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
+                SwerveConstants.WallToSkystoneSwerveConstants.kV,
+                SwerveConstants.WallToSkystoneSwerveConstants.kA,
+                wallToSkystoneSwervePositions,
+                80,
+                .8,
+                SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
+                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance);
 
-    SwerveToTarget skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
-            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
-            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
-            skystoneToMovedFoundationSwervePositions,
-            80,
-            0.8,
-            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
-            SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance);
+        startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
+                SwerveConstants.StartToSkystoneSwerveConstants.kV,
+                SwerveConstants.StartToSkystoneSwerveConstants.kA,
+                startToSkystoneSwervePositions,
+                80,
+                .5,
+                SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
+                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance);
 
-    SwerveToTarget skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
-            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
-            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
-            skystoneToUnmovedFoundationSwervePositions,
-            80,
-            0.8,
-            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance);
+        skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
+                skystoneToMovedFoundationSwervePositions,
+                80,
+                0.8,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
+                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance);
 
-    SwerveToTarget movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
-            SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
-            SwerveConstants.MovedFoundationToParkingSwerveConstants.kA,
-            movedFoundationToParkingSwervePositions,
-            80,
-            .5,
-            SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
-            SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance);
+        skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
+                skystoneToUnmovedFoundationSwervePositions,
+                80,
+                0.8,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
+                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance);
 
-    SwerveToTarget wallToParkSwerve = new SwerveToTarget(SwerveConstants.WallToParkingSwerveConstants.kP,
-            SwerveConstants.WallToParkingSwerveConstants.kV,
-            SwerveConstants.WallToParkingSwerveConstants.kA,
-            wallToParkingSwervePositions,
-            80,
-            .5,
-            SwerveConstants.WallToParkingSwerveConstants.velocityConstant,
-            SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance);
+        movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.kA,
+                movedFoundationToParkingSwervePositions,
+                80,
+                .5,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance);
+
+        wallToParkSwerve = new SwerveToTarget(SwerveConstants.WallToParkingSwerveConstants.kP,
+                SwerveConstants.WallToParkingSwerveConstants.kV,
+                SwerveConstants.WallToParkingSwerveConstants.kA,
+                wallToParkingSwervePositions,
+                80,
+                .5,
+                SwerveConstants.WallToParkingSwerveConstants.velocityConstant,
+                SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance);
+    }
 
     /**
      * State Definitions
@@ -278,6 +288,10 @@ public class WHSAuto extends OpMode {
 
         skybridgePositionArray[BLUE][INSIDE] = new Position(0,1000);
         skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1600);
+
+        robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
+
+        instantiateSwerveToTargets();
     }
 
     @Override
@@ -287,7 +301,6 @@ public class WHSAuto extends OpMode {
         switch (state) {
             case INIT:
                 stateDesc = "Starting auto";
-                robot.setInitialCoordinate(startingCoordinateArray[STARTING_POSITION]);
                 advanceState();
                 break;
             case INITIAL_MOVE_FOUNDATION:
@@ -307,7 +320,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Grabbing foundation";
-                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
+                        //robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
                         if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
                         }
@@ -322,7 +335,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 4:
                         subStateDesc = "Releasing foundation";
-                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
+                        //robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         if (foundationPullerDownToUpTimer.isExpired()) {
                             subState++;
                         }
@@ -375,9 +388,9 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Intaking skystone";
-                        robot.intake.setIntakeMotorPowers(Intake.INTAKE_POWER);
+                        //robot.intake.setIntakeMotorPowers(Intake.INTAKE_POWER);
                         if (intakeSystoneTimer.isExpired()) {
-                            robot.intake.setIntakeMotorPowers(0);
+                            //robot.intake.setIntakeMotorPowers(0);
                             subState++;
                         }
                         break;
@@ -421,7 +434,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Outtaking skystone";
-                        robot.intake.setIntakeMotorPowers(-Intake.INTAKE_POWER);
+                        //robot.intake.setIntakeMotorPowers(-Intake.INTAKE_POWER);
                         break;
                     case 2:
                         subStateDesc = "Exit";
@@ -439,7 +452,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Grabbing foundation";
-                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
+                        //robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
                         if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
                         }
@@ -455,7 +468,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 3:
                         subStateDesc = "Releasing foundation";
-                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
+                        //robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         if (foundationPullerDownToUpTimer.isExpired()) {
                             subState++;
                         }
