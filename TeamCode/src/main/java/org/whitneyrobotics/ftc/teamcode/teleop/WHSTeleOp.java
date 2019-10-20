@@ -27,11 +27,11 @@ public class WHSTeleOp extends OpMode {
         //Intake
         robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger >0.01);
 
-/*        //Extension
-        robot.extension.operateExtension(gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.x);
+        //Extension
+        //robot.extension.operateExtension(gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.x);
         //TODO: Add in stuff for the actual grabber
 
         //Foundation Puller
-        robot.foundationPuller.operate(gamepad1.a);*/
+        robot.foundationPuller.operate(gamepad1.a);
     }
 }

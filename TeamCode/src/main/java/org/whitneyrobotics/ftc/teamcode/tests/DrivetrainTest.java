@@ -13,43 +13,8 @@ import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 @TeleOp(name = "drivetrainTest", group = "tests")
 public class DrivetrainTest extends OpMode {
 
-    /*TileRunner drivetrain;
-
-    @Override
-    public void init() {
-        drivetrain = new TileRunner(hardwareMap);
-    }
-
-    @Override
-    public void loop() {
-
-        if(gamepad1.x){
-            drivetrain.operate(0.5, 0.5);
-        }
-        else {
-            drivetrain.operate(gamepad1.left_stick_y, gamepad1.right_stick_y);
-        }
-        drivetrain.switchOrientation(gamepad1.a);
-        telemetry.addData("FL Position", drivetrain.frontLeft.getCurrentPosition());
-        telemetry.addData("BL Position", drivetrain.backLeft.getCurrentPosition());
-        telemetry.addData("FR Position", drivetrain.frontRight.getCurrentPosition());
-        telemetry.addData("BR Position", drivetrain.backRight.getCurrentPosition());
-        /*if(gamepad1.y){
-            drivetrain.frontLeft.setPower(0.5);
-        }
-        else if(gamepad1.b){
-            drivetrain.frontRight.setPower(0.5);
-        }
-        else if(gamepad1.x){
-            drivetrain.backLeft.setPower(0.5);
-        }
-        else if(gamepad1.a){
-            drivetrain.backRight.setPower(0.5);
-        }
-    }*/
-
     Drivetrain drivetrain;
-    Toggler scaleTog = new Toggler(3);
+    Toggler stateTog = new Toggler(4);
     String mode = "";
     double[] power = new double[2];
     Toggler powerTog = new Toggler(50);
@@ -64,14 +29,18 @@ public class DrivetrainTest extends OpMode {
     @Override
     public void loop() {
 
-        scaleTog.changeState(gamepad1.x);
-        drivetrain.switchOrientation(gamepad1.a);
+        stateTog.changeState(gamepad1.x);
+        if (stateTog.currentState() < 3) {
+            drivetrain.switchOrientation(gamepad1.b);
+        } else {
+            drivetrain.switchFieldCentric(gamepad1.b);
+        }
         powerTog.changeState(gamepad1.dpad_up, gamepad1.dpad_down);
 
-        if (scaleTog.currentState() == 0){
+        if (stateTog.currentState() == 0){
             drivetrain.operate(gamepad1.left_stick_y, gamepad1.right_stick_y);
             mode = "Normal";
-        } else if (scaleTog.currentState() == 1){
+        } else if (stateTog.currentState() == 1){
             drivetrain.operateWithOrientationScaled(gamepad1.left_stick_y, gamepad1.right_stick_y);
             mode = "Scaled";
         } else {

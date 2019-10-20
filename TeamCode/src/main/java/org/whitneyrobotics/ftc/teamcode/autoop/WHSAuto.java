@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
+import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
@@ -33,7 +34,7 @@ public class WHSAuto extends OpMode {
     static final int STARTING_POSITION = FOUNDATION;
     static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = OUTSIDE;
-    static final int STARTING_COORDINATE_X = 600;
+    static final double STARTING_COORDINATE_X = 600;
     static final boolean PARTNER_MOVED_FOUNDATION = true;
 
     static final int LEFT = 0;
@@ -263,8 +264,8 @@ public class WHSAuto extends OpMode {
         robot = new WHSRobotImpl(hardwareMap);
         defineStateEnabledStatus();
 
-        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, 90);
-        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  -90);
+        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, -90);
+        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  90);
 
         skystonePositionArray[RED][LEFT] = new Position(-1088, -606);
         skystonePositionArray[RED][CENTER] = new Position(-885,-60);
@@ -289,8 +290,6 @@ public class WHSAuto extends OpMode {
         skybridgePositionArray[BLUE][INSIDE] = new Position(0,1000);
         skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1600);
 
-        robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
-
         instantiateSwerveToTargets();
     }
 
@@ -301,6 +300,7 @@ public class WHSAuto extends OpMode {
         switch (state) {
             case INIT:
                 stateDesc = "Starting auto";
+                robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
                 advanceState();
                 break;
             case INITIAL_MOVE_FOUNDATION:
@@ -312,8 +312,8 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Driving to foundation";
-                        robot.driveToTarget(foundationStartingPositionArray[STARTING_ALLIANCE], false);
-                        if (!robot.driveToTargetInProgress()) {
+                        robot.driveToTarget(foundationStartingPositionArray[STARTING_ALLIANCE], true);
+                        if (!robot.driveToTargetInProgress() && !robot.rotateToTargetInProgress()) {
                             foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
                             subState++;
                         }
@@ -322,15 +322,16 @@ public class WHSAuto extends OpMode {
                         subStateDesc = "Grabbing foundation";
                         //robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
                         if (foundationPullerUpToDownTimer.isExpired()) {
+                            robot.driveToTarget(startingCoordinateArray[STARTING_ALLIANCE], false);
                             subState++;
                         }
                         break;
                     case 3:
                         subStateDesc = "Driving to wall";
-                        robot.driveToTarget(startingCoordinateArray[STARTING_ALLIANCE].getPos(), true);
-                        if (!robot.driveToTargetInProgress()) {
-                            subState++;
+                        robot.driveToTarget(startingCoordinateArray[STARTING_ALLIANCE], false);
+                        if (!robot.driveToTargetInProgress() && !robot.rotateToTargetInProgress()) {
                             foundationPullerDownToUpTimer.set(GRAB_FOUNDATION_DELAY);
+                            subState++;
                         }
                         break;
                     case 4:
@@ -516,6 +517,5 @@ public class WHSAuto extends OpMode {
         telemetry.addData("X", robot.getCoordinate().getX());
         telemetry.addData("Y", robot.getCoordinate().getY());
         telemetry.addData("Heading", robot.getCoordinate().getHeading());
-        telemetry.addData("Stonks", "stonks");
     }
 }

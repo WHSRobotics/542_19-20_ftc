@@ -27,6 +27,7 @@ public class WHSRobotImpl implements WHSRobot {
     private double targetHeading; //field frame
     public double angleToTargetDebug;
     public double distanceToTargetDebug = 0;
+    public Position vectorToTargetDebug = new Position(542, 542);
     private double lastKnownHeading = 0.1;
 
     private static double DEADBAND_DRIVE_TO_TARGET = RobotConstants.DEADBAND_DRIVE_TO_TARGET; //in mm
@@ -81,8 +82,8 @@ public class WHSRobotImpl implements WHSRobot {
 
         drivetrain = new Drivetrain(hardwareMap);
         imu = new IMU(hardwareMap);
-       // intake = new Intake(hardwareMap);
-        //foundationPuller = new FoundationPuller(hardwareMap);
+        intake = new Intake(hardwareMap);
+        foundationPuller = new FoundationPuller(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }
@@ -91,6 +92,7 @@ public class WHSRobotImpl implements WHSRobot {
     public void driveToTarget(Position targetPos, boolean backwards) {
         Position vectorToTarget = Functions.Positions.subtract(targetPos, currentCoord.getPos()); //field frame
         vectorToTarget = Functions.field2body(vectorToTarget, currentCoord); //body frame
+        vectorToTargetDebug = vectorToTarget;
         double distanceToTarget = vectorToTarget.getX()/*Functions.calculateMagnitude(vectorToTarget) * (vectorToTarget.getX() >= 0 ? 1 : -1)*/;
         distanceToTargetDebug = distanceToTarget;
 
@@ -213,9 +215,9 @@ public class WHSRobotImpl implements WHSRobot {
         double deltaX = drivetrain.encToMM(encoderDeltas[0]);
         double deltaY = drivetrain.encToMM(encoderDeltas[1]);
 
-        Position bodyVector = new Position(deltaX,deltaY);
+        Position bodyVector = new Position(deltaX, deltaY);
         Position fieldVector = Functions.body2field(bodyVector, currentCoord);
-        currentCoord.setPos(Functions.Positions.add(fieldVector,currentCoord));
+        currentCoord.setPos(Functions.Positions.add(fieldVector, currentCoord));
     }
 
     @Override
@@ -229,6 +231,8 @@ public class WHSRobotImpl implements WHSRobot {
     @Override
     public void setInitialCoordinate(Coordinate initCoord) {
         currentCoord = initCoord;
+        robotX = initCoord.getX();
+        robotY = initCoord.getY();
         imu.setImuBias(currentCoord.getHeading());
     }
 
