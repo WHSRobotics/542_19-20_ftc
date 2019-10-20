@@ -299,9 +299,8 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Driving to foundation";
-                        motorPowers = startToFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
-                        robot.drivetrain.operate(motorPowers);
-                        if (!startToFoundationSwerve.inProgress()) {
+                        robot.driveToTarget(foundationStartingPositionArray[STARTING_ALLIANCE], false);
+                        if (!robot.driveToTargetInProgress()) {
                             foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
                             subState++;
                         }
@@ -315,9 +314,8 @@ public class WHSAuto extends OpMode {
                         break;
                     case 3:
                         subStateDesc = "Driving to wall";
-                        motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
-                        robot.drivetrain.operate(motorPowers);
-                        if (!foundationToWallSwerve.inProgress()) {
+                        robot.driveToTarget(startingCoordinateArray[STARTING_ALLIANCE].getPos(), true);
+                        if (!robot.driveToTargetInProgress()) {
                             subState++;
                             foundationPullerDownToUpTimer.set(GRAB_FOUNDATION_DELAY);
                         }
@@ -505,5 +503,6 @@ public class WHSAuto extends OpMode {
         telemetry.addData("X", robot.getCoordinate().getX());
         telemetry.addData("Y", robot.getCoordinate().getY());
         telemetry.addData("Heading", robot.getCoordinate().getHeading());
+        telemetry.addData("Stonks", "stonks");
     }
 }

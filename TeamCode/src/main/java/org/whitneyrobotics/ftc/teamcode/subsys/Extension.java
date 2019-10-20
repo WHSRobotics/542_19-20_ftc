@@ -95,22 +95,34 @@ public class Extension {
     }
 
     public void operateOuttake (boolean gamepadInput){
+        /*
+        * Hand = Yellow 3d printed spatula
+        * Wrist = Green Wheel
+        * Elbow = Two servos in the back that swing
+        * */
+
+
         extensionTog.changeState(gamepadInput);
+        //Waiting for Stone
         if (extensionTog.currentState() == 0){
             setHandServoPosition(Extension.HandPosition.UP);
             setWristServoPosition(Extension.WristPosition.INTAKE);
             setElbowServoPosition(Extension.ElbowPosition.INTAKE);
+        //Grabbing the stone
         }else if(extensionTog.currentState() == 1){
             setHandServoPosition(Extension.HandPosition.DOWN);
             setWristServoPosition(Extension.WristPosition.OUTTAKE);
             setElbowServoPosition(Extension.ElbowPosition.INTAKE);
+        //Spinning Around
         }else if (extensionTog.currentState() == 2){
             setHandServoPosition(Extension.HandPosition.DOWN);
             setWristServoPosition(Extension.WristPosition.OUTTAKE);
             setElbowServoPosition(Extension.ElbowPosition.OUTTAKE);
+        //Make the stone parallel
         }else if (extensionTog.currentState() == 3){
             setHandServoPosition(Extension.HandPosition.OUTTAKE);
             setElbowServoPosition(Extension.ElbowPosition.OUTTAKE);
+        //Let go of the stone
         }else{
             setWristServoPosition(Extension.WristPosition.INTAKE);
         }
