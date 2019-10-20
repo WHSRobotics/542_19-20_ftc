@@ -236,6 +236,8 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         fieldCentricSwitch.changeState(gamepadInput);
     }
 
-
+    public String getFieldCentric() {
+        return fieldCentricSwitch.currentState() == 0 ? "Robot Centric" : "Field Centric";
+    }
 
 }

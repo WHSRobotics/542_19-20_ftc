@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
+import org.whitneyrobotics.ftc.teamcode.subsys.IMU;
 
 
 /**
@@ -14,7 +15,8 @@ import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 public class DrivetrainTest extends OpMode {
 
     Drivetrain drivetrain;
-    Toggler stateTog = new Toggler(4);
+    IMU imu;
+    Toggler stateTog = new Toggler(5);
     String mode = "";
     double[] power = new double[2];
     Toggler powerTog = new Toggler(50);
@@ -22,6 +24,7 @@ public class DrivetrainTest extends OpMode {
     @Override
     public void init() {
         drivetrain = new Drivetrain(hardwareMap);
+        imu = new IMU(hardwareMap);
         telemetry.log().add("mode (scaled/normal) switch : gamepad1-x");
         telemetry.log().add("orientation switch : gamepad1-a");
     }
@@ -38,23 +41,29 @@ public class DrivetrainTest extends OpMode {
         powerTog.changeState(gamepad1.dpad_up, gamepad1.dpad_down);
 
         if (stateTog.currentState() == 0){
-            drivetrain.operate(gamepad1.left_stick_y, gamepad1.right_stick_y);
-            mode = "Normal";
+            drivetrain.operateWithOrientation(gamepad1.left_stick_y, gamepad1.right_stick_y);
+            mode = "Tank";
         } else if (stateTog.currentState() == 1){
             drivetrain.operateWithOrientationScaled(gamepad1.left_stick_y, gamepad1.right_stick_y);
-            mode = "Scaled";
-        } else {
-            if (gamepad1.b) {
-                drivetrain.operate(powerTog.currentState() * 0.02, powerTog.currentState() * 0.02);
+            mode = " Tank Scaled";
+        } else if (stateTog.currentState() == 2){
+            if (gamepad1.a) {
+                drivetrain.operateWithOrientation(powerTog.currentState() * 0.02, powerTog.currentState() * 0.02);
             } else {
                 drivetrain.operate(0.0, 0.0);
             }
             mode = "Step";
+        } else if (stateTog.currentState() == 3){
+            drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, imu.getHeading());
+            mode = "Mecanum";
+        } else {
+            drivetrain.operateMecanumDrive(gamepad1.left_stick_x/2.54, gamepad1.left_stick_y/2.54, gamepad1.right_stick_x/2.54, imu.getHeading());
+            mode = "Mecanum Scaled";
         }
 
 
         telemetry.addData("Mode:", mode);
-        telemetry.addData("Orientation:", drivetrain.getOrientation());
+        telemetry.addData("Orientation:", stateTog.currentState() < 3 ? drivetrain.getOrientation() : drivetrain.getFieldCentric());
         telemetry.addData("LeftStickY:", gamepad1.left_stick_y);
         telemetry.addData("RightStickY:", gamepad1.right_stick_y);
         //telemetry.addData("Scaled L", drivetrain.getScaledPower(gamepad1.left_stick_y));
