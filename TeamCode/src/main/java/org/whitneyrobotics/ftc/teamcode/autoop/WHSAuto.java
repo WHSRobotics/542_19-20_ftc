@@ -10,11 +10,9 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
-import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
-import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
@@ -151,7 +149,7 @@ public class WHSAuto extends OpMode {
     static final int INITIAL_MOVE_FOUNDATION = 1;
     static final int SCAN_SKYSTONE = 2;
     static final int INTAKE_SKYSTONE = 3;
-    static final int DRIVE_TO_FOUDNATION = 4;
+    static final int DRIVE_TO_FOUNDATION = 4;
     static final int OUTTAKE_SKYSTONE = 5;
     static final int SECONDARY_MOVE_FOUNDATION = 6;
     static final int PARK = 7;
@@ -188,7 +186,7 @@ public class WHSAuto extends OpMode {
         stateEnabled[INITIAL_MOVE_FOUNDATION] = (STARTING_POSITION == FOUNDATION);
         stateEnabled[SCAN_SKYSTONE] = true;
         stateEnabled[INTAKE_SKYSTONE] = true;
-        stateEnabled[DRIVE_TO_FOUDNATION] = true;
+        stateEnabled[DRIVE_TO_FOUNDATION] = true;
         stateEnabled[OUTTAKE_SKYSTONE] = true;
         stateEnabled[SECONDARY_MOVE_FOUNDATION] = (STARTING_POSITION == SKYSTONE && !PARTNER_MOVED_FOUNDATION);
         stateEnabled[PARK] = true;
@@ -301,6 +299,7 @@ public class WHSAuto extends OpMode {
             case INIT:
                 stateDesc = "Starting auto";
                 robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
+                robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
                 advanceState();
                 break;
             case INITIAL_MOVE_FOUNDATION:
@@ -357,9 +356,12 @@ public class WHSAuto extends OpMode {
                     case 1:
                         subStateDesc = "Driving to skystone";
                         if (STARTING_POSITION == SKYSTONE) {
-                            motorPowers = startToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                            motorPowers = startToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         } else {
-                            motorPowers = wallToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                            motorPowers = wallToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
+                        }
+                        if (robot.getCoordinate().getX() < -450) {
+                            robot.outtake.hover();
                         }
                         robot.drivetrain.operate(motorPowers);
                         if (!startToSkystoneSwerve.inProgress() && !wallToSkystoneSwerve.inProgress()) {
@@ -389,9 +391,9 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Intaking skystone";
-                        //robot.intake.setIntakeMotorPowers(Intake.INTAKE_POWER);
+                        robot.intake.setMotorPowers(Intake.INTAKE_POWER);
                         if (intakeSystoneTimer.isExpired()) {
-                            //robot.intake.setIntakeMotorPowers(0);
+                            robot.intake.setMotorPowers(0);
                             subState++;
                         }
                         break;
@@ -401,7 +403,7 @@ public class WHSAuto extends OpMode {
                         break;
                 }
                 break;
-            case DRIVE_TO_FOUDNATION:
+            case DRIVE_TO_FOUNDATION:
                 stateDesc = "Driving to foundation";
                 switch (subState) {
                     case 0:
@@ -410,10 +412,11 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Driving to foundation";
+                        robot.outtake.grabStone();
                         if (stateEnabled[SECONDARY_MOVE_FOUNDATION]) {
-                            motorPowers = skystoneToUnmovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                            motorPowers = skystoneToUnmovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
                         } else {
-                            motorPowers = skystoneToMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                            motorPowers = skystoneToMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
                         }
                         robot.drivetrain.operate(motorPowers);
                         if (!skystoneToUnmovedFoundationSwerve.inProgress() && !skystoneToMovedFoundationSwerve.inProgress()) {
@@ -435,7 +438,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Outtaking skystone";
-                        //robot.intake.setIntakeMotorPowers(-Intake.INTAKE_POWER);
+                        robot.outtake.autoOuttake(1);
                         break;
                     case 2:
                         subStateDesc = "Exit";
@@ -460,7 +463,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Moving foundation";
-                        motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                        motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         robot.drivetrain.operate(motorPowers);
                         if (!foundationToWallSwerve.inProgress()) {
                             foundationPullerDownToUpTimer.set(GRAB_FOUNDATION_DELAY);
@@ -490,9 +493,9 @@ public class WHSAuto extends OpMode {
                     case 1:
                         subStateDesc = "Parking";
                         if (stateEnabled[SECONDARY_MOVE_FOUNDATION]) {
-                            motorPowers = wallToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                            motorPowers = wallToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         } else {
-                            motorPowers = movedFoundationToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities());
+                            motorPowers = movedFoundationToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(),false);
                         }
                         robot.drivetrain.operate(motorPowers);
                         if (!wallToParkSwerve.inProgress() && !movedFoundationToParkSwerve.inProgress()) {

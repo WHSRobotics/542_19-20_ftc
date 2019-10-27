@@ -3,12 +3,24 @@ package org.whitneyrobotics.ftc.teamcode.subsys;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 
 public class Intake {
+
     private DcMotor leftIntake;
     private DcMotor rightIntake;
+    private Servo intakePusher;
+
+    public enum IntakePusherPosition {
+        DOWN, UP
+    }
+
+    // DOWN, UP
+    private final double[] INTAKE_PUSHER_POSITIONS = {0, 0};
+    private final double INTAKE_PUSHER_DOWN = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.DOWN.ordinal()];
+    private final double INTAKE_PUSHER_UP = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.UP.ordinal()];
 
     public static final double INTAKE_POWER = 0.8;
 
@@ -16,6 +28,8 @@ public class Intake {
     public Intake(HardwareMap intakeMap){
         leftIntake = intakeMap.dcMotor.get("leftIntake");
         rightIntake = intakeMap.dcMotor.get("rightIntake");
+        intakePusher = intakeMap.servo.get("intakePusher");
+
         leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
@@ -35,8 +49,12 @@ public class Intake {
         }
     }
 
-    public void setIntakeMotorPowers(double power){
+    public void setMotorPowers(double power){
         leftIntake.setPower(power);
         rightIntake.setPower(power);
+    }
+
+    public void setIntakePusherPosition(IntakePusherPosition intakePusherPosition) {
+        intakePusher.setPosition(INTAKE_PUSHER_POSITIONS[intakePusherPosition.ordinal()]);
     }
 }

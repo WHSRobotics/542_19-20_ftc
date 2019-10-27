@@ -21,12 +21,12 @@ public class ServoTest extends OpMode {
     @Override
     public void loop() {
         i++;
-        servoPositionTog.changeState(gamepad1.a, gamepad1.b);
+        servoPositionTog.changeState(gamepad1.b, gamepad1.a);
         servoSelectionTog.changeState(gamepad1.dpad_right, gamepad1.dpad_left);
         servos[servoSelectionTog.currentState()].setPosition(servoPositionTog.currentState()/200f);
         if (i%10 == 0) {
-            if (gamepad1.x) servoPositionTog.setState(servoPositionTog.currentState() + 1);
-            if (gamepad1.y) servoPositionTog.setState(servoPositionTog.currentState() - 1);
+            if (gamepad1.y) servoPositionTog.setState(servoPositionTog.currentState() + 1);
+            if (gamepad1.x) servoPositionTog.setState(servoPositionTog.currentState() - 1);
         }
 
         for(int i = 0; i<servos.length; i++){

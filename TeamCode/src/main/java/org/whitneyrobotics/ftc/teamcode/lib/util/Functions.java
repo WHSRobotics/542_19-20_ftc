@@ -34,11 +34,12 @@ public class Functions {
      * Converts angles from 0-360 to -180-180
      */
     public static double normalizeAngle(double angle) {
-
-        if (angle > 180) {
-            angle = angle - 360;
-        } else if (angle < -180) {
-            angle = angle + 360;
+        while (angle > 180 || angle < -180) {
+            if (angle > 180) {
+                angle = angle - 360;
+            } else if (angle < -180) {
+                angle = angle + 360;
+            }
         }
         return angle;
     }

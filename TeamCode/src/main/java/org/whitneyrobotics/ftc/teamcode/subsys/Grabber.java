@@ -16,6 +16,8 @@ public class Grabber {
     private Servo wristServo;
     private Servo handServo;
 
+    private Toggler cyclePositionsToggler = new Toggler(5);
+
     public enum ElbowPosition {
         INTAKE, OUTTAKE;
     }
@@ -25,7 +27,7 @@ public class Grabber {
     }
 
     public enum HandPosition {
-        UP, DOWN, OUTTAKE
+        UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN
     }
 
     public enum GrabberPosition {
@@ -33,22 +35,22 @@ public class Grabber {
     }
 
     //INTAKE, OUTTAKE
-    private final double[] LEFT_ELBOW_POSITION = {0.130, 0.950};
+    private final double[] LEFT_ELBOW_POSITION = {0.065, 0.995};
     private final double LEFT_ELBOW_INTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.INTAKE.ordinal()];
     private final double LEFT_ELBOW_OUTTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.OUTTAKE.ordinal()];
 
     //INTAKE, OUTTAKE
-    private final double[] RIGHT_ELBOW_POSITIONS = {0.935, 0.115};
+    private final double[] RIGHT_ELBOW_POSITIONS = {0.98, 0.065};
     private final double RIGHT_ELBOW_INTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.INTAKE.ordinal()];
     private final double RIGHT_ELBOW_OUTTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.OUTTAKE.ordinal()];
 
     //UP, DOWN
-    private final double[] WRIST_POSITIONS = {0.120, 0.370};
+    private final double[] WRIST_POSITIONS = {0.195, 0.455};
     private final double WRIST_INTAKE_POSITION = WRIST_POSITIONS[WristPosition.UP.ordinal()];
     private final double WRIST_OUTTAKE_POSITION = WRIST_POSITIONS[WristPosition.DOWN.ordinal()];
 
-    //UP, DOWN, OUTTAKE
-    private final double[] HAND_POSITIONS = {0.240, 0.135, 0.995};
+    //UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN
+    private final double[] HAND_POSITIONS = {0.240, 0.07, 0.38, 0.75};
     private final double HAND_UP_POSITION = HAND_POSITIONS[HandPosition.UP.ordinal()];
     private final double HAND_DOWN_POSITION = HAND_POSITIONS[HandPosition.DOWN.ordinal()];
 
@@ -87,17 +89,47 @@ public class Grabber {
             // Spinning Around
             setElbowServoPosition(ElbowPosition.OUTTAKE);
             setWristServoPosition(WristPosition.DOWN);
-            setHandServoPosition(HandPosition.DOWN);
+            setHandServoPosition(HandPosition.OUTTAKE_UP);
         } else if (grabberPosition == GrabberPosition.OUTTAKE_DOWN) {
             // Make the stone parallel
             setElbowServoPosition(ElbowPosition.OUTTAKE);
             setWristServoPosition(WristPosition.DOWN);
-            setHandServoPosition(HandPosition.OUTTAKE);
+            setHandServoPosition(HandPosition.OUTTAKE_DOWN);
         } else if (grabberPosition == GrabberPosition.OUTTAKE_RELEASED){
             // Let go of the stone
             setElbowServoPosition(ElbowPosition.OUTTAKE);
             setWristServoPosition(WristPosition.UP);
-            setHandServoPosition(HandPosition.OUTTAKE);
+            setHandServoPosition(HandPosition.OUTTAKE_DOWN);
+        }
+    }
+
+    public void cyclePositions(boolean gamepadInputUp, boolean gamepadInputDown) {
+        cyclePositionsToggler.changeState(gamepadInputUp, gamepadInputDown);
+        if (cyclePositionsToggler.currentState() == 0) {
+            // Waiting for Stone
+            setElbowServoPosition(ElbowPosition.INTAKE);
+            setWristServoPosition(WristPosition.UP);
+            setHandServoPosition(HandPosition.UP);
+        } else if (cyclePositionsToggler.currentState() == 1) {
+            // Grabbing the stone
+            setElbowServoPosition(ElbowPosition.INTAKE);
+            setWristServoPosition(WristPosition.DOWN);
+            setHandServoPosition(HandPosition.DOWN);
+        } else if (cyclePositionsToggler.currentState() == 2) {
+            // Spinning Around
+            setElbowServoPosition(ElbowPosition.OUTTAKE);
+            setWristServoPosition(WristPosition.DOWN);
+            setHandServoPosition(HandPosition.OUTTAKE_UP);
+        } else if (cyclePositionsToggler.currentState() == 3) {
+            // Make the stone parallel
+            setElbowServoPosition(ElbowPosition.OUTTAKE);
+            setWristServoPosition(WristPosition.DOWN);
+            setHandServoPosition(HandPosition.OUTTAKE_DOWN);
+        } else if (cyclePositionsToggler.currentState() == 4){
+            // Let go of the stone
+            setElbowServoPosition(ElbowPosition.OUTTAKE);
+            setWristServoPosition(WristPosition.UP);
+            setHandServoPosition(HandPosition.OUTTAKE_DOWN);
         }
     }
 }

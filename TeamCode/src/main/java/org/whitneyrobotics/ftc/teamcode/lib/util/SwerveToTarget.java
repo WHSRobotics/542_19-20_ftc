@@ -50,8 +50,12 @@ public class SwerveToTarget {
         lastTime = System.nanoTime() / 1E9;
     }
 
-    public double[] calculateMotorPowers(Coordinate currentCoord, double[] currentWheelVelocities) {
-        this.currentCoord = currentCoord;
+    public double[] calculateMotorPowers(Coordinate currentCoord, double[] currentWheelVelocities, boolean backwards) {
+        if (backwards) {
+            this.currentCoord = new Coordinate(currentCoord.getPos(), Functions.normalizeAngle(currentCoord.getHeading() + 180));
+        } else {
+            this.currentCoord = currentCoord;
+        }
 
         boolean tFound = false;
         for (int i = lastIndex; i < smoothedPath.length - 1; i++) {

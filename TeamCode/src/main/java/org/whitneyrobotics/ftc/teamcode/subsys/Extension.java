@@ -11,8 +11,9 @@ public class Extension {
     private DcMotor rightExtension;
 
     // index 0 = intook; index 3 = level 3, clearance & hover
-    private int[] extensionMotorPositions = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    private int CLEARANCE_POSITION = 0;
+    private int[] extensionMotorPositions = {0, 785, 1985, 2925, 4045, 5085, 6045};
+    private static final int UPDATE_LEVEL_DEADBAND = 150;
+    private double EXTENSION_MOTOR_POWER = 1.0;
 
     private int currentLevel = 0;
 
@@ -20,7 +21,7 @@ public class Extension {
         leftExtension = extensionMap.dcMotor.get("leftExtension");
         rightExtension = extensionMap.dcMotor.get("rightExtension");
 
-        rightExtension.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftExtension.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftExtension.setTargetPosition(extensionMotorPositions[0]);
         rightExtension.setTargetPosition(extensionMotorPositions[0]);
@@ -32,19 +33,30 @@ public class Extension {
     public void setLevel(int extensionLevel){
         leftExtension.setTargetPosition(extensionMotorPositions[extensionLevel]);
         rightExtension.setTargetPosition(extensionMotorPositions[extensionLevel]);
+        leftExtension.setPower(EXTENSION_MOTOR_POWER);
+        rightExtension.setPower(EXTENSION_MOTOR_POWER);
     }
 
     public void estimateLevel() {
         double[] differences = new double[extensionMotorPositions.length];
         double encoderAvg = (leftExtension.getCurrentPosition() + rightExtension.getCurrentPosition()) / 2;
-        for (int i = 0; i < extensionMotorPositions.length; i++) {
-            differences[i] = Math.abs(encoderAvg - (double)extensionMotorPositions[i]);
+        if (currentLevel > 0 && Math.abs(encoderAvg - extensionMotorPositions[currentLevel - 1]) < UPDATE_LEVEL_DEADBAND) {
+            currentLevel--;
         }
-        currentLevel = Functions.calculateIndexOfSmallestValue(differences);
+        if (currentLevel < (extensionMotorPositions.length - 1) && Math.abs(encoderAvg - extensionMotorPositions[currentLevel + 1]) < UPDATE_LEVEL_DEADBAND) {
+            currentLevel++;
+        }
     }
 
     public int getCurrentLevel() {
         return currentLevel;
+    }
+
+    public void setTargetEncoderPosition(int targetPosition) {
+        leftExtension.setTargetPosition(targetPosition);
+        rightExtension.setTargetPosition(targetPosition);
+        leftExtension.setPower(EXTENSION_MOTOR_POWER);
+        rightExtension.setPower(EXTENSION_MOTOR_POWER);
     }
 }
 
