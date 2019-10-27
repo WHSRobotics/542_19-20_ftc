@@ -207,10 +207,10 @@ public class StrafeToTarget {
         double targetVelocityX = targetVelocity * Functions.cosd(angleToLookaheadPoint);
         double targetVelocityY = targetVelocity * Functions.sind(angleToLookaheadPoint);
 
-        double vFL = targetVelocityX + targetVelocityY;
-        double vFR = targetVelocityX - targetVelocityY;
-        double vBL = targetVelocityX - targetVelocityY;
-        double vBR = targetVelocityX + targetVelocityY;
+        double vFL = targetVelocityX - targetVelocityY;
+        double vFR = targetVelocityX + targetVelocityY;
+        double vBL = targetVelocityX + targetVelocityY;
+        double vBR = targetVelocityX - targetVelocityY;
 
         return new double[]{vFL, vFR, vBL, vBR};
     }

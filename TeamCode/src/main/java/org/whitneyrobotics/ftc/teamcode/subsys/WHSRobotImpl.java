@@ -2,8 +2,6 @@ package org.whitneyrobotics.ftc.teamcode.subsys;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.Function;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.robot.WHSRobot;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
@@ -218,6 +216,12 @@ public class WHSRobotImpl implements WHSRobot {
         Position bodyVector = new Position(deltaX, deltaY);
         Position fieldVector = Functions.body2field(bodyVector, currentCoord);
         currentCoord.setPos(Functions.Positions.add(fieldVector, currentCoord));
+    }
+
+    public void mecanumEstimatePosition() {
+        encoderDeltas = drivetrain.getMecanumEncoderDelta();
+        double theta = Math.atan(encoderDeltas[1]/encoderDeltas[0]);
+
     }
 
     @Override

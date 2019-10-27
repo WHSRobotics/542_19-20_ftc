@@ -5,8 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.MotorSubsystem;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.drivetrain.MecanumDrivetrain;
+import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 
 /**
@@ -45,6 +47,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private double robotAngle;
     private double r;
 
+    private double[] lastKnownEncoderValues = {0,0,0,0};
 
     public Drivetrain (HardwareMap driveMap) {
 
@@ -240,4 +243,20 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return fieldCentricSwitch.currentState() == 0 ? "Robot Centric" : "Field Centric";
     }
 
+    public double[] getAllEncoderValues(){
+        double[] encoderValues = {frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
+        return encoderValues;
+    }
+
+    public double[] getMecanumEncoderDelta(){
+        double currentFLBR = (frontLeft.getCurrentPosition() + backRight.getCurrentPosition())/2;
+        double currentFRBL = (frontRight.getCurrentPosition() + backLeft.getCurrentPosition())/2;
+
+        double[] encoderDistances = {currentFLBR - encoderValues[0], currentFRBL - encoderValues[1]};
+
+        encoderValues[0] = currentFLBR;
+        encoderValues[1] = currentFRBL;
+
+        return encoderDistances;
+    }
 }
