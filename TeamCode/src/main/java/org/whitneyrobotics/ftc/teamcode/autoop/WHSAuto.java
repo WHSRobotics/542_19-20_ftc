@@ -29,6 +29,11 @@ public class WHSAuto extends OpMode {
     static final int INSIDE = 0;
     static final int OUTSIDE = 1;
 
+    /**
+     * Starting X Guidelines
+     * Robot center to edge: 9 inches = 228 mm
+     */
+
     static final int STARTING_POSITION = FOUNDATION;
     static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = OUTSIDE;
@@ -163,7 +168,6 @@ public class WHSAuto extends OpMode {
     int subState = 0;
     String stateDesc;
     String subStateDesc;
-
 
     /**
      * Advances the state, skipping ones that have been disabled.

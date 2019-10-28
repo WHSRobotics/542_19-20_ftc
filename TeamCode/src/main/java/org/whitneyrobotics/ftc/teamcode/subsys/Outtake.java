@@ -12,7 +12,7 @@ public class Outtake {
 
     private static final int CLEARANCE_LEVEL = 4;
 
-    private Toggler operateOuttakeToggler = new Toggler(6);
+    private Toggler operateOuttakeToggler = new Toggler(5);
     int operateExtensionSubState = 0;
     private Toggler extensionLevelTog = new Toggler(7);
 
@@ -43,7 +43,9 @@ public class Outtake {
         switch (operateOuttakeToggler.currentState()) {
             case 0: // Wait For Stone
                 extension.setLevel(CLEARANCE_LEVEL); //sets the linear slides to the intermediate state where it waits for the stone
-                grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
+                if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
+                    grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
+                }
                 break;
             case 1: // Grab the stone
                 extension.setLevel(0); //Brings linear slides all the way down
@@ -75,6 +77,7 @@ public class Outtake {
                         }
                         break;
                     case 2: //Goes to Target Linear Slide Position
+                        grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_UP); //Sets the Grabber to swing out
                         extension.setLevel(extensionLevelTog.currentState());
                         break;
                     default:
@@ -83,16 +86,11 @@ public class Outtake {
                 break;
             case 3: //Makes Stone Parallel
                 grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_DOWN);
-                operateExtensionSubState = 0;
+                extension.setLevel(extensionLevelTog.currentState());
                 break;
             case 4: // Releases Stone
                 grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_RELEASED);
-                break;
-            case 5: // Return extension to hover (clearance) for grabber to swing back in
-                extension.setLevel(CLEARANCE_LEVEL);
-                if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
-                    grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP);
-                }
+                extension.setLevel(extensionLevelTog.currentState());
                 break;
             default:
                 break;
