@@ -20,7 +20,8 @@ public class IntakeTest extends OpMode {
 
     @Override
     public void loop() {
-        robot.intake.operateIntake(gamepad1.right_trigger>0.01, gamepad1.left_trigger>0.01);
+        robot.intake.operateIntake(gamepad1.right_trigger>0.01, gamepad1.left_trigger>0.01, gamepad1.a, gamepad1.b);
         robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
+        telemetry.addData("Neddy", robot.intake.intakeSpeedToggler.currentState());
     }
 }

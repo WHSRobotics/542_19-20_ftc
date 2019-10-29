@@ -395,7 +395,9 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Intaking skystone";
+/*
                         robot.intake.setMotorPowers(Intake.INTAKE_POWER);
+*/
                         if (intakeSystoneTimer.isExpired()) {
                             robot.intake.setMotorPowers(0);
                             subState++;

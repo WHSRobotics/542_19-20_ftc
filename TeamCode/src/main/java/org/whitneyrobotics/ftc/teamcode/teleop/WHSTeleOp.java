@@ -25,7 +25,7 @@ public class WHSTeleOp extends OpMode {
         }
 
         //Intake
-        robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger >0.01);
+        robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger >0.01, gamepad1.x, gamepad1.y);
 
         //Extension
         //robot.extension.operateExtension(gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.x);
