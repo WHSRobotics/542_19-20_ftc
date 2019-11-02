@@ -16,12 +16,12 @@ public class FoundationPuller {
     }
 
     //UP, DOWN
-    private final double[] LEFT_PULLER_POSITIONS = {0.05, 0.875};
+    private final double[] LEFT_PULLER_POSITIONS = {0.345, 0.795};
     private final double LEFT_PULLER_UP = LEFT_PULLER_POSITIONS[PullerPosition.UP.ordinal()];
     private final double LEFT_PULLER_DOWN = LEFT_PULLER_POSITIONS[PullerPosition.DOWN.ordinal()];
 
     //UP, DOWN
-    private final double[] RIGHT_PULLER_POSITIONS = {0.80, 0.005};
+    private final double[] RIGHT_PULLER_POSITIONS = {0.99, 0.53};
     private final double RIGHT_PULLER_UP = RIGHT_PULLER_POSITIONS[PullerPosition.UP.ordinal()];
     private final double RIGHT_PULLER_DOWN = RIGHT_PULLER_POSITIONS[PullerPosition.DOWN.ordinal()];
 
