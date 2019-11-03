@@ -51,11 +51,8 @@ public class SwerveToTarget {
     }
 
     public double[] calculateMotorPowers(Coordinate currentCoord, double[] currentWheelVelocities, boolean backwards) {
-        if (backwards) {
-            this.currentCoord = new Coordinate(currentCoord.getPos(), Functions.normalizeAngle(currentCoord.getHeading() + 180));
-        } else {
-            this.currentCoord = currentCoord;
-        }
+
+        this.currentCoord = currentCoord;
 
         boolean tFound = false;
         for (int i = lastIndex; i < smoothedPath.length - 1; i++) {

@@ -15,7 +15,7 @@ public class WHSTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        //Drivetrain
+        // Drivetrain
         robot.estimateHeading();
         robot.drivetrain.switchFieldCentric(gamepad1.b);
         if (gamepad1.left_bumper){
@@ -24,16 +24,18 @@ public class WHSTeleOp extends OpMode {
             robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
         }
 
-        //Intake
-        robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger >0.01, gamepad1.x, gamepad1.y);
+        // Intake
+        robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger >0.01);
 
-        //Extension
-       robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down);
-        //TODO: Add in stuff for the actual grabber
+        // Outtake
+        robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down);
 
         //Foundation Puller
         robot.foundationPuller.operate(gamepad1.a);
         telemetry.addData("Outtake State",robot.outtake.getCurrentState());
+        telemetry.addData("Target extension level", robot.outtake.getCurrentTargetLevel());
+        telemetry.addData("Current extension level", robot.outtake.getCurrentLevel());
+        telemetry.addData("Field-centric", robot.drivetrain.getFieldCentric());
 
     }
 }

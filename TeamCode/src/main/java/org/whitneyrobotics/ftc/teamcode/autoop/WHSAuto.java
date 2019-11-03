@@ -48,8 +48,8 @@ public class WHSAuto extends OpMode {
 
     Coordinate[] startingCoordinateArray = new Coordinate[2];
     Position[][] skystonePositionArray = new Position[2][3];
-    Position[] /*whitney*/foundationMovedPositionArray = new Position[2];
-    Position[] /*whitney*/foundationStartingPositionArray = new Position[2];
+    Position[] foundationMovedPositionArray = new Position[2];
+    Position[] foundationStartingPositionArray = new Position[2];
     Position[] slideOutFromFoundationMidpointArray = new Position[2];
     Position[][] skybridgePositionArray = new Position[2][2];
 
@@ -61,9 +61,10 @@ public class WHSAuto extends OpMode {
     SwerveToTarget skystoneToUnmovedFoundationSwerve;
     SwerveToTarget movedFoundationToParkSwerve;
     SwerveToTarget wallToParkSwerve;
-    /*
-    * Swerve to target instantiations
-    */
+
+    /**
+     * werve to target instantiations
+     */
     private void instantiateSwerveToTargets() {
         Position[] startToFoundationSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
         Position[] foundationToWallSwervePositions = {foundationStartingPositionArray[STARTING_ALLIANCE], startingCoordinateArray[STARTING_ALLIANCE]};
@@ -149,7 +150,7 @@ public class WHSAuto extends OpMode {
 
     /**
      * State Definitions
-      */
+     */
     static final int INIT = 0;
     static final int INITIAL_MOVE_FOUNDATION = 1;
     static final int SCAN_SKYSTONE = 2;
