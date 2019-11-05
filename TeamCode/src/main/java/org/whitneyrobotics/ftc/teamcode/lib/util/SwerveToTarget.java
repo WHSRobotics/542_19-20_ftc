@@ -51,8 +51,11 @@ public class SwerveToTarget {
     }
 
     public double[] calculateMotorPowers(Coordinate currentCoord, double[] currentWheelVelocities, boolean backwards) {
-
-        this.currentCoord = currentCoord;
+        if (backwards) {
+            this.currentCoord = new Coordinate(currentCoord.getPos(), Functions.normalizeAngle(currentCoord.getHeading() + 180));
+        } else {
+            this.currentCoord = currentCoord;
+        }
 
         boolean tFound = false;
         for (int i = lastIndex; i < smoothedPath.length - 1; i++) {
@@ -72,6 +75,9 @@ public class SwerveToTarget {
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
         double curvature = calculateCurvature(lookaheadDistance, lookaheadPoint);
         currentTargetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], curvature);
+        if (backwards) {
+            currentWheelVelocities = new double[] {-currentWheelVelocities[1], -currentWheelVelocities[0]};
+        }
 
         double deltaTime = System.nanoTime() / 1E9 - lastTime;
         double[] targetWheelAccelerations = {(currentTargetWheelVelocities[0] - lastTargetWheelVelocities[0]) / deltaTime, (currentTargetWheelVelocities[1] - lastTargetWheelVelocities[1]) / deltaTime};
@@ -88,6 +94,9 @@ public class SwerveToTarget {
             double[] motorPowers = {Functions.constrain(feedBack[0] + feedForward[0], -1, 1), Functions.constrain(feedBack[1] + feedForward[1], -1, 1)};
             lastTargetWheelVelocities = currentTargetWheelVelocities;
             inProgress = true;
+            if (backwards) {
+                return new double[] {-motorPowers[1], -motorPowers[0]};
+            }
             return motorPowers;
         } else {
             inProgress = false;

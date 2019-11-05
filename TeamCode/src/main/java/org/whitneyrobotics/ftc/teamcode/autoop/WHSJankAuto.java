@@ -40,8 +40,8 @@ public class WHSJankAuto extends OpMode {
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
 
-        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, 90);
-        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  -90);
+        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, -90);
+        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  90);
 
         parkingWaypointPositionArray[RED] = new Position(STARTING_COORDINATE_X, -1100);
         parkingWaypointPositionArray[BLUE] = new Position(STARTING_COORDINATE_X, 1100);
@@ -68,7 +68,7 @@ public class WHSJankAuto extends OpMode {
 
         robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
         if (timer.isExpired()) {
-            double[] motorPowers = startToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
+            double[] motorPowers = startToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
             robot.drivetrain.operate(motorPowers);
         }
 

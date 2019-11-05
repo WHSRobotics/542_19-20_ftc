@@ -19,7 +19,7 @@ public class SwerveToTargetTest extends OpMode {
     static Position p4 = new Position(-1800, 2700);
     static Position p5 = new Position(-1800, 0);*/
 
-    Position[] positions1 = {startingCoordinate.getPos(), p1, p2};
+    Position[] positions1 = {startingCoordinate.getPos(), p2};
     SwerveToTarget swerve1;
     SwerveToTarget swerve2;
     int state = 1;

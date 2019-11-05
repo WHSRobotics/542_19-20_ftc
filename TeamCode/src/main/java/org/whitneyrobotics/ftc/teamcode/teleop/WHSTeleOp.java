@@ -28,13 +28,13 @@ public class WHSTeleOp extends OpMode {
         robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger >0.01);
 
         // Outtake
-        robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down);
+        //robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down);
 
         //Foundation Puller
         robot.foundationPuller.operate(gamepad1.a);
-        telemetry.addData("Outtake State",robot.outtake.getCurrentState());
-        telemetry.addData("Target extension level", robot.outtake.getCurrentTargetLevel());
-        telemetry.addData("Current extension level", robot.outtake.getCurrentLevel());
+//        telemetry.addData("Outtake State",robot.outtake.getCurrentState());
+//        telemetry.addData("Target extension level", robot.outtake.getCurrentTargetLevel());
+//        telemetry.addData("Current extension level", robot.outtake.getCurrentLevel());
         telemetry.addData("Field-centric", robot.drivetrain.getFieldCentric());
 
     }
