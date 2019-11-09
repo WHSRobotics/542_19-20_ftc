@@ -22,7 +22,7 @@ public class Intake {
     private final double INTAKE_PUSHER_DOWN = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.DOWN.ordinal()];
     private final double INTAKE_PUSHER_UP = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.UP.ordinal()];
 
-    public static final double INTAKE_POWER = 0.7;
+    public static final double INTAKE_POWER = 0.542;
     private Toggler intakeToggler = new Toggler(2);
 
     public Intake(HardwareMap intakeMap) {

@@ -35,7 +35,7 @@ public class Grabber {
     }
 
     //INTAKE, OUTTAKE
-    private final double[] LEFT_ELBOW_POSITION = {0.07, 0.99};
+    private final double[] LEFT_ELBOW_POSITION = {0.0794, 0.99};
     private final double LEFT_ELBOW_INTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.INTAKE.ordinal()];
     private final double LEFT_ELBOW_OUTTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.OUTTAKE.ordinal()];
 
@@ -45,7 +45,7 @@ public class Grabber {
     private final double RIGHT_ELBOW_OUTTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.OUTTAKE.ordinal()];
 
     //UP, DOWN
-    private final double[] WRIST_POSITIONS = {0.195, 0.455};
+    private final double[] WRIST_POSITIONS = {.34, 0.635};
     private final double WRIST_INTAKE_POSITION = WRIST_POSITIONS[WristPosition.UP.ordinal()];
     private final double WRIST_OUTTAKE_POSITION = WRIST_POSITIONS[WristPosition.DOWN.ordinal()];
 

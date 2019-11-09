@@ -38,7 +38,7 @@ public class WHSAuto extends OpMode {
     static final int STARTING_POSITION = FOUNDATION;
     static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = OUTSIDE;
-    static final double STARTING_COORDINATE_X = 600;
+    static final double STARTING_COORDINATE_X = 1200;
     static final boolean PARTNER_MOVED_FOUNDATION = true;
 
     static final int LEFT = 0;
@@ -281,8 +281,8 @@ public class WHSAuto extends OpMode {
         skystonePositionArray[BLUE][CENTER] = new Position(-885,606);
         skystonePositionArray[BLUE][RIGHT] = new Position(-1088,606);
 
-        foundationStartingPositionArray[RED] = new Position(STARTING_COORDINATE_X, -600);
-        foundationStartingPositionArray[BLUE] = new Position(STARTING_COORDINATE_X,600);
+        foundationStartingPositionArray[RED] = new Position(STARTING_COORDINATE_X, -780);
+        foundationStartingPositionArray[BLUE] = new Position(STARTING_COORDINATE_X,780);
 
         foundationMovedPositionArray[RED] = new Position(1024,-1108);
         foundationMovedPositionArray[BLUE] = new Position(1024, 1108);
@@ -291,10 +291,10 @@ public class WHSAuto extends OpMode {
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
 
         skybridgePositionArray[RED][INSIDE] = new Position(0,-1000);
-        skybridgePositionArray[RED][OUTSIDE] = new Position(0,-1600);
+        skybridgePositionArray[RED][OUTSIDE] = new Position(0,-1450);
 
         skybridgePositionArray[BLUE][INSIDE] = new Position(0,1000);
-        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1600);
+        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1450);
 
         instantiateSwerveToTargets();
     }
@@ -345,6 +345,7 @@ public class WHSAuto extends OpMode {
                         subStateDesc = "Releasing foundation";
                         robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         if (foundationPullerDownToUpTimer.isExpired()) {
+                            robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
                             subState++;
                         }
                         break;
@@ -369,7 +370,7 @@ public class WHSAuto extends OpMode {
                             motorPowers = wallToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         }
                         if (robot.getCoordinate().getX() < -450) {
-                            robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
+                            robot.intake.setMotorPowers(Intake.INTAKE_POWER);
                             //robot.outtake.hover();
                         }
                         robot.drivetrain.operate(motorPowers);
