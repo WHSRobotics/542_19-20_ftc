@@ -10,9 +10,10 @@ public class Outtake {
     Extension extension;
     Grabber grabber;
 
+    private static final int HOVER_LEVEL = 3;
     private static final int CLEARANCE_LEVEL = 4;
 
-    private Toggler operateOuttakeToggler = new Toggler(5);
+    private Toggler operateOuttakeToggler = new Toggler(6);
     int operateExtensionSubState = 0;
     private Toggler extensionLevelTog = new Toggler(7);
 
@@ -41,13 +42,17 @@ public class Outtake {
         extensionLevelTog.changeState(gamepadInputExtensionLevelUp, gamepadInputExtensionLevelDown); // Changes the target Extension Level
 
         switch (operateOuttakeToggler.currentState()) {
-            case 0: // Wait For Stone
-                extension.setLevel(CLEARANCE_LEVEL); //sets the linear slides to the intermediate state where it waits for the stone
-                if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
+            case 0:
+                extension.setLevel(0);
+                grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP);
+                break;
+            case 1: // Wait For Stone
+                extension.setLevel(HOVER_LEVEL); //sets the linear slides to the intermediate state where it waits for the stone
+                if (extension.getCurrentLevel() >= HOVER_LEVEL) {
                     grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
                 }
                 break;
-            case 1: // Grab the stone
+            case 2: // Grab the stone
                 extension.setLevel(0); //Brings linear slides all the way down
                 if (extension.getCurrentLevel() == 0) {
                     // Brings down the Hand and Wrist Servos if the Extension is all the way down
@@ -55,7 +60,7 @@ public class Outtake {
                 }
                 operateExtensionSubState = 0;
                 break;
-            case 2: //Swing around
+            case 3: //Swing around
                 switch (operateExtensionSubState) {
                     case 0: //Go To clearance Position
                         grabber.setPosition(Grabber.GrabberPosition.INTAKE_DOWN);
@@ -84,11 +89,11 @@ public class Outtake {
                         break;
                 }
                 break;
-            case 3: //Makes Stone Parallel
+            case 4: //Makes Stone Parallel
                 grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_DOWN);
                 extension.setLevel(extensionLevelTog.currentState());
                 break;
-            case 4: // Releases Stone
+            case 5: // Releases Stone
                 grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_RELEASED);
                 extension.setLevel(extensionLevelTog.currentState());
                 break;
