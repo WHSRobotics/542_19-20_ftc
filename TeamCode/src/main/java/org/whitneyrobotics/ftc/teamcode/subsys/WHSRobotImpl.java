@@ -21,6 +21,7 @@ public class WHSRobotImpl implements WHSRobot {
     public FoundationPuller foundationPuller;
     public Outtake outtake;
     public SkystoneGrabber skystoneGrabber;
+    public Vuforia vuforia;
 
     Coordinate currentCoord;
     private double targetHeading; //field frame
@@ -85,6 +86,7 @@ public class WHSRobotImpl implements WHSRobot {
         foundationPuller = new FoundationPuller(hardwareMap);
         outtake = new Outtake(hardwareMap);
         skystoneGrabber = new SkystoneGrabber(hardwareMap);
+        vuforia = new Vuforia(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }

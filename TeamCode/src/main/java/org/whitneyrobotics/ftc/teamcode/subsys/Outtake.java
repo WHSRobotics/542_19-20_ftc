@@ -13,7 +13,7 @@ public class Outtake {
     private static final int HOVER_LEVEL = 3;
     private static final int CLEARANCE_LEVEL = 4;
 
-    private Toggler operateOuttakeToggler = new Toggler(6);
+    private Toggler operateOuttakeToggler = new Toggler(7);
     int operateExtensionSubState = 0;
     private Toggler extensionLevelTog = new Toggler(7);
 
@@ -22,12 +22,15 @@ public class Outtake {
     private int autoOuttakeState = 0;
     private int autoOuttakeSubState = 0;
 
+    private SimpleTimer teleOuttakeToIntakeTimer = new SimpleTimer();
     private SimpleTimer autoIntakeToOuttakeTimer = new SimpleTimer();
     private SimpleTimer autoOuttakeUpToOuttakeDownTimer = new SimpleTimer();
     private SimpleTimer autoReleaseOuttakeTimer = new SimpleTimer();
     private SimpleTimer autoOuttakeToIntakeTimer = new SimpleTimer();
 
-    private double intakeToOuttakeDelay = 2.0;
+    boolean setOuttakeToIntakeTimer = true;
+
+    private double intakeToOuttakeDelay = 2.54;
     private double outtakeUpToOuttakeDownDelay = 1.5;
     private double releaseOuttakeDelay = 1.0;
 
@@ -43,6 +46,7 @@ public class Outtake {
 
         switch (operateOuttakeToggler.currentState()) {
             case 0:
+                setOuttakeToIntakeTimer = true;
                 extension.setLevel(0);
                 grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP);
                 break;
@@ -94,8 +98,22 @@ public class Outtake {
                 extension.setLevel(extensionLevelTog.currentState());
                 break;
             case 5: // Releases Stone
+                setOuttakeToIntakeTimer = true;
                 grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_RELEASED);
                 extension.setLevel(extensionLevelTog.currentState());
+                break;
+            case 6:
+                if(setOuttakeToIntakeTimer){
+                    teleOuttakeToIntakeTimer.set(intakeToOuttakeDelay);
+                    setOuttakeToIntakeTimer = false;
+                }
+                extension.setLevel(CLEARANCE_LEVEL); //sets the linear slides to the intermediate state where it waits for the stone
+                if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
+                    grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
+                }
+                if(teleOuttakeToIntakeTimer.isExpired()){
+                    operateOuttakeToggler.setState(0);
+                }
                 break;
             default:
                 break;
