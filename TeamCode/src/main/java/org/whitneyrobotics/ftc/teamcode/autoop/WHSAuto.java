@@ -14,6 +14,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
+import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 import java.util.List;
@@ -457,7 +458,6 @@ public class WHSAuto extends OpMode {
                         subState++;
                         break;
                     case 1:
-
                         subStateDesc = "Moving to skystone";
                         robot.drivetrain.operateMecanumDrive(-STRAFE_TO_SKYSTONE_POWER, 0.0, 0.0, 0.0 /*<- Don't care about heading*/);
                         if (deadmanStrafeToSkystoneTimer.isExpired()) {
@@ -469,6 +469,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Grabbing Skystone";
+                        robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.DOWN);
                         if(grabSkystoneTimer.isExpired()){
                             deadmanStrafeFromSkystoneTimer.set(STRAFE_SKYSTONE_TIME);
                             robot.drivetrain.operateMecanumDrive(STRAFE_TO_SKYSTONE_POWER, 0.0, 0.0, 0.0 /*<- Don't care about heading*/);
@@ -523,6 +524,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Outtaking skystone";
+                        robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.UP);
                         //robot.outtake.autoOuttake(1);
                         if (outtakeSkystoneTimer.isExpired()) {
                             subState++;

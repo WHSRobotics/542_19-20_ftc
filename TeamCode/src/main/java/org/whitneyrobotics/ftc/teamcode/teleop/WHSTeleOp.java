@@ -5,12 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
+import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
+
 @TeleOp(name = "WHS TeleOp")
 public class WHSTeleOp extends OpMode {
-    WHSRobotImpl robot;
+    WHSRobotTele robot;
     @Override
     public void init() {
-        robot = new WHSRobotImpl(hardwareMap);
+        robot = new WHSRobotTele(hardwareMap);
     }
 
     @Override
@@ -30,6 +32,8 @@ public class WHSTeleOp extends OpMode {
         // Outtake
         robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down);
 
+        //Skystone Grabber
+        robot.skystoneGrabber.operate(gamepad2.x);
         //Foundation Puller
         robot.foundationPuller.operate(gamepad1.a);
         telemetry.addData("Outtake State",robot.outtake.getCurrentState());
