@@ -8,7 +8,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 public class SkystoneGrabber {
 
     Servo skystoneGrabber;
-    double[] positions = {0.125 ,0.235, 0.97};
+    double[] positions = {0.1 ,0.235, 0.97};
     private Toggler operateSkystoneGrabberTog;
 
     public enum SkystoneGrabberPosition{
