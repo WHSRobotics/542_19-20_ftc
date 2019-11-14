@@ -269,18 +269,18 @@ public class WHSAuto extends OpMode {
         startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  90);
 
         // 0 = next to wall
-        skystonePositionArray[RED][0] = new Position(-1088, -606);
-        skystonePositionArray[RED][1] = new Position(-885,-606);
-        skystonePositionArray[RED][2] = new Position(-682,-606);
-        skystonePositionArray[RED][3] = new Position(-1088, -606);
-        skystonePositionArray[RED][4] = new Position(-885,-606);
-        skystonePositionArray[RED][5] = new Position(-682,-606);
+        skystonePositionArray[RED][0] = new Position(-1700, -606);
+        skystonePositionArray[RED][1] = new Position(-1500,-606);
+        skystonePositionArray[RED][2] = new Position(-1300,-606);
+        skystonePositionArray[RED][3] = new Position(-1100, -606);
+        skystonePositionArray[RED][4] = new Position(-900,-606);
+        skystonePositionArray[RED][5] = new Position(-700,-606);
 
-        skystonePositionArray[BLUE][0] = new Position(-1088,606);
-        skystonePositionArray[BLUE][1] = new Position(-885,606);
-        skystonePositionArray[BLUE][2] = new Position(-682,606);
+        skystonePositionArray[BLUE][0] = new Position(-1700,1300);
+        skystonePositionArray[BLUE][1] = new Position(-1500,1300);
+        skystonePositionArray[BLUE][2] = new Position(-1300,1300);
         skystonePositionArray[BLUE][3] = new Position(-1073,1300);
-        skystonePositionArray[BLUE][4] = new Position(-870,1300);
+        skystonePositionArray[BLUE][4] = new Position(-880,1300);
         skystonePositionArray[BLUE][5] = new Position(-667,1300);
 
         foundationStartingPositionArray[RED] = new Position(STARTING_COORDINATE_X, -780);
@@ -346,7 +346,7 @@ public class WHSAuto extends OpMode {
                         }
                         break;
                     case 4:
-                        subStateDesc = "Releasing foundation";
+                        subStateDesc = "Releasing foundation and dropping intake";
                         //nrobot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         if (foundationPullerDownToUpTimer.isExpired()) {
                             robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
@@ -589,7 +589,7 @@ public class WHSAuto extends OpMode {
                         break;
                 }
                 break;
-            case GRAB_SECOND_SKYSTONE
+            case GRAB_SECOND_SKYSTONE:
                 switch (subState){
                     case 0:
                         subStateDesc ="initialzing new swerves";
@@ -607,6 +607,7 @@ public class WHSAuto extends OpMode {
                     case 1:
                         subStateDesc = "driving to second skystone";
                         motorPowers = movedFoundationToSecondSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
+                        robot.drivetrain.operate(motorPowers);
                         if (!movedFoundationToSecondSkystoneSwerve.inProgress()){
                             subState++;
                         }
@@ -667,8 +668,9 @@ public class WHSAuto extends OpMode {
                         subState++;
                         break;
                     case 8:
-                        subStateDesc ="Swerving to foundation and letting go"
+                        subStateDesc ="Swerving to foundation and letting go";
                         motorPowers = secondSkystonetoMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
+                        robot.drivetrain.operate(motorPowers);
                         if (!secondSkystonetoMovedFoundationSwerve.inProgress()){
                             robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.REST);
                             subState++;
@@ -679,6 +681,7 @@ public class WHSAuto extends OpMode {
                         advanceState();
                         break;
                 }
+                break;
             case PARK:
                 stateDesc = "Parking";
                 switch (subState) {
