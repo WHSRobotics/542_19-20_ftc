@@ -37,7 +37,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = FOUNDATION;
-    static final int STARTING_ALLIANCE = BLUE;
+    static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = OUTSIDE;
     static final double STARTING_COORDINATE_X = 1200;
     static final boolean PARTNER_MOVED_FOUNDATION = true;
@@ -201,7 +201,7 @@ public class WHSAuto extends OpMode {
 
     private final double GRAB_FOUNDATION_DELAY = 1.0;
     private final double SCAN_SKYSTONE_DURATION = 1.0;
-    private final double STRAFE_SKYSTONE_TIME = 1.1;
+    private final double STRAFE_SKYSTONE_TIME = 1.3;
     private final double GRAB_SKYSTONE_DELAY = 0.8;
     private final double OUTTAKE_SKYSTONE_DELAY = 1.0;
     private final double MOVE_SKYSTONE_GRABBER_DELAY = 1.0;
@@ -269,12 +269,12 @@ public class WHSAuto extends OpMode {
         startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  90);
 
         // 0 = next to wall
-        skystonePositionArray[RED][0] = new Position(-1700, -606);
-        skystonePositionArray[RED][1] = new Position(-1500,-606);
-        skystonePositionArray[RED][2] = new Position(-1300,-606);
-        skystonePositionArray[RED][3] = new Position(-1100, -606);
-        skystonePositionArray[RED][4] = new Position(-900,-606);
-        skystonePositionArray[RED][5] = new Position(-700,-606);
+        skystonePositionArray[RED][0] = new Position(-1700, -1300);
+        skystonePositionArray[RED][1] = new Position(-1500,-1300);
+        skystonePositionArray[RED][2] = new Position(-1300,-1300);
+        skystonePositionArray[RED][3] = new Position(-1200, -1300);
+        skystonePositionArray[RED][4] = new Position(-1000,-1300);
+        skystonePositionArray[RED][5] = new Position(-840,-1300);
 
         skystonePositionArray[BLUE][0] = new Position(-1700,1300);
         skystonePositionArray[BLUE][1] = new Position(-1500,1300);
@@ -379,7 +379,11 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Rotating";
-                        robot.rotateToTarget(0, STARTING_ALLIANCE == BLUE);
+                        if (STARTING_ALLIANCE == BLUE) {
+                            robot.rotateToTarget(0, STARTING_ALLIANCE == BLUE);
+                        }else if (STARTING_ALLIANCE == RED){
+                            robot.rotateToTarget(175, false);
+                        }
                         if (!robot.rotateToTargetInProgress()) {
                             scanSkystoneTimer.set(SCAN_SKYSTONE_DURATION);
                             subState++;
