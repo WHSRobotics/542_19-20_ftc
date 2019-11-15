@@ -12,7 +12,7 @@ public class SwerveConstants {
     public static double velocityConstant = 2.5;
 
     public static class StartToFoundationSwerveConstants {
-        public static double kP = SwerveConstants.kP/3;
+        public static double kP = SwerveConstants.kP/2.54;
         public static double kV = SwerveConstants.kV;
         public static double kA = SwerveConstants.kA;
 
