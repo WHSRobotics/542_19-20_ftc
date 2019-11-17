@@ -16,18 +16,17 @@ import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 @Autonomous(name = "RotateToTargetTest", group = "tests")
 public class RotateToTargetTest extends OpMode {
     WHSRobotImpl robot;
-    FtcDashboard dashboard = FtcDashboard.getInstance();
-    Telemetry dashboardTelemetry = dashboard.getTelemetry();
+//    Telemetry dashboardTelemetry = dashboard.getTelemetry();
     @Override
     public void init() {
-        TelemetryPacket packet = new TelemetryPacket();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+  //      TelemetryPacket packet = new TelemetryPacket();
+    //    telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // dashboard.sendTelemetryPacket(packet);
 
         robot = new WHSRobotImpl(hardwareMap);
         robot.setInitialCoordinate(new Coordinate(0, 0, 0));
-        telemetry.setMsTransmissionInterval(10);
+      //  telemetry.setMsTransmissionInterval(10);
     }
 
     @Override

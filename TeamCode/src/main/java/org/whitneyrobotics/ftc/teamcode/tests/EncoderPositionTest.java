@@ -56,7 +56,7 @@ public class EncoderPositionTest extends OpMode {
 
         extension.setTargetEncoderPosition(targetPosition);
 
-        grabber.cyclePositions(gamepad1.dpad_up, gamepad1.dpad_down);
+        grabber.cyclePositions(gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.dpad_right);
 
         telemetry.addData("Target Position", pendingTargetPosition);
         telemetry.addData("Current Position", targetPosition);

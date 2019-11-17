@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
+import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
@@ -30,9 +31,12 @@ public class WHSTeleOp extends OpMode {
         robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger >0.01);
 
         // Outtake
-        robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down);
+        robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.dpad_right);
 
         //Skystone Grabber
+        if (robot.intake.isIntakeOn()) {
+            robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.UP);
+        }
         robot.skystoneGrabber.operate(gamepad2.x);
         //Foundation Puller
         robot.foundationPuller.operate(gamepad1.a);

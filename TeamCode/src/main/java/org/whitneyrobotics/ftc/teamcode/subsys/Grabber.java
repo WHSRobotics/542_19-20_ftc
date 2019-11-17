@@ -17,9 +17,10 @@ public class Grabber {
     private Servo handServo;
 
     private Toggler cyclePositionsToggler = new Toggler(5);
+    private Toggler capstoneToggler = new Toggler(2);
 
     public enum ElbowPosition {
-        INTAKE, OUTTAKE;
+        INTAKE, OUTTAKE, CAPSTONE_INTAKE
     }
 
     public enum WristPosition {
@@ -27,20 +28,20 @@ public class Grabber {
     }
 
     public enum HandPosition {
-        UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN
+        UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN, CAPSTONE_UP, CAPSTONE_DOWN
     }
 
     public enum GrabberPosition {
-        INTAKE_UP, INTAKE_DOWN, OUTTAKE_UP, OUTTAKE_DOWN, OUTTAKE_RELEASED
+        INTAKE_UP, INTAKE_DOWN, OUTTAKE_UP, OUTTAKE_DOWN, OUTTAKE_RELEASED, CAPSTONE_INTAKE_UP, CAPSTONE_INTAKE_DOWN
     }
 
     //INTAKE, OUTTAKE
-    private final double[] LEFT_ELBOW_POSITION = {0.0794, 0.99};
+    private final double[] LEFT_ELBOW_POSITION = {0.0794, 0.99, 0.1794};
     private final double LEFT_ELBOW_INTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.INTAKE.ordinal()];
     private final double LEFT_ELBOW_OUTTAKE_POSITION = LEFT_ELBOW_POSITION[ElbowPosition.OUTTAKE.ordinal()];
 
     //INTAKE, OUTTAKE
-    private final double[] RIGHT_ELBOW_POSITIONS = {0.96, 0.05};
+    private final double[] RIGHT_ELBOW_POSITIONS = {0.96, 0.05, 0.86};
     private final double RIGHT_ELBOW_INTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.INTAKE.ordinal()];
     private final double RIGHT_ELBOW_OUTTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.OUTTAKE.ordinal()];
 
@@ -50,7 +51,7 @@ public class Grabber {
     private final double WRIST_OUTTAKE_POSITION = WRIST_POSITIONS[WristPosition.DOWN.ordinal()];
 
     //UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN
-    private final double[] HAND_POSITIONS = {.17, .02, .31, .68};//{0.240, 0.07, 0.38, 0.75};
+    private final double[] HAND_POSITIONS = {.17, .02, .31, .68, 0.27, 0.12};//{0.240, 0.07, 0.38, 0.75};
     private final double HAND_UP_POSITION = HAND_POSITIONS[HandPosition.UP.ordinal()];
     private final double HAND_DOWN_POSITION = HAND_POSITIONS[HandPosition.DOWN.ordinal()];
 
@@ -100,21 +101,42 @@ public class Grabber {
             setElbowServoPosition(ElbowPosition.OUTTAKE);
             setWristServoPosition(WristPosition.UP);
             setHandServoPosition(HandPosition.OUTTAKE_DOWN);
+        } else if (grabberPosition == GrabberPosition.CAPSTONE_INTAKE_UP) {
+            setElbowServoPosition(ElbowPosition.CAPSTONE_INTAKE);
+            setWristServoPosition(WristPosition.UP);
+            setHandServoPosition(HandPosition.CAPSTONE_UP);
+        } else if (grabberPosition == GrabberPosition.CAPSTONE_INTAKE_DOWN) {
+            setElbowServoPosition(ElbowPosition.CAPSTONE_INTAKE);
+            setWristServoPosition(WristPosition.DOWN);
+            setHandServoPosition(HandPosition.CAPSTONE_DOWN);
         }
     }
 
-    public void cyclePositions(boolean gamepadInputUp, boolean gamepadInputDown) {
+    public void cyclePositions(boolean gamepadInputUp, boolean gamepadInputDown, boolean gamepadInputCapstone) {
+        capstoneToggler.changeState(gamepadInputCapstone);
         cyclePositionsToggler.changeState(gamepadInputUp, gamepadInputDown);
         if (cyclePositionsToggler.currentState() == 0) {
             // Waiting for Stone
-            setElbowServoPosition(ElbowPosition.INTAKE);
-            setWristServoPosition(WristPosition.UP);
-            setHandServoPosition(HandPosition.UP);
+            if (capstoneToggler.currentState() == 0) {
+                setElbowServoPosition(ElbowPosition.INTAKE);
+                setWristServoPosition(WristPosition.UP);
+                setHandServoPosition(HandPosition.UP);
+            } else {
+                setElbowServoPosition(ElbowPosition.CAPSTONE_INTAKE);
+                setWristServoPosition(WristPosition.UP);
+                setHandServoPosition(HandPosition.CAPSTONE_UP);
+            }
         } else if (cyclePositionsToggler.currentState() == 1) {
             // Grabbing the stone
-            setElbowServoPosition(ElbowPosition.INTAKE);
-            setWristServoPosition(WristPosition.DOWN);
-            setHandServoPosition(HandPosition.DOWN);
+            if (capstoneToggler.currentState() == 0) {
+                setElbowServoPosition(ElbowPosition.INTAKE);
+                setWristServoPosition(WristPosition.DOWN);
+                setHandServoPosition(HandPosition.DOWN);
+            } else {
+                setElbowServoPosition(ElbowPosition.CAPSTONE_INTAKE);
+                setWristServoPosition(WristPosition.DOWN);
+                setHandServoPosition(HandPosition.CAPSTONE_DOWN);
+            }
         } else if (cyclePositionsToggler.currentState() == 2) {
             // Spinning Around
             setElbowServoPosition(ElbowPosition.OUTTAKE);

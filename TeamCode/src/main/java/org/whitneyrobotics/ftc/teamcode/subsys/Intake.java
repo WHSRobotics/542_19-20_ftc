@@ -52,6 +52,10 @@ public class Intake {
         rightIntake.setPower(power);
     }
 
+    public boolean isIntakeOn() {
+        return intakeToggler.currentState() == 1;
+    }
+
     public void setIntakePusherPosition(IntakePusherPosition intakePusherPosition) {
         intakePusher.setPosition(INTAKE_PUSHER_POSITIONS[intakePusherPosition.ordinal()]);
     }

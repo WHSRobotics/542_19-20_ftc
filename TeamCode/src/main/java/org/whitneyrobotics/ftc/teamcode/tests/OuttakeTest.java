@@ -15,7 +15,7 @@ public class OuttakeTest extends OpMode {
 
     @Override
     public void loop() {
-        outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down);
+        outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.dpad_right);
 
         telemetry.addData("Current level", outtake.getCurrentLevel());
         telemetry.addData("Current target level", outtake.getCurrentTargetLevel());
