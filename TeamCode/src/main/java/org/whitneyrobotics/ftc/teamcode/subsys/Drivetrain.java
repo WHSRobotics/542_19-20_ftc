@@ -259,4 +259,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
         return encoderDistances;
     }
+
+    public void resetEncoders(){
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
 }
