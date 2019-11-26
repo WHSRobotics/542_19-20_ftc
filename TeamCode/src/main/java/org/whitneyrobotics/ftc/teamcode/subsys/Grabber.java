@@ -16,7 +16,7 @@ public class Grabber {
     private Servo wristServo;
     private Servo handServo;
 
-    private Toggler cyclePositionsToggler = new Toggler(5);
+    private Toggler cyclePositionsToggler = new Toggler(4);
     private Toggler capstoneToggler = new Toggler(2);
 
     public enum ElbowPosition {
@@ -28,11 +28,11 @@ public class Grabber {
     }
 
     public enum HandPosition {
-        UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN, CAPSTONE_UP, CAPSTONE_DOWN
+        UP, DOWN, OUTTAKE_DOWN, CAPSTONE_UP, CAPSTONE_DOWN
     }
 
     public enum GrabberPosition {
-        INTAKE_UP, INTAKE_DOWN, OUTTAKE_UP, OUTTAKE_DOWN, OUTTAKE_RELEASED, CAPSTONE_INTAKE_UP, CAPSTONE_INTAKE_DOWN
+        INTAKE_UP, INTAKE_DOWN, OUTTAKE_DOWN, OUTTAKE_RELEASED, CAPSTONE_INTAKE_UP, CAPSTONE_INTAKE_DOWN
     }
 
     //INTAKE, OUTTAKE
@@ -46,12 +46,12 @@ public class Grabber {
     private final double RIGHT_ELBOW_OUTTAKE_POSITION = RIGHT_ELBOW_POSITIONS[ElbowPosition.OUTTAKE.ordinal()];
 
     //UP, DOWN
-    private final double[] WRIST_POSITIONS = {.34, 0.635};
+    private final double[] WRIST_POSITIONS = {.34, 0.605};
     private final double WRIST_INTAKE_POSITION = WRIST_POSITIONS[WristPosition.UP.ordinal()];
     private final double WRIST_OUTTAKE_POSITION = WRIST_POSITIONS[WristPosition.DOWN.ordinal()];
 
     //UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN
-    private final double[] HAND_POSITIONS = {.17, .02, .31, .68, 0.27, 0.12};//{0.240, 0.07, 0.38, 0.75};
+    private final double[] HAND_POSITIONS = {.17, .02, .68, 0.27, 0.12};//{0.240, 0.07, 0.38, 0.75};
     private final double HAND_UP_POSITION = HAND_POSITIONS[HandPosition.UP.ordinal()];
     private final double HAND_DOWN_POSITION = HAND_POSITIONS[HandPosition.DOWN.ordinal()];
 
@@ -86,11 +86,6 @@ public class Grabber {
             setElbowServoPosition(ElbowPosition.INTAKE);
             setWristServoPosition(WristPosition.DOWN);
             setHandServoPosition(HandPosition.DOWN);
-        } else if (grabberPosition == GrabberPosition.OUTTAKE_UP) {
-            // Spinning Around
-            setElbowServoPosition(ElbowPosition.OUTTAKE);
-            setWristServoPosition(WristPosition.DOWN);
-            setHandServoPosition(HandPosition.OUTTAKE_UP);
         } else if (grabberPosition == GrabberPosition.OUTTAKE_DOWN) {
             // Make the stone parallel
             setElbowServoPosition(ElbowPosition.OUTTAKE);
@@ -141,13 +136,8 @@ public class Grabber {
             // Spinning Around
             setElbowServoPosition(ElbowPosition.OUTTAKE);
             setWristServoPosition(WristPosition.DOWN);
-            setHandServoPosition(HandPosition.OUTTAKE_UP);
-        } else if (cyclePositionsToggler.currentState() == 3) {
-            // Make the stone parallel
-            setElbowServoPosition(ElbowPosition.OUTTAKE);
-            setWristServoPosition(WristPosition.DOWN);
             setHandServoPosition(HandPosition.OUTTAKE_DOWN);
-        } else if (cyclePositionsToggler.currentState() == 4){
+        } else if (cyclePositionsToggler.currentState() == 3){
             // Let go of the stone
             setElbowServoPosition(ElbowPosition.OUTTAKE);
             setWristServoPosition(WristPosition.UP);

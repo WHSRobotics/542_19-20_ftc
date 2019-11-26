@@ -36,8 +36,9 @@ public class WHSTeleOp extends OpMode {
         //Skystone Grabber
         if (robot.intake.isIntakeOn()) {
             robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.UP);
+        }else {
+            robot.skystoneGrabber.operate(gamepad2.x);
         }
-        robot.skystoneGrabber.operate(gamepad2.x);
         //Foundation Puller
         robot.foundationPuller.operate(gamepad1.a);
         telemetry.addData("Outtake State",robot.outtake.getCurrentState());

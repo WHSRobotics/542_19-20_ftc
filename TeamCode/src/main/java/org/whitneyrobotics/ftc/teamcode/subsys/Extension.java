@@ -11,8 +11,8 @@ public class Extension {
     private DcMotor rightExtension;
 
     // index 0 = intook; index 3 = level 3, clearance & hover
-    private int[] extensionMotorPositions = {0, 542, 1460, 2460, 3360, 5000, 5960};
-    private static final int UPDATE_LEVEL_DEADBAND = 150;
+    private int[] extensionMotorPositions = {0, 820, 1820, 2840, 3780, 4600, 5500, 6520, 7400};
+    private static final int UPDATE_LEVEL_DEADBAND = 75;
     private double EXTENSION_MOTOR_POWER = 1.0;
 
     private int currentLevel = 0;

@@ -10,6 +10,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
+import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 
@@ -18,13 +19,15 @@ public class SwerveToTargetTest extends OpMode {
     WHSRobotImpl robot;
     Coordinate startingCoordinate = new Coordinate(0, 0, -90);
     static Position p1 = new Position(0, 0);
-    static Position p2 = new Position(0, 3000);/*
+    static Position p2 = new Position(0, 1800);/*
     static Position p3 = new Position(1800, 2700);
     static Position p4 = new Position(-1800, 2700);
     static Position p5 = new Position(-1800, 0);*/
 
-    FtcDashboard dashboard = FtcDashboard.getInstance();
+  //  FtcDashboard dashboard = FtcDashboard.getInstance();
+/*
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
+*/
 
     Position[] positions1 = {startingCoordinate.getPos(), p2};
     SwerveToTarget swerve1;
@@ -39,10 +42,10 @@ public class SwerveToTargetTest extends OpMode {
         robot.setInitialCoordinate(startingCoordinate);
         swerve1 = new SwerveToTarget(SwerveConstants.kP, SwerveConstants.kV, SwerveConstants.kA, positions1, 80, 0.99, 3, SwerveConstants.lookaheadDistance);
 
-        TelemetryPacket packet = new TelemetryPacket();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        dashboard.sendTelemetryPacket(packet);
-        telemetry.setMsTransmissionInterval(10);
+     //   TelemetryPacket packet = new TelemetryPacket();
+       // telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+    //    dashboard.sendTelemetryPacket(packet);
+        //telemetry.setMsTransmissionInterval(10);
     }
 
     @Override
