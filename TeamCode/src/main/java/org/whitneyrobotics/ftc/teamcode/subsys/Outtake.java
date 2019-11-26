@@ -31,8 +31,8 @@ public class Outtake {
     boolean autoOuttakeInProgress = false;
     boolean setOuttakeToIntakeTimer = true;
 
-    private double intakeToOuttakeDelay = 1.1;
-    private double outtakeToIntakeDelay = 1.1;
+    private double intakeToOuttakeDelay = 0.45;
+    private double outtakeToIntakeDelay = 0.45;
     private double releaseOuttakeDelay = 1.0;
 
     public Outtake(HardwareMap outtakeMap) {
@@ -117,20 +117,20 @@ public class Outtake {
                 extension.setLevel(extensionLevelTog.currentState());
                 break;
             case 5:
-                if(setOuttakeToIntakeTimer){
-                    teleOuttakeToIntakeTimer.set(outtakeToIntakeDelay);
-                    setOuttakeToIntakeTimer = false;
-                }
-                extension.setLevel(CLEARANCE_LEVEL); //sets the linear slides to the intermediate state where it waits for the stone
+                extension.setLevel(CLEARANCE_LEVEL);
                 if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
                     if (capstoneTog.currentState() == 0) {
                         grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
                     } else {
                         grabber.setPosition(Grabber.GrabberPosition.CAPSTONE_INTAKE_UP);
                     }
-                }
-                if(teleOuttakeToIntakeTimer.isExpired()){
-                    operateOuttakeToggler.setState(0);
+                    if (setOuttakeToIntakeTimer) {
+                        teleOuttakeToIntakeTimer.set(outtakeToIntakeDelay);
+                        setOuttakeToIntakeTimer = false;
+                    }
+                    if (teleOuttakeToIntakeTimer.isExpired()) {
+                        operateOuttakeToggler.setState(0);
+                    }
                 }
                 break;
             default:

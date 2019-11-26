@@ -39,7 +39,7 @@ public class WHSAuto extends OpMode {
     static final int STARTING_POSITION = SKYSTONE;
     static final int STARTING_ALLIANCE = BLUE;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
-    static final double STARTING_COORDINATE_X = -1200;
+    static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
 
     static final int LEFT = 0;
@@ -49,6 +49,7 @@ public class WHSAuto extends OpMode {
     int skystonePosition = CENTER;
 
     Coordinate[] startingCoordinateArray = new Coordinate[2];
+    Position[][] startToSkystoneMidpointArray = new Position[2][3];
     Position[][] skystonePositionArray = new Position[2][6];
     Position[] foundationMovedPositionArray = new Position[2];
     Position[] foundationStartingPositionArray = new Position[2];
@@ -286,23 +287,31 @@ public class WHSAuto extends OpMode {
         startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, 90);
         startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  -90);
 
-        // 0 = next to wall
-        skystonePositionArray[RED][0] = new Position(-2090, -1300);
-        skystonePositionArray[RED][1] = new Position(-1890,-1300);
-        skystonePositionArray[RED][2] = new Position(-1620,- 1000);
-        skystonePositionArray[RED][3] = new Position(-1295, -1000);
-        skystonePositionArray[RED][4] = new Position(-1172,-1000);
-        skystonePositionArray[RED][5] = new Position(-834,-1300);
+        startToSkystoneMidpointArray[RED][0] = new Position(-834,-1300);
+        startToSkystoneMidpointArray[RED][1] = new Position(-1172,-1100);
+        startToSkystoneMidpointArray[RED][2] = new Position(-1295, -1000);
 
-        skystonePositionArray[BLUE][0] = new Position(-1700,600);
-        skystonePositionArray[BLUE][1] = new Position(-1500,600);
-        skystonePositionArray[BLUE][2] = new Position(-1205,600);
-        skystonePositionArray[BLUE][3] = new Position(-993,600);
-        skystonePositionArray[BLUE][4] = new Position(/*Geforce*/-970/*ti*//*780*/,585);
-        skystonePositionArray[BLUE][5] = new Position(-647,1200);
+        startToSkystoneMidpointArray[BLUE][0] = new Position(-647,1200);
+        startToSkystoneMidpointArray[BLUE][1] = new Position(-970,585);
+        startToSkystoneMidpointArray[BLUE][2] = new Position(-900,1100);
+
+        // 0 = next to wall
+        skystonePositionArray[RED][0] = new Position(-834,-1300);
+        skystonePositionArray[RED][1] = new Position(-1172,-1000);
+        skystonePositionArray[RED][2] = new Position(-1295, -1000);
+        skystonePositionArray[RED][3] = new Position(-1620,-1000);
+        skystonePositionArray[RED][4] = new Position(-1890,-1300);
+        skystonePositionArray[RED][5] = new Position(-2090, -1300);
+
+        skystonePositionArray[BLUE][0] = new Position(-647,1200);
+        skystonePositionArray[BLUE][1] = new Position(-970,585);
+        skystonePositionArray[BLUE][2] = new Position(-1150,560);
+        skystonePositionArray[BLUE][3] = new Position(-1205,600);
+        skystonePositionArray[BLUE][4] = new Position(-1500,600);
+        skystonePositionArray[BLUE][5] = new Position(-1700,600);
 
         foundationStartingPositionArray[RED] = new Position(1200, -780);
-        foundationStartingPositionArray[BLUE] = new Position(1250,710);
+        foundationStartingPositionArray[BLUE] = new Position(1250,690);
 
         foundationMovedPositionArray[RED] = new Position(424,-1350);
         foundationMovedPositionArray[BLUE] = new Position(1024, 1108);
@@ -452,7 +461,7 @@ public class WHSAuto extends OpMode {
                         break;*/
                     case 1:
                         //scan
-                        skystonePosition = 4;
+                        skystonePosition = 2;
                         if (STARTING_POSITION == SKYSTONE) {
                             robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
                         }
@@ -462,9 +471,9 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Exit";
-                        Position[] startToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], new Position(-1200, 1250), skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
+                        Position[] startToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
                         Position[] skystoneToMovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
-                        Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], new Position(skystonePositionArray[STARTING_ALLIANCE][skystonePosition].getX(), 1200), skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], new Position(1170, 1200), foundationStartingPositionArray[STARTING_ALLIANCE]};
+                        Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], new Position(1170, 1200), foundationStartingPositionArray[STARTING_ALLIANCE]};
                         startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
                                 SwerveConstants.StartToSkystoneSwerveConstants.kV,
                                 SwerveConstants.StartToSkystoneSwerveConstants.kA,

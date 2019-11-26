@@ -153,14 +153,14 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     {
         /*double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
         return rightTotal * 0.5;*/
-        return frontRight.getCurrentPosition();
+        return (frontRight.getCurrentPosition() + backRight.getCurrentPosition())/2;
     }
 
     public double getLeftEncoderPosition()
     {
         /*double leftTotal = backLeft.getCurrentPosition() +frontLeft.getCurrentPosition();
         return leftTotal * 0.5;*/
-        return backLeft.getCurrentPosition();
+        return (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition())/2;
     }
 
     public double getEncoderPosition() {
