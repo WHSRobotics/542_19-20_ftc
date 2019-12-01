@@ -25,10 +25,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private Toggler orientationSwitch = new Toggler(2);
     private Toggler fieldCentricSwitch = new Toggler(2);
 
-    private static final double TRACK_WIDTH = 470;
+    private static final double TRACK_WIDTH = 450;
 
     //TODO: measure actual wheel base
-    private static final double WHEEL_BASE = 354;
+    private static final double WHEEL_BASE = 450;
     private static final double RADIUS_OF_WHEEL = 50;               //in mm
     private static final double CIRC_OF_WHEEL = RADIUS_OF_WHEEL * 2 * Math.PI;
     private static final double ENCODER_TICKS_PER_REV = 537.6;      //Orbital 20
@@ -222,12 +222,32 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         if (fieldCentricSwitch.currentState() == 1) {
             robotAngle -= heading * Math.PI / 180;
         }
-
+        double a = WHEEL_BASE / 2;
+        double b = TRACK_WIDTH / 2;
         rightX = gamepadInputTurn;
-        vFL = r * Math.cos(robotAngle) + rightX;
-        vFR = r * Math.sin(robotAngle) - rightX;
-        vBL = r * Math.sin(robotAngle) + rightX;
-        vBR = r * Math.cos(robotAngle) - rightX;
+//        vFL = r * Math.cos(robotAngle) + rightX;
+//        vFR = r * Math.sin(robotAngle) - rightX;
+//        vBL = r * Math.sin(robotAngle) + rightX;
+//        vBR = r * Math.cos(robotAngle) - rightX;
+        vFL = -gamepadInputY - gamepadInputX + gamepadInputTurn;
+        vFR = -gamepadInputY + gamepadInputX - gamepadInputTurn;
+        vBL = -gamepadInputY + gamepadInputX + gamepadInputTurn;
+        vBR = -gamepadInputY - gamepadInputX - gamepadInputTurn;
+        frontLeft.setPower(vFL);
+        frontRight.setPower(vFR);
+        backLeft.setPower(vBL);
+        backRight.setPower(vBR);
+    }
+
+    public void operateMecanumDriveScaled(double gamepadInputX, double gamepadInputY, double gamepadInputTurn, double heading){
+        double scaledY = Math.pow(gamepadInputY, 3);
+        double scaledX = Math.pow(gamepadInputX, 3);
+        double scaledTurn = Math.pow(gamepadInputTurn, 3);
+
+        vFL = -scaledY - scaledX + scaledTurn;
+        vFR = -scaledY + scaledX - scaledTurn;
+        vBL = -scaledY + scaledX + scaledTurn;
+        vBR = -scaledY - scaledX - scaledTurn;
         frontLeft.setPower(vFL);
         frontRight.setPower(vFR);
         backLeft.setPower(vBL);

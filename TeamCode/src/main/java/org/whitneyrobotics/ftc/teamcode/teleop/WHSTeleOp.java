@@ -3,6 +3,7 @@ package org.whitneyrobotics.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
@@ -10,7 +11,12 @@ import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
 @TeleOp(name = "WHS TeleOp")
 public class WHSTeleOp extends OpMode {
+
+    static final int RED = 0;
+    static final int BLUE = 1;
+    static final int STARTING_ALLIANCE = WHSAuto.STARTING_ALLIANCE;
     WHSRobotTele robot;
+
     @Override
     public void init() {
         robot = new WHSRobotTele(hardwareMap);
@@ -24,7 +30,7 @@ public class WHSTeleOp extends OpMode {
         if (gamepad1.left_bumper){
             robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x/2.54, gamepad1.left_stick_y/2.54, gamepad1.right_stick_x/2.54, robot.getCoordinate().getHeading());
         }else{
-            robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
+            robot.drivetrain.operateMecanumDriveScaled(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
         }
 
         // Intake

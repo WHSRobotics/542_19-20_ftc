@@ -68,8 +68,8 @@ public class WHSJankAutoV2 extends OpMode {
         Position[] middleToBuildingSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], buildingZonePositionArray[STARTING_ALLIANCE]};
         Position[] buildingToParkSwervePositions = {buildingZonePositionArray[STARTING_ALLIANCE], parkingPositionArray[STARTING_ALLIANCE]};
 
-        middleToBuildingSwerve = new SwerveToTarget(0.01, 0, 0, middleToBuildingSwervePositions, 80, .5, 2.2, 220);
-        buildingToParkingSwerve = new SwerveToTarget(0.01, 0, 0, buildingToParkSwervePositions, 80, .5, 2.2, 220);
+        middleToBuildingSwerve = new SwerveToTarget(0.01, 0, 0, middleToBuildingSwervePositions, 80, .5, 2.2, 220, 1000);
+        buildingToParkingSwerve = new SwerveToTarget(0.01, 0, 0, buildingToParkSwervePositions, 80, .5, 2.2, 220, 1000);
 
     }
 

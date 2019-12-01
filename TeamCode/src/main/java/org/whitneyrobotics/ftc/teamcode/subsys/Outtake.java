@@ -33,7 +33,7 @@ public class Outtake {
 
     private double intakeToOuttakeDelay = 0.45;
     private double outtakeToIntakeDelay = 0.45;
-    private double releaseOuttakeDelay = 1.0;
+    private double releaseOuttakeDelay = 0.15;
 
     public Outtake(HardwareMap outtakeMap) {
         extension = new Extension(outtakeMap);

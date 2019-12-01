@@ -41,7 +41,7 @@ public class SwerveToTargetTest extends OpMode {
         robot = new WHSRobotImpl(hardwareMap);
         robot.drivetrain.resetEncoders();
         robot.setInitialCoordinate(startingCoordinate);
-        swerve1 = new SwerveToTarget(SwerveConstants.kP, SwerveConstants.kV, SwerveConstants.kA, positions1, 10, 0.99, 3, SwerveConstants.lookaheadDistance);
+        swerve1 = new SwerveToTarget(SwerveConstants.kP, SwerveConstants.kV, SwerveConstants.kA, positions1, 10, 0.99, 3, SwerveConstants.lookaheadDistance, 1000);
 
         TelemetryPacket packet = new TelemetryPacket();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

@@ -8,6 +8,7 @@ public class SwerveToTarget {
 
     private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
     private static final double MAXIMUM_VELOCITY = SwerveConstants.MAX_VELOCITY;
+    private double pathMaximumVelocity;
     public int lastClosestPointIndex = 0;
     private int lastIndex = 0;
     private double currentTValue = 0;
@@ -40,9 +41,10 @@ public class SwerveToTarget {
      * @param turnSpeed            Determines the speed of the robot around turns (recommended 1-5)
      * @param lookaheadDistance    How far ahead along the path the robot will be "looking" (in mm)
      */
-    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double turnSpeed, double lookaheadDistance) {
+    public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double turnSpeed, double lookaheadDistance, double pathMaximumVelocity) {
+        this.pathMaximumVelocity = pathMaximumVelocity;
         this.kP = kP;
-        this.kV = 1/MAXIMUM_VELOCITY;
+        this.kV = 1 / MAXIMUM_VELOCITY;
         this.kA = kA;
         this.lookaheadDistance = lookaheadDistance;
         targetVelocityRateLimiter = new RateLimiter(MAXIMUM_ACCELERATION, 0);
@@ -157,7 +159,7 @@ public class SwerveToTarget {
             double distance = Functions.Positions.subtract(smoothedPath[i+1], smoothedPath[i]).getMagnitude();
 
             // finds the smaller value between the velocity constant / the curvature and a new target velocity
-            double targetVelocity = Math.min(Math.min(MAXIMUM_VELOCITY, k / targetCurvatures[i]), Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
+            double targetVelocity = Math.min(Math.min(pathMaximumVelocity, k / targetCurvatures[i]), Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
             targetVelocities[i] = targetVelocity;
         }
         return targetVelocities;

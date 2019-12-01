@@ -12,6 +12,7 @@ public class Extension {
 
     // index 0 = intook; index 3 = level 3, clearance & hover
     private int[] extensionMotorPositions = {0, 820, 1700, 2840, 3780, 4600, 5500, 6520, 7400};
+    private int[] extensionFinalMotorPositions = new int[extensionMotorPositions.length];
     private static final int UPDATE_LEVEL_DEADBAND = 125;
     private double EXTENSION_MOTOR_POWER = 1.0;
 
@@ -28,11 +29,22 @@ public class Extension {
 
         leftExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        for (int i = 0; i < extensionFinalMotorPositions.length; i++) {
+            extensionFinalMotorPositions[i] = extensionMotorPositions[i] - 200;
+        }
     }
 
     public void setLevel(int extensionLevel){
         leftExtension.setTargetPosition(extensionMotorPositions[extensionLevel]);
         rightExtension.setTargetPosition(extensionMotorPositions[extensionLevel]);
+        leftExtension.setPower(EXTENSION_MOTOR_POWER);
+        rightExtension.setPower(EXTENSION_MOTOR_POWER);
+    }
+
+    public void setFinalLevel(int finalExtensionLevel) {
+        leftExtension.setTargetPosition(extensionFinalMotorPositions[finalExtensionLevel]);
+        rightExtension.setTargetPosition(extensionFinalMotorPositions[finalExtensionLevel]);
         leftExtension.setPower(EXTENSION_MOTOR_POWER);
         rightExtension.setPower(EXTENSION_MOTOR_POWER);
     }

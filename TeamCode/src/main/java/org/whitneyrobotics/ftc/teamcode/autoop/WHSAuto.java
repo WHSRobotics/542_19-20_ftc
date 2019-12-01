@@ -37,7 +37,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    static final int STARTING_ALLIANCE = BLUE;
+    public static final int STARTING_ALLIANCE = BLUE;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -55,6 +55,8 @@ public class WHSAuto extends OpMode {
     Position[] foundationStartingPositionArray = new Position[2];
     Position[] slideOutFromFoundationMidpointArray = new Position[2];
     Position[][] skybridgePositionArray = new Position[2][2];
+    Position[] skystoneToFoundationMidpointArray = new Position[2];
+    Position[] pullFoundationMidpointArray = new Position[2];
 
     SwerveToTarget startToFoundationSwerve;
     SwerveToTarget foundationToWallSwerve;
@@ -76,13 +78,13 @@ public class WHSAuto extends OpMode {
      */
     private void instantiateSwerveToTargets() {
         Position[] startToFoundationSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
-        Position[] foundationToWallSwervePositions = {foundationStartingPositionArray[STARTING_ALLIANCE], new Position(1200,1200)};
+        Position[] foundationToWallSwervePositions = {foundationStartingPositionArray[STARTING_ALLIANCE], pullFoundationMidpointArray[STARTING_ALLIANCE]};
         Position[] wallToMidpointPositions = {startingCoordinateArray[STARTING_ALLIANCE], slideOutFromFoundationMidpointArray[STARTING_ALLIANCE]};
         Position[] midpointToSkystonePositions = {skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystonePositionArray[STARTING_ALLIANCE][2]};
         Position[] movedFoundationToParkingSwervePositions = {foundationMovedPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
         Position[] wallToParkingSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
 
-        Position[] startToParkingSwervePositions = {new Position(1200,1200), skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
+        Position[] startToParkingSwervePositions = {pullFoundationMidpointArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
 
         startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
                 SwerveConstants.StartToFoundationSwerveConstants.kV,
@@ -91,7 +93,8 @@ public class WHSAuto extends OpMode {
                 80,
                 .5,
                 SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
-                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance);
+                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance,
+                600);
 
         foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
                 SwerveConstants.FoundationToWallSwerveConstants.kV,
@@ -100,7 +103,8 @@ public class WHSAuto extends OpMode {
                 80,
                 .5,
                 SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance);
+                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance,
+                800);
 
         wallToMidpointSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
                 SwerveConstants.WallToSkystoneSwerveConstants.kV,
@@ -109,7 +113,9 @@ public class WHSAuto extends OpMode {
                 80,
                 .8,
                 SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance);
+                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
+                1000);
+
         midpointToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
                 SwerveConstants.WallToSkystoneSwerveConstants.kV,
                 SwerveConstants.WallToSkystoneSwerveConstants.kA,
@@ -117,7 +123,8 @@ public class WHSAuto extends OpMode {
                 80,
                 .8,
                 SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance);
+                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
+                1000);
 
         movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
@@ -126,7 +133,8 @@ public class WHSAuto extends OpMode {
                 80,
                 .5,
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance);
+                SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
+                1000);
 
         wallToParkSwerve = new SwerveToTarget(SwerveConstants.WallToParkingSwerveConstants.kP,
                 SwerveConstants.WallToParkingSwerveConstants.kV,
@@ -135,7 +143,8 @@ public class WHSAuto extends OpMode {
                 80,
                 .5,
                 SwerveConstants.WallToParkingSwerveConstants.velocityConstant,
-                SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance);
+                SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance,
+                1000);
 
 
         startToParkingSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
@@ -145,7 +154,8 @@ public class WHSAuto extends OpMode {
                 80,
                 .9,
                 SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance);
+                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance ,
+                1000);
     }
 
     /**
@@ -224,6 +234,8 @@ public class WHSAuto extends OpMode {
     private final double OUTTAKE_SKYSTONE_DELAY = 1.0;
     private final double MOVE_SKYSTONE_GRABBER_DELAY = 1.0;
 
+    private boolean autoOutake = false;
+
     double[] motorPowers;
 
     /*Skystone Detection Tensorflow Variables*/
@@ -293,7 +305,7 @@ public class WHSAuto extends OpMode {
 
         startToSkystoneMidpointArray[BLUE][0] = new Position(-647,1200);
         startToSkystoneMidpointArray[BLUE][1] = new Position(-970,585);
-        startToSkystoneMidpointArray[BLUE][2] = new Position(-900,1100);
+        startToSkystoneMidpointArray[BLUE][2] = new Position(-950,1175);
 
         // 0 = next to wall
         skystonePositionArray[RED][0] = new Position(-834,-1300);
@@ -311,7 +323,7 @@ public class WHSAuto extends OpMode {
         skystonePositionArray[BLUE][5] = new Position(-1700,600);
 
         foundationStartingPositionArray[RED] = new Position(1200, -780);
-        foundationStartingPositionArray[BLUE] = new Position(1250,690);
+        foundationStartingPositionArray[BLUE] = new Position(1100,690);
 
         foundationMovedPositionArray[RED] = new Position(424,-1350);
         foundationMovedPositionArray[BLUE] = new Position(1024, 1108);
@@ -325,16 +337,23 @@ public class WHSAuto extends OpMode {
         skybridgePositionArray[BLUE][INSIDE] = new Position(0,1200);
         skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1450);
 
+        skystoneToFoundationMidpointArray[RED] = new Position(1100, -1200);
+        skystoneToFoundationMidpointArray[BLUE] = new Position(1000, 1200);
+
+        pullFoundationMidpointArray[RED] = new Position(1100,-1200);
+        pullFoundationMidpointArray[BLUE] = new Position(1000,900);
+
         instantiateSwerveToTargets();
         robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
     }
 
     @Override
     public void loop() {
-        //if (!isStrafing) {
-            robot.estimateHeading();
-            robot.estimatePosition();
-        //}
+        robot.estimateHeading();
+        robot.estimatePosition();
+        if (autoOutake) {
+            robot.outtake.autoOuttake(1);
+        }
         switch (state) {
             case INIT:
                 stateDesc = "Starting auto";
@@ -473,7 +492,7 @@ public class WHSAuto extends OpMode {
                         subStateDesc = "Exit";
                         Position[] startToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
                         Position[] skystoneToMovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
-                        Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], new Position(1170, 1200), foundationStartingPositionArray[STARTING_ALLIANCE]};
+                        Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystoneToFoundationMidpointArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
                         startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
                                 SwerveConstants.StartToSkystoneSwerveConstants.kV,
                                 SwerveConstants.StartToSkystoneSwerveConstants.kA,
@@ -481,7 +500,8 @@ public class WHSAuto extends OpMode {
                                 80,
                                 .5,
                                 SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
-                                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance);
+                                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
+                                350);
 
                         skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
                                 SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
@@ -490,7 +510,8 @@ public class WHSAuto extends OpMode {
                                 80,
                                 0.8,
                                 SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
-                                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance);
+                                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
+                                1000);
 
                         skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
@@ -499,7 +520,8 @@ public class WHSAuto extends OpMode {
                                 80,
                                 0.8,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance);
+                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance - 110,
+                                600);
 
                         advanceState();
                         break;
@@ -576,8 +598,13 @@ public class WHSAuto extends OpMode {
                         } else {
                             motorPowers = skystoneToMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), STARTING_ALLIANCE == BLUE);
                         }
-                        robot.outtake.grabStone();
                         robot.drivetrain.operate(motorPowers);
+                        if (robot.getCoordinate().getX() > 100) {
+                            autoOutake = true;
+                        }
+                        if (!autoOutake) {
+                            robot.outtake.grabStone();
+                        }
                         if (!skystoneToUnmovedFoundationSwerve.inProgress() && !skystoneToMovedFoundationSwerve.inProgress()) {
                             subState++;
                         }
@@ -593,21 +620,26 @@ public class WHSAuto extends OpMode {
                 switch (subState) {
                     case 0:
                         subStateDesc = "Entry";
-                        outtakeSkystoneTimer.set(OUTTAKE_SKYSTONE_DELAY);
+                        foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
                         subState++;
                         break;
                     case 1:
                         subStateDesc = "Outtaking skystone";
-                        //robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.REST);
-                        robot.outtake.autoOuttake(1);
-//                        if (outtakeSkystoneTimer.isExpired()) {
-//                            subState++;
-//                        }
-                        if (!robot.outtake.autoOuttakeInProgress()) {
+                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
+                        if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
                         }
                         break;
                     case 2:
+                        subStateDesc = "Outtaking skystone and pulling foundation";
+                        motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
+                        robot.drivetrain.operate(motorPowers);
+                        if (!robot.outtake.autoOuttakeInProgress() && !foundationToWallSwerve.inProgress()) {
+                            autoOutake = false;
+                            subState++;
+                        }
+                        break;
+                    case 3:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
@@ -618,8 +650,8 @@ public class WHSAuto extends OpMode {
                 switch (subState) {
                     case 0:
                         subStateDesc = "Entry";
+                        advanceState();
                         subState++;
-                        foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
                         break;
                     case 1:
                         subStateDesc = "Grabbing foundation";
@@ -654,7 +686,8 @@ public class WHSAuto extends OpMode {
                             80,
                             0.8,
                             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-                            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance);
+                            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
+                            600);
                         subState++;
                         break;
                     case 1:
@@ -711,7 +744,8 @@ public class WHSAuto extends OpMode {
                                 80,
                                 0.8,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance);
+                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
+                                1000);
                         subState++;
                         break;
                     case 7:
@@ -779,5 +813,10 @@ public class WHSAuto extends OpMode {
         telemetry.addData("X", robot.getCoordinate().getX());
         telemetry.addData("Y", robot.getCoordinate().getY());
         telemetry.addData("Heading", robot.getCoordinate().getHeading());
+    }
+
+    @Override
+    public void stop() {
+        robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
     }
 }
