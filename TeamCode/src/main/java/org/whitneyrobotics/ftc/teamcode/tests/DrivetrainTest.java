@@ -20,6 +20,13 @@ public class DrivetrainTest extends OpMode {
     String mode = "";
     double[] power = new double[2];
     Toggler powerTog = new Toggler(50);
+    double currentVelocity = 0;
+    double previousMaxVelocity = 0;
+    double previousVelocity = 0;
+    double currentAcceleration = 0;
+    double previousMaxAcceleration = 0;
+    double currentTime = 0;
+    double lastTime = 0;
 
     @Override
     public void init() {
@@ -27,10 +34,26 @@ public class DrivetrainTest extends OpMode {
         imu = new IMU(hardwareMap);
         telemetry.log().add("mode (scaled/normal) switch : gamepad1-x");
         telemetry.log().add("orientation switch : gamepad1-a");
+
     }
 
     @Override
     public void loop() {
+        currentVelocity = drivetrain.getAllWheelVelocities()[0];
+        currentTime = System.nanoTime() / 1E9;
+        if (currentVelocity>previousMaxVelocity){
+            previousMaxVelocity = currentVelocity;
+        }
+        telemetry.addData("Maximum Velocity", previousMaxVelocity);
+
+        currentAcceleration = (currentVelocity - previousVelocity )/(currentTime - lastTime);
+        if (currentAcceleration > previousMaxAcceleration){
+            previousMaxAcceleration = currentAcceleration;
+        }
+        lastTime = currentTime;
+        previousVelocity = currentVelocity;
+        telemetry.addData("Max Acceleration", previousMaxAcceleration);
+        telemetry.addData("kV", 1/previousMaxVelocity);
 
         stateTog.changeState(gamepad1.x);
         if (stateTog.currentState() < 3) {

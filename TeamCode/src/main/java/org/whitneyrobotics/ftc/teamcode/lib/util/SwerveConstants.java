@@ -4,12 +4,13 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class SwerveConstants {
 
-    public static double MAX_ACCELERATION = 2000.0; // mm/s^2
-    public static double kP = 0.0007;
-    public static double kV = 0.000015;
-    public static double kA = 0.000015;
-    public static double lookaheadDistance = 300;
-    public static double velocityConstant = 3.2;
+    public static double MAX_ACCELERATION = 1500.0; // mm/s^2
+    public static double MAX_VELOCITY = 1400.0;
+    public static double kP = 0.0001;
+    public static double kV = 0.0006338;
+    public static double kA = 0.0012;
+    public static double lookaheadDistance = 350;//220;
+    public static double velocityConstant = 2.3;
 
     public static class StartToFoundationSwerveConstants {
         public static double kP = SwerveConstants.kP/2.54;

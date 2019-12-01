@@ -53,7 +53,7 @@ public class WHSJankAuto extends OpMode {
 
         Position[] startToParkSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], parkingWaypointPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE]};
 
-        startToParkSwerve = new SwerveToTarget(.001, 0, 0, startToParkSwervePositions, 80, .9, 2.2, 220);
+        startToParkSwerve = new SwerveToTarget(.001, 0, 0, startToParkSwervePositions, 80, .9, 2.2, 220, 1000);
     }
 
     @Override

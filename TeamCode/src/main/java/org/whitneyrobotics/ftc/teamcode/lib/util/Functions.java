@@ -4,8 +4,6 @@ package org.whitneyrobotics.ftc.teamcode.lib.util;
  * General purpose functions class
  */
 public class Functions {
-    public static double lastKnownOutput = 0;
-    public static double rateLimitedOutput;
 
     public static double calculateDistance(Position current, Position target) {
         double distance;
@@ -52,22 +50,6 @@ public class Functions {
 
         transformedVector = new Position(x, y);
         return transformedVector;
-    }
-
-    /**
-     * limits how fast the input can change
-     *
-     * @param input                   the thing you want to limit
-     * @param maxRate                 the max speed at which it should change
-     * @param time                    the time at which you are calling the method
-     * @param lastCallTime            the time at which you last called this method
-     * @return Returns the new limited rate
-     */
-    public static double rateLimiter(double input, double maxRate, double time, double lastCallTime) {
-        double maxChange = (time - lastCallTime) * maxRate;
-        rateLimitedOutput += constrain(input - lastKnownOutput, -maxChange, maxChange);
-        lastKnownOutput = rateLimitedOutput;
-        return rateLimitedOutput;
     }
 
     public static double constrain(double input, double min, double max) {
