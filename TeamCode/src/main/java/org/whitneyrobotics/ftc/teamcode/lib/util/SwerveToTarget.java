@@ -7,6 +7,7 @@ public class SwerveToTarget {
     private Coordinate currentCoord;
 
     private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
+    private static final double MAXIMUM_VELOCITY = SwerveConstants.MAX_VELOCITY;
     public int lastClosestPointIndex = 0;
     private int lastIndex = 0;
     private double currentTValue = 0;
@@ -18,6 +19,7 @@ public class SwerveToTarget {
     private double[] currentTargetWheelVelocities = {0.0, 0.0};
     private double[] lastTargetWheelVelocities = {0.0, 0.0};
     private double lastTime;
+    private RateLimiter targetVelocityRateLimiter;
     private double kP;
     private double kV;
     private double kA;
@@ -40,9 +42,10 @@ public class SwerveToTarget {
      */
     public SwerveToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double turnSpeed, double lookaheadDistance) {
         this.kP = kP;
-        this.kV = kV;
+        this.kV = 1/MAXIMUM_VELOCITY;
         this.kA = kA;
         this.lookaheadDistance = lookaheadDistance;
+        targetVelocityRateLimiter = new RateLimiter(MAXIMUM_ACCELERATION, 0);
         trackWidth = Drivetrain.getTrackWidth();
         smoothedPath = PathGenerator.generatePath(targetPositions, spacing, weightSmooth);
         targetCurvatures = calculateTargetCurvatures(smoothedPath);
@@ -154,7 +157,7 @@ public class SwerveToTarget {
             double distance = Functions.Positions.subtract(smoothedPath[i+1], smoothedPath[i]).getMagnitude();
 
             // finds the smaller value between the velocity constant / the curvature and a new target velocity
-            double targetVelocity = Math.min(k / targetCurvatures[i], Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
+            double targetVelocity = Math.min(Math.min(MAXIMUM_VELOCITY, k / targetCurvatures[i]), Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
             targetVelocities[i] = targetVelocity;
         }
         return targetVelocities;
@@ -241,8 +244,9 @@ public class SwerveToTarget {
 
     private double[] calculateTargetWheelVelocities(double targetVelocity, double curvature) {
         // calculates the wheel velocity at which the wheels should be
-        double leftVelocity = targetVelocity * (2 + curvature * trackWidth) / 2;
-        double rightVelocity = targetVelocity * (2 - curvature * trackWidth) / 2;
+        double rateLimitedTargetVelocity = targetVelocityRateLimiter.calculateOutput(targetVelocity);
+        double leftVelocity = rateLimitedTargetVelocity * (2 + curvature * trackWidth) / 2;
+        double rightVelocity = rateLimitedTargetVelocity * (2 - curvature * trackWidth) / 2;
 
         return new double[]{leftVelocity, rightVelocity};
     }
