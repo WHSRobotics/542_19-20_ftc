@@ -6,7 +6,9 @@ public class StrafeToTarget {
 
     private Coordinate currentCoord;
 
-    private static final double MAXIMUM_ACCELERATION = 2000.0; // mm/s^2
+    private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
+    private static final double MAXIMUM_VELOCITY = SwerveConstants.MAX_VELOCITY;
+    private double pathMaximumVelocity;
     public int lastClosestPointIndex = 0;
     private int lastIndex = 0;
     private double currentTValue = 0;
@@ -18,6 +20,7 @@ public class StrafeToTarget {
     private double[] currentTargetWheelVelocities = {0.0, 0.0, 0.0, 0.0};
     private double[] lastTargetWheelVelocities = {0.0, 0.0, 0.0, 0.0};
     private double lastTime;
+    private RateLimiter targetVelocityRateLimiter;
     private double kP;
     private double kV;
     private double kA;
@@ -28,16 +31,18 @@ public class StrafeToTarget {
     public Position lookaheadPoint;
     private boolean inProgress;
 
-    public StrafeToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance) {
+    public StrafeToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double pathMaximumVelocity) {
+        this.pathMaximumVelocity = pathMaximumVelocity;
         this.kP = kP;
-        this.kV = kV;
+        this.kV = 1 / MAXIMUM_VELOCITY;
         this.kA = kA;
         this.lookaheadDistance = lookaheadDistance;
+        targetVelocityRateLimiter = new RateLimiter(MAXIMUM_ACCELERATION, 0);
         trackWidth = Drivetrain.getTrackWidth();
         wheelBase = Drivetrain.getWheelBase();
-        smoothedPath = PathGenerator.generatePath(targetPositions, spacing, weightSmooth);
-        targetCurvatures = calculateTargetCurvatures(smoothedPath);
-        targetVelocities = calculateTargetVelocities(smoothedPath, velocityConstant);
+        PathGenerator pathGenerator = new PathGenerator();
+        smoothedPath = pathGenerator.generatePosPath(targetPositions, spacing, weightSmooth);
+        targetVelocities = pathGenerator.calculateTargetVelocities(velocityConstant, pathMaximumVelocity, MAXIMUM_ACCELERATION);
         lastTime = System.nanoTime() / 1E9;
     }
 
@@ -90,62 +95,6 @@ public class StrafeToTarget {
             inProgress = false;
         }
         return new double[] {0.0, 0.0, 0.0, 0.0};
-    }
-
-    private double[] calculateTargetCurvatures(Position[] smoothedPath) {
-        // creates an array to store all the curvatures
-        double[] curvatureArray = new double[smoothedPath.length];
-
-        // sets the curvatures at the first and last point to 0
-        curvatureArray[0] = 0;
-        curvatureArray[smoothedPath.length - 1] = 0;
-
-        // loops through the array to calculate the curvatures
-        for (int i = 1; i < (smoothedPath.length - 2); i++) {
-
-            // calculates the coordinates of the points directly ahead and behind point i
-            double x1 = smoothedPath[i].getX() + 0.0001;
-            double y1 = smoothedPath[i].getY();
-
-            double x2 = smoothedPath[i - 1].getX();
-            double y2 = smoothedPath[i - 1].getY();
-
-            double x3 = smoothedPath[i + 1].getX();
-            double y3 = smoothedPath[i + 1].getY();
-
-            // calculates the curvatures and returns the array
-            double k1 = 0.5 * (Math.pow(x1, 2) + Math.pow(y1, 2) - Math.pow(x2, 2) - Math.pow(y2, 2)) / (x1 - x2);
-            double k2 = (y1 - y2) / (x1 - x2);
-
-            double b = 0.5 * (Math.pow(x2, 2) - 2 * x2 * k1 + Math.pow(y2, 2) - Math.pow(x3, 2) + 2 * x3 * k1 - Math.pow(y3, 2)) / (x3 * k2 - y3 + y2 - x2 * k2);
-            double a = k1 - k2 * b;
-
-            double r = Math.sqrt(Math.pow(x1 - a, 2) + (Math.pow(y1 - b, 2)));
-            double curvature = 0.0;
-            if (!Double.isNaN(r)) {
-                curvature = 1 / r;
-            }
-            curvatureArray[i] = curvature;
-        }
-        return curvatureArray;
-    }
-
-    private double[] calculateTargetVelocities(Position[] smoothedPath, double k) {
-        // creates array that holds all of the target velocities
-        double[] targetVelocities = new double[smoothedPath.length];
-
-        // calculates the target velocities for each point
-        targetVelocities[smoothedPath.length - 1] = 0; // last point target velocity is zero
-        for (int i = smoothedPath.length - 2; i >= 0; i--) { // works backwards as we need to know last point's velocity to calculate current point's
-
-            // distance from this current point to next point
-            double distance = Functions.distanceFormula(smoothedPath[i].getX(), smoothedPath[i].getY(), smoothedPath[i + 1].getX(), smoothedPath[i + 1].getY());
-
-            // finds the smaller value between the velocity constant / the curvature and a new target velocity
-            double targetVelocity = Math.min(k / targetCurvatures[i], Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
-            targetVelocities[i] = targetVelocity;
-        }
-        return targetVelocities;
     }
 
     private double calculateT(Position lineStart, Position lineEnd, double lookaheadDistance) {

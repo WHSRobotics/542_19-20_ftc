@@ -23,6 +23,7 @@ public class Coordinate extends Position {
         return this;
     }
 
+    @Override
     public double getHeading() {
         return orientation;
     }

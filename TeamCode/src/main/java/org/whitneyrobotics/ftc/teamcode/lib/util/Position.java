@@ -40,6 +40,10 @@ public class Position {
         return yPos;
     }
 
+    public double getHeading() {
+        return Double.NaN;
+    }
+
     public void setX(double x) {
         xPos = x;
     }
