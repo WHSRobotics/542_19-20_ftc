@@ -60,6 +60,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     public static final double Y_WHEEL_TO_ROBOT_CENTER = 100.0;
 
     private double[] encoderValues = {0.0, 0.0};
+    private double[] deadWheelEncoderValues = {0.0, 0.0, 0.0};
     private double[] allEncoderValues = {0.0, 0.0, 0.0, 0.0};
 
     private double vFL;
@@ -89,6 +90,8 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         orientationSwitch.setState(1);
     }
@@ -212,6 +215,20 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         encoderValues[1] = currentRight; //Change in the Y Odometry wheel
 
         return encoderDistances;
+    }
+
+    public double[] getDeadWheelEncoderDeltas() {
+        double currentLeft = getLeftDeadWheelPosition();
+        double currentRight = getRightDeadWheelPosition();
+        double currentHoriz = getHorizDeadWheelPosition();
+
+        double[] encoderDeltas = {currentLeft - deadWheelEncoderValues[0], currentRight - encoderValues[1], currentHoriz - encoderValues[2]};
+
+        deadWheelEncoderValues[0] = currentLeft;
+        deadWheelEncoderValues[1] = currentRight;
+        deadWheelEncoderValues[2] = currentHoriz;
+
+        return encoderDeltas;
     }
 
     public double[] getWheelVelocities() {

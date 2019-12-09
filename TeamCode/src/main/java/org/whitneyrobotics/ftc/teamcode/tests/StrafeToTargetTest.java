@@ -23,7 +23,7 @@ public class StrafeToTargetTest extends OpMode {
     @Override
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
-        strafe1 = new StrafeToTarget(kP, kV,kA,positions, 80, .7, 0.01, velocityConstant, lookaheadDistance );
+        strafe1 = new StrafeToTarget(kP, kV,kA,positions, 80, .7, 0.01, velocityConstant, lookaheadDistance, 800);
     }
 
     @Override

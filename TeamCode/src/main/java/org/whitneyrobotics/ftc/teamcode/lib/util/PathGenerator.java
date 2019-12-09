@@ -170,12 +170,14 @@ public class PathGenerator {
         return targetVelocities;
     }
 
-    public double[] calculateTargetAngularVelocities() {
+    /*public double[] calculateTargetAngularVelocities() {
         double[] targetAngularVelocities = new double[smoothedPath.length];
 
         for (int i = anchorHeadings.length - 1; i > 0; i--) {
             targetAngularVelocities[anchorHeadings[i][0]] = 0;
-            
+            for (int j = anchorHeadings[i][0] - 1; j > anchorHeadings[i-1][0]; j--) {
+
+            }
         }
-    }
+    }*/
 }
