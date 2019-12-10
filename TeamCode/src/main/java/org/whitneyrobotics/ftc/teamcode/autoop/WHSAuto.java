@@ -388,8 +388,8 @@ public class WHSAuto extends OpMode {
         skybridgePositionArray[RED][INSIDE] = new Position(0, -910);
         skybridgePositionArray[RED][OUTSIDE] = new Position(0, -900);
 
-        skybridgePositionArray[BLUE][INSIDE] = new Position(0, 960);
-        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0, 930);
+        skybridgePositionArray[BLUE][INSIDE] = new Position(0,1000);
+        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1450);
 
         parkingMidpointArray[RED] = new Position(855,-650);
         parkingMidpointArray[BLUE] = new Position(855, 945);
@@ -606,7 +606,7 @@ public class WHSAuto extends OpMode {
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
                                 skystoneToUnmovedFoundationSwervePositions,
-                                80,
+                                20,
                                 0.8,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant - 0.3,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance - 80,

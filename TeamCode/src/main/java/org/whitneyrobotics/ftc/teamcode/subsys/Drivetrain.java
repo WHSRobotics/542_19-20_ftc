@@ -31,7 +31,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     public static final double B_DEAD_WHEEL_TO_ROBOT_CENTER = 103.0;
     private static final double RADIUS_OF_WHEEL = 50;               //in mm
     private static final double CIRC_OF_WHEEL = RADIUS_OF_WHEEL * 2 * Math.PI;
-    private static final double ENCODER_TICKS_PER_REV = 537.6;      //Orbital 20
+    private static final double ENCODER_TICKS_PER_REV = 1440; // <-- omnis  537.6;      //Orbital 20
     private static final double GEAR_RATIO = 1.0;
     private static final double ENCODER_TICKS_PER_MM = ENCODER_TICKS_PER_REV / (CIRC_OF_WHEEL * GEAR_RATIO);
 
@@ -222,7 +222,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         double currentRight = getRightDeadWheelPosition();
         double currentHoriz = getHorizDeadWheelPosition();
 
-        double[] encoderDeltas = {currentLeft - deadWheelEncoderValues[0], currentRight - encoderValues[1], currentHoriz - encoderValues[2]};
+        double[] encoderDeltas = {currentLeft - deadWheelEncoderValues[0], currentRight - deadWheelEncoderValues[1], currentHoriz - deadWheelEncoderValues[2]};
 
         deadWheelEncoderValues[0] = currentLeft;
         deadWheelEncoderValues[1] = currentRight;

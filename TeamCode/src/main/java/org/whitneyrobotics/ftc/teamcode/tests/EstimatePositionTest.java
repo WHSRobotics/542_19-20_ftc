@@ -33,8 +33,6 @@ public class EstimatePositionTest extends OpMode {
         robot.deadWheelEstimatePosition();
         robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
 
-        telemetry.addData("x", robot.getCoordinate().getX());
-        telemetry.addData("y", robot.getCoordinate().getY());
         telemetry.addData("IMU", robot.imu.getHeading());
         telemetry.addData("X", robot.getCoordinate().getX());
         telemetry.addData("Y", robot.getCoordinate().getY());
