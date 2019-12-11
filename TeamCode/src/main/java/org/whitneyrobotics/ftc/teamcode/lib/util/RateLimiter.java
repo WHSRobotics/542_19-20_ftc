@@ -26,7 +26,7 @@ public class RateLimiter {
         }
         double time = System.nanoTime() / 1E9;
         double maxChange = (time - lastKnownTime) * maxRate;
-        rateLimitedOutput += Functions.constrain(input - lastKnownOutput, -2*maxChange, maxChange);
+        rateLimitedOutput += Functions.constrain(input - lastKnownOutput, -maxChange, maxChange);
         lastKnownOutput = rateLimitedOutput;
         lastKnownTime = time;
         return rateLimitedOutput;

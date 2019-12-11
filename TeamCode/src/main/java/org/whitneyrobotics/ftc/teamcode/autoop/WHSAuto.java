@@ -323,10 +323,10 @@ public class WHSAuto extends OpMode {
         skystonePositionArray[BLUE][5] = new Position(-1700,600);
 
         foundationStartingPositionArray[RED] = new Position(1200, -780);
-        foundationStartingPositionArray[BLUE] = new Position(1100,690);
+        foundationStartingPositionArray[BLUE] = new Position(1120,690);
 
         foundationMovedPositionArray[RED] = new Position(424,-1350);
-        foundationMovedPositionArray[BLUE] = new Position(1024, 1108);
+        foundationMovedPositionArray[BLUE] = new Position(1100, 1108);
 
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1400);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
@@ -334,13 +334,13 @@ public class WHSAuto extends OpMode {
         skybridgePositionArray[RED][INSIDE] = new Position(0,-1000);
         skybridgePositionArray[RED][OUTSIDE] = new Position(0,-1450);
 
-        skybridgePositionArray[BLUE][INSIDE] = new Position(0,1200);
+        skybridgePositionArray[BLUE][INSIDE] = new Position(0,1050);
         skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1450);
 
         skystoneToFoundationMidpointArray[RED] = new Position(1100, -1200);
         skystoneToFoundationMidpointArray[BLUE] = new Position(1000, 1200);
 
-        pullFoundationMidpointArray[RED] = new Position(1100,-1200);
+        pullFoundationMidpointArray[RED] = new Position(1200,-1200);
         pullFoundationMidpointArray[BLUE] = new Position(1000,900);
 
         instantiateSwerveToTargets();
@@ -778,6 +778,13 @@ public class WHSAuto extends OpMode {
                         subState++;
                         break;
                     case 1:
+                        subStateDesc ="Rotating";
+                        robot.rotateToTarget(0,true);
+                        if (!robot.rotateToTargetInProgress()){
+                            subState++;
+                        }
+                        break;
+                    case 2:
                         subStateDesc = "Parking";
 //                        if (stateEnabled[SECONDARY_MOVE_FOUNDATION]) {
 //                            motorPowers = wallToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
@@ -794,7 +801,7 @@ public class WHSAuto extends OpMode {
                             subState++;
                         }
                         break;
-                    case 2:
+                    case 3:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
