@@ -83,6 +83,14 @@ public class SwerveConstants {
         public static double lookaheadDistance = SwerveConstants.lookaheadDistance;
         public static double velocityConstant = SwerveConstants.velocityConstant;
     }
+    public static class secondSkystoneToMovedFoundationSwerveConstants{
+        public static double kP = SwerveConstants.kP;
+        public static double kV = SwerveConstants.kV;
+        public static double kA = SwerveConstants.kA;
+
+        public static double lookaheadDistance = SwerveConstants.lookaheadDistance;
+        public static double velocityConstant = SwerveConstants.velocityConstant;
+    }
 
 
 

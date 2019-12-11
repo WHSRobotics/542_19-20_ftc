@@ -234,8 +234,6 @@ public class WHSAuto extends OpMode {
     private final double OUTTAKE_SKYSTONE_DELAY = 1.0;
     private final double MOVE_SKYSTONE_GRABBER_DELAY = 1.0;
 
-    private boolean autoOutake = false;
-
     double[] motorPowers;
 
     /*Skystone Detection Tensorflow Variables*/
@@ -351,9 +349,6 @@ public class WHSAuto extends OpMode {
     public void loop() {
         robot.estimateHeading();
         robot.estimatePosition();
-        if (autoOutake) {
-            robot.outtake.autoOuttake(1);
-        }
         switch (state) {
             case INIT:
                 stateDesc = "Starting auto";
@@ -600,9 +595,9 @@ public class WHSAuto extends OpMode {
                         }
                         robot.drivetrain.operate(motorPowers);
                         if (robot.getCoordinate().getX() > 100) {
-                            autoOutake = true;
-                        }
-                        if (!autoOutake) {
+                            robot.outtake.autoOuttake(1);
+                            }
+                        else {
                             robot.outtake.grabStone();
                         }
                         if (!skystoneToUnmovedFoundationSwerve.inProgress() && !skystoneToMovedFoundationSwerve.inProgress()) {
@@ -635,7 +630,6 @@ public class WHSAuto extends OpMode {
                         motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         robot.drivetrain.operate(motorPowers);
                         if (!robot.outtake.autoOuttakeInProgress() && !foundationToWallSwerve.inProgress()) {
-                            autoOutake = false;
                             subState++;
                         }
                         break;
@@ -678,7 +672,7 @@ public class WHSAuto extends OpMode {
                 switch (subState){
                     case 0:
                         subStateDesc ="Initializing new swerves";
-                        Position[] movedFoundationToSecondSkystonePosition = {foundationMovedPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystonePositionArray[STARTING_ALLIANCE][2]};
+                        Position[] movedFoundationToSecondSkystonePosition = {foundationMovedPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition+3], skystonePositionArray[STARTING_ALLIANCE][2]};
                         movedFoundationToSecondSkystoneSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
                             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
                             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
@@ -688,83 +682,52 @@ public class WHSAuto extends OpMode {
                             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
                             SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
                             600);
+                        Position[] secondSkystoneToMovedFoundationPosition = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition+3], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION],foundationMovedPositionArray[STARTING_ALLIANCE]};
+                        secondSkystonetoMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kP,
+                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kV,
+                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kA,
+                                secondSkystoneToMovedFoundationPosition,
+                                80,
+                                0.8,
+                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.velocityConstant,
+                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
+                                600);
                         subState++;
                         break;
                     case 1:
-                        subStateDesc = "Driving to second skystone";
+                        subStateDesc = "Driving to second skystone and Intaking Stone";
                         motorPowers = movedFoundationToSecondSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), (STARTING_ALLIANCE == RED));
                         robot.drivetrain.operate(motorPowers);
+                        if (robot.getCoordinate().getX() < -100){
+                            robot.outtake.hover();
+                        }
+                        if (robot.getCoordinate().getX() < startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition+3].getX()){
+                            robot.intake.setMotorPowers(Intake.INTAKE_POWER);
+                        }
                         if (!movedFoundationToSecondSkystoneSwerve.inProgress()){
                             subState++;
                         }
                         break;
-                    case 2: subStateDesc ="Rotating";
-                        robot.rotateToTarget(0, STARTING_ALLIANCE == BLUE);
-                        if (!robot.rotateToTargetInProgress()){
-                            deadmanStrafeToSkystoneTimer.set(STRAFE_SECOND_SKYSTONE_TIME);
-                            isStrafing = true;
+                    case 2: subStateDesc ="Driving Back To Foundation";
+                        motorPowers= secondSkystonetoMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(),robot.drivetrain.getWheelVelocities(),true);
+                        robot.drivetrain.operate(motorPowers);
+                        if (robot.getCoordinate().getX() < 100){
+                            robot.outtake.autoOuttake(2);
+                        }else{
+                            robot.outtake.grabStone();
+                        }
+                        if (!secondSkystonetoMovedFoundationSwerve.inProgress()){
                             subState++;
                         }
                         break;
                     case 3:
-                        subStateDesc = "Moving to skystone";
-                        robot.drivetrain.operateMecanumDrive(-STRAFE_TO_SKYSTONE_POWER, 0.0, 0.0, 0.0 /*<- Don't care about heading*/);
-                        if (deadmanStrafeToSkystoneTimer.isExpired()) {
-                            robot.drivetrain.operate(0.0, 0.0);
-                            grabSkystoneTimer.set(GRAB_SKYSTONE_DELAY);
+                        subStateDesc = "Outtaking Stone";
+                        robot.outtake.autoOuttake(2);
+                        if (!robot.outtake.autoOuttakeInProgress()){
                             subState++;
                         }
-
                         break;
                     case 4:
-                        subStateDesc = "Grabbing Skystone";
-                        robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.DOWN);
-                        if(grabSkystoneTimer.isExpired()){
-                            deadmanStrafeFromSkystoneTimer.set(STRAFE_SECOND_SKYSTONE_TIME);
-                            subState++;
-                        }
-                        break;
-                    case 5:
-                        subStateDesc = "Driving away from Skystone";
-                        robot.drivetrain.operateMecanumDrive(STRAFE_TO_SKYSTONE_POWER, 0.0, 0.0, 0.0 /*<- Don't care about heading*/);
-                        if(deadmanStrafeFromSkystoneTimer.isExpired()){
-                            //robot.setInitialCoordinate(new Coordinate(skystonePositionArray[STARTING_ALLIANCE][2], 180));
-                            isStrafing = false;
-                            robot.drivetrain.operate(0.0, 0.0);
-                            subState++;
-                        }
-                        break;
-                    case 6:
-                        subStateDesc ="Initializing Swerve to Foundation";
-                        Position[] secondSkystoneToMovedFoundationPositions = {skystonePositionArray[STARTING_ALLIANCE][2], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
-                        secondSkystonetoMovedFoundationSwerve =  new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
-                                secondSkystoneToMovedFoundationPositions,
-                                80,
-                                0.8,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
-                                1000);
-                        subState++;
-                        break;
-                    case 7:
-                        subStateDesc ="Swerving to foundation";
-                        motorPowers = secondSkystonetoMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), STARTING_ALLIANCE == BLUE);
-                        robot.drivetrain.operate(motorPowers);
-                        if (!secondSkystonetoMovedFoundationSwerve.inProgress()){
-                            outtakeSkystoneTimer.set(OUTTAKE_SKYSTONE_DELAY);
-                            subState++;
-                        }
-                        break;
-                    case 8:
-                        subStateDesc = "Letting go of stone";
-                        robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.REST);
-                        if (outtakeSkystoneTimer.isExpired()) {
-                            subState++;
-                        }
-                        break;
-                    case 9:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
