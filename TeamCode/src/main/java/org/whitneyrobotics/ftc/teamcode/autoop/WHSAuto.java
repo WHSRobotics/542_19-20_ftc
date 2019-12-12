@@ -15,7 +15,6 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
-import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 import java.util.List;
@@ -49,7 +48,7 @@ public class WHSAuto extends OpMode {
     int skystonePosition = CENTER;
 
     Coordinate[] startingCoordinateArray = new Coordinate[2];
-    Position[][] startToSkystoneMidpointArray = new Position[2][3];
+    Position[][] skystoneMidpointArray = new Position[2][3];
     Position[][] skystonePositionArray = new Position[2][6];
     Position[] foundationMovedPositionArray = new Position[2];
     Position[] foundationStartingPositionArray = new Position[2];
@@ -73,6 +72,7 @@ public class WHSAuto extends OpMode {
     SwerveToTarget startToParkingSwerve;
 
     boolean isStrafing = false;
+
     /**
      * werve to target instantiations
      */
@@ -154,7 +154,7 @@ public class WHSAuto extends OpMode {
                 80,
                 .9,
                 SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance ,
+                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance,
                 1000);
     }
 
@@ -264,7 +264,8 @@ public class WHSAuto extends OpMode {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
-    private void detectSkystonePosition(){
+
+    private void detectSkystonePosition() {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
@@ -279,7 +280,7 @@ public class WHSAuto extends OpMode {
                             recognition.getLeft(), recognition.getTop());
                     telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                             recognition.getRight(), recognition.getBottom());
-                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT ){
+                    if (recognition.getLabel() == LABEL_SECOND_ELEMENT) {
 
                     }
                 }
@@ -288,6 +289,7 @@ public class WHSAuto extends OpMode {
             }
         }
     }
+
     @Override
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
@@ -295,51 +297,57 @@ public class WHSAuto extends OpMode {
         defineStateEnabledStatus();
 
         startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, 90);
-        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  -90);
+        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571, -90);
 
-        startToSkystoneMidpointArray[RED][0] = new Position(-834,-1300);
-        startToSkystoneMidpointArray[RED][1] = new Position(-1172,-1100);
-        startToSkystoneMidpointArray[RED][2] = new Position(-1295, -1000);
+        skystoneMidpointArray[RED][0] = new Position(-834, -1300);
+        skystoneMidpointArray[RED][1] = new Position(-1172, -1100);
+        skystoneMidpointArray[RED][2] = new Position(-1295, -1000);
+        skystoneMidpointArray[RED][3] = new Position(-1620, -1000);
+        skystoneMidpointArray[RED][4] = new Position(-1890, -1300);
+        skystoneMidpointArray[RED][5] = new Position(-2090, -1300);
 
-        startToSkystoneMidpointArray[BLUE][0] = new Position(-647,1200);
-        startToSkystoneMidpointArray[BLUE][1] = new Position(-970,585);
-        startToSkystoneMidpointArray[BLUE][2] = new Position(-950,1175);
+        skystoneMidpointArray[BLUE][0] = new Position(-647, 1200);
+        skystoneMidpointArray[BLUE][1] = new Position(-970, 585);
+        skystoneMidpointArray[BLUE][2] = new Position(-950, 1175);
+        skystoneMidpointArray[BLUE][3] = new Position(-1205, 600);
+        skystoneMidpointArray[BLUE][4] = new Position(-1500, 600);
+        skystoneMidpointArray[BLUE][5] = new Position(-1700, 600);
 
         // 0 = next to wall
-        skystonePositionArray[RED][0] = new Position(-834,-1300);
-        skystonePositionArray[RED][1] = new Position(-1172,-1000);
+        skystonePositionArray[RED][0] = new Position(-834, -1300);
+        skystonePositionArray[RED][1] = new Position(-1172, -1000);
         skystonePositionArray[RED][2] = new Position(-1295, -1000);
-        skystonePositionArray[RED][3] = new Position(-1620,-1000);
-        skystonePositionArray[RED][4] = new Position(-1890,-1300);
+        skystonePositionArray[RED][3] = new Position(-1620, -1000);
+        skystonePositionArray[RED][4] = new Position(-1890, -1300);
         skystonePositionArray[RED][5] = new Position(-2090, -1300);
 
-        skystonePositionArray[BLUE][0] = new Position(-647,1200);
-        skystonePositionArray[BLUE][1] = new Position(-970,585);
-        skystonePositionArray[BLUE][2] = new Position(-1150,560);
-        skystonePositionArray[BLUE][3] = new Position(-1205,600);
-        skystonePositionArray[BLUE][4] = new Position(-1500,600);
-        skystonePositionArray[BLUE][5] = new Position(-1700,600);
+        skystonePositionArray[BLUE][0] = new Position(-647, 1200);
+        skystonePositionArray[BLUE][1] = new Position(-970, 585);
+        skystonePositionArray[BLUE][2] = new Position(-1150, 560);
+        skystonePositionArray[BLUE][3] = new Position(-1205, 600);
+        skystonePositionArray[BLUE][4] = new Position(-1500, 600);
+        skystonePositionArray[BLUE][5] = new Position(-1700, 600);
 
         foundationStartingPositionArray[RED] = new Position(1200, -780);
-        foundationStartingPositionArray[BLUE] = new Position(1120,690);
+        foundationStartingPositionArray[BLUE] = new Position(1120, 690);
 
-        foundationMovedPositionArray[RED] = new Position(424,-1350);
-        foundationMovedPositionArray[BLUE] = new Position(1100, 1108);
+        foundationMovedPositionArray[RED] = new Position(424, -1350);
+        foundationMovedPositionArray[BLUE] = new Position(1100, 1050);
 
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1400);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
 
-        skybridgePositionArray[RED][INSIDE] = new Position(0,-1000);
-        skybridgePositionArray[RED][OUTSIDE] = new Position(0,-1450);
+        skybridgePositionArray[RED][INSIDE] = new Position(0, -1000);
+        skybridgePositionArray[RED][OUTSIDE] = new Position(0, -1450);
 
-        skybridgePositionArray[BLUE][INSIDE] = new Position(0,1050);
-        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0,1450);
+        skybridgePositionArray[BLUE][INSIDE] = new Position(0, 1050);
+        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0, 1450);
 
         skystoneToFoundationMidpointArray[RED] = new Position(1100, -1200);
         skystoneToFoundationMidpointArray[BLUE] = new Position(1000, 1200);
 
-        pullFoundationMidpointArray[RED] = new Position(1200,-1200);
-        pullFoundationMidpointArray[BLUE] = new Position(1000,900);
+        pullFoundationMidpointArray[RED] = new Position(1200, -1200);
+        pullFoundationMidpointArray[BLUE] = new Position(1000, 900);
 
         instantiateSwerveToTargets();
         robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
@@ -479,15 +487,15 @@ public class WHSAuto extends OpMode {
                         if (STARTING_POSITION == SKYSTONE) {
                             robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
                         }
-                        if (dropIntakeTimer.isExpired()){
+                        if (dropIntakeTimer.isExpired()) {
                             subState++;
                         }
                         break;
                     case 2:
                         subStateDesc = "Exit";
-                        Position[] startToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
+                        Position[] startToSkystoneSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], skystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skystonePositionArray[STARTING_ALLIANCE][skystonePosition]};
                         Position[] skystoneToMovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
-                        Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystoneToFoundationMidpointArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
+                        Position[] skystoneToUnmovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skystoneMidpointArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystoneToFoundationMidpointArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
                         startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
                                 SwerveConstants.StartToSkystoneSwerveConstants.kV,
                                 SwerveConstants.StartToSkystoneSwerveConstants.kA,
@@ -596,8 +604,7 @@ public class WHSAuto extends OpMode {
                         robot.drivetrain.operate(motorPowers);
                         if (robot.getCoordinate().getX() > 100) {
                             robot.outtake.autoOuttake(1);
-                            }
-                        else {
+                        } else {
                             robot.outtake.grabStone();
                         }
                         if (!skystoneToUnmovedFoundationSwerve.inProgress() && !skystoneToMovedFoundationSwerve.inProgress()) {
@@ -606,6 +613,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Exit";
+                        robot.outtake.autoOuttake(1);
                         advanceState();
                         break;
                 }
@@ -615,11 +623,13 @@ public class WHSAuto extends OpMode {
                 switch (subState) {
                     case 0:
                         subStateDesc = "Entry";
+                        robot.outtake.autoOuttake(1);
                         foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
                         subState++;
                         break;
                     case 1:
-                        subStateDesc = "Outtaking skystone";
+                        subStateDesc = "Moving foundation pullers";
+                        robot.outtake.autoOuttake(1);
                         robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
                         if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
@@ -627,13 +637,25 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Outtaking skystone and pulling foundation";
+                        robot.outtake.autoOuttake(1);
                         motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         robot.drivetrain.operate(motorPowers);
-                        if (!robot.outtake.autoOuttakeInProgress() && !foundationToWallSwerve.inProgress()) {
+                        if (!foundationToWallSwerve.inProgress()) {
                             subState++;
                         }
                         break;
                     case 3:
+                        subStateDesc = "rotating";
+                        robot.rotateToTarget(0, true);
+                        robot.outtake.autoOuttake(1);
+                        if (180 - Math.abs(robot.getCoordinate().getHeading()) < 20) {
+                            robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
+                        }
+                        if (!robot.outtake.autoOuttakeInProgress() && !robot.rotateToTargetInProgress()) {
+                            subState++;
+                        }
+                        break;
+                    case 4:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
@@ -669,20 +691,20 @@ public class WHSAuto extends OpMode {
                 }
                 break;
             case GRAB_SECOND_SKYSTONE:
-                switch (subState){
+                switch (subState) {
                     case 0:
-                        subStateDesc ="Initializing new swerves";
-                        Position[] movedFoundationToSecondSkystonePosition = {foundationMovedPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition+3], skystonePositionArray[STARTING_ALLIANCE][2]};
+                        subStateDesc = "Initializing new swerves";
+                        Position[] movedFoundationToSecondSkystonePosition = {pullFoundationMidpointArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystoneMidpointArray[STARTING_ALLIANCE][skystonePosition + 3], skystonePositionArray[STARTING_ALLIANCE][skystonePosition + 3]};
                         movedFoundationToSecondSkystoneSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
-                            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
-                            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
-                            movedFoundationToSecondSkystonePosition,
-                            80,
-                            0.8,
-                            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-                            SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
-                            600);
-                        Position[] secondSkystoneToMovedFoundationPosition = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition+3], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION],foundationMovedPositionArray[STARTING_ALLIANCE]};
+                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
+                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
+                                movedFoundationToSecondSkystonePosition,
+                                80,
+                                0.8,
+                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
+                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
+                                600);
+                        Position[] secondSkystoneToMovedFoundationPosition = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition + 3], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
                         secondSkystonetoMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kP,
                                 SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kV,
                                 SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kA,
@@ -696,34 +718,35 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Driving to second skystone and Intaking Stone";
-                        motorPowers = movedFoundationToSecondSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), (STARTING_ALLIANCE == RED));
+                        motorPowers = movedFoundationToSecondSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         robot.drivetrain.operate(motorPowers);
-                        if (robot.getCoordinate().getX() < -100){
+                        if (robot.getCoordinate().getX() < -100) {
                             robot.outtake.hover();
                         }
-                        if (robot.getCoordinate().getX() < startToSkystoneMidpointArray[STARTING_ALLIANCE][skystonePosition+3].getX()){
+                        if (robot.getCoordinate().getX() < skystoneMidpointArray[STARTING_ALLIANCE][skystonePosition + 3].getX()) {
                             robot.intake.setMotorPowers(Intake.INTAKE_POWER);
                         }
-                        if (!movedFoundationToSecondSkystoneSwerve.inProgress()){
+                        if (!movedFoundationToSecondSkystoneSwerve.inProgress()) {
                             subState++;
                         }
                         break;
-                    case 2: subStateDesc ="Driving Back To Foundation";
-                        motorPowers= secondSkystonetoMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(),robot.drivetrain.getWheelVelocities(),true);
+                    case 2:
+                        subStateDesc = "Driving Back To Foundation";
+                        motorPowers = secondSkystonetoMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
                         robot.drivetrain.operate(motorPowers);
-                        if (robot.getCoordinate().getX() < 100){
+                        if (robot.getCoordinate().getX() > 100) {
                             robot.outtake.autoOuttake(2);
-                        }else{
+                        } else {
                             robot.outtake.grabStone();
                         }
-                        if (!secondSkystonetoMovedFoundationSwerve.inProgress()){
+                        if (!secondSkystonetoMovedFoundationSwerve.inProgress()) {
                             subState++;
                         }
                         break;
                     case 3:
                         subStateDesc = "Outtaking Stone";
                         robot.outtake.autoOuttake(2);
-                        if (!robot.outtake.autoOuttakeInProgress()){
+                        if (!robot.outtake.autoOuttakeInProgress()) {
                             subState++;
                         }
                         break;
@@ -741,11 +764,11 @@ public class WHSAuto extends OpMode {
                         subState++;
                         break;
                     case 1:
-                        subStateDesc ="Rotating";
-                        robot.rotateToTarget(0,true);
-                        if (!robot.rotateToTargetInProgress()){
+                        /*subStateDesc = "Rotating";
+                        robot.rotateToTarget(0, true);
+                        if (!robot.rotateToTargetInProgress()) {*/
                             subState++;
-                        }
+//                        }
                         break;
                     case 2:
                         subStateDesc = "Parking";
@@ -754,13 +777,14 @@ public class WHSAuto extends OpMode {
 //                        } else {
 //                            motorPowers = movedFoundationToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(),STARTING_ALLIANCE == RED);
 //                        }
-                        if (180 - Math.abs(robot.getCoordinate().getHeading()) < 30) {
+                        /*if (180 - Math.abs(robot.getCoordinate().getHeading()) < 30) {
                             robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         }
-                        motorPowers = startToParkingSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
+                        motorPowers = startToParkingSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);*/
+                        motorPowers = movedFoundationToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         robot.drivetrain.operate(motorPowers);
-                        if (!startToParkingSwerve.inProgress()){
-                    //if (!wallToParkSwerve.inProgress() && !movedFoundationToParkSwerve.inProgress()) {
+                        //if (!startToParkingSwerve.inProgress()) {
+                        if (!movedFoundationToParkSwerve.inProgress()) {
                             subState++;
                         }
                         break;
