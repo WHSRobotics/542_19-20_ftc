@@ -33,7 +33,7 @@ public class DogeCVTest extends OpMode {
         this.detector = new ImprovedSkystoneDetector(Alliance.RED);
         this.detector.useDefaults();
         webcam.setPipeline(detector);
-        webcam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
     }
 
     @Override

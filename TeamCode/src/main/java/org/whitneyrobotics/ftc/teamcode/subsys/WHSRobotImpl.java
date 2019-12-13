@@ -2,7 +2,9 @@ package org.whitneyrobotics.ftc.teamcode.subsys;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.openftc.easyopencv.OpenCvCamera;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.robot.WHSRobot;
+import org.whitneyrobotics.ftc.teamcode.lib.util.Alliance;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.lib.util.PIDController;
@@ -21,7 +23,9 @@ public class WHSRobotImpl implements WHSRobot {
     public FoundationPuller foundationPuller;
     public Outtake outtake;
     public SkystoneGrabber skystoneGrabber;
-    public Vuforia vuforia;
+  //  public Vuforia vuforia;
+    public ImprovedSkystoneDetector skystoneDetector;
+    public OpenCvCamera webcam;
 
     Coordinate currentCoord;
     private double targetHeading; //field frame
@@ -86,7 +90,7 @@ public class WHSRobotImpl implements WHSRobot {
         foundationPuller = new FoundationPuller(hardwareMap);
         outtake = new Outtake(hardwareMap);
         skystoneGrabber = new SkystoneGrabber(hardwareMap);
-        vuforia = new Vuforia(hardwareMap);
+        //vuforia = new Vuforia(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }

@@ -217,8 +217,8 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     @Override
     public void operateMecanumDrive(double gamepadInputX, double gamepadInputY, double gamepadInputTurn, double heading){
-        r = Math.hypot(gamepadInputX, -gamepadInputY);
-        robotAngle = (Math.atan2(-gamepadInputY, gamepadInputX) - Math.PI / 4);
+        r = Math.hypot(-gamepadInputX, -gamepadInputY);
+        robotAngle = (Math.atan2(-gamepadInputY, -gamepadInputX) - Math.PI / 4);
         if (fieldCentricSwitch.currentState() == 1) {
             robotAngle -= heading * Math.PI / 180;
         }
@@ -229,10 +229,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 //        vFR = r * Math.sin(robotAngle) - rightX;
 //        vBL = r * Math.sin(robotAngle) + rightX;
 //        vBR = r * Math.cos(robotAngle) - rightX;
-        vFL = -gamepadInputY - gamepadInputX + gamepadInputTurn;
-        vFR = -gamepadInputY + gamepadInputX - gamepadInputTurn;
-        vBL = -gamepadInputY + gamepadInputX + gamepadInputTurn;
-        vBR = -gamepadInputY - gamepadInputX - gamepadInputTurn;
+        vFL = -gamepadInputY + gamepadInputX + gamepadInputTurn;
+        vFR = -gamepadInputY - gamepadInputX - gamepadInputTurn;
+        vBL = -gamepadInputY - gamepadInputX + gamepadInputTurn;
+        vBR = -gamepadInputY + gamepadInputX - gamepadInputTurn;
         frontLeft.setPower(vFL);
         frontRight.setPower(vFR);
         backLeft.setPower(vBL);
@@ -244,10 +244,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         double scaledX = Math.pow(gamepadInputX, 3);
         double scaledTurn = Math.pow(gamepadInputTurn, 3);
 
-        vFL = -scaledY - scaledX + scaledTurn;
-        vFR = -scaledY + scaledX - scaledTurn;
-        vBL = -scaledY + scaledX + scaledTurn;
-        vBR = -scaledY - scaledX - scaledTurn;
+        vFL = -scaledY + scaledX + scaledTurn;
+        vFR = -scaledY - scaledX - scaledTurn;
+        vBL = -scaledY - scaledX + scaledTurn;
+        vBR = -scaledY + scaledX - scaledTurn;
         frontLeft.setPower(vFL);
         frontRight.setPower(vFR);
         backLeft.setPower(vBL);
