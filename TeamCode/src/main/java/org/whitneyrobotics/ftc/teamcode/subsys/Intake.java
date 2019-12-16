@@ -1,16 +1,17 @@
 package org.whitneyrobotics.ftc.teamcode.subsys;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 
 public class Intake {
 
-    private DcMotor leftIntake;
-    private DcMotor rightIntake;
+    private DcMotorEx leftIntake;
+    private DcMotorEx rightIntake;
     private Servo intakePusher;
 
     public enum IntakePusherPosition {
@@ -18,17 +19,23 @@ public class Intake {
     }
 
     // DOWN, UP
-    private final double[] INTAKE_PUSHER_POSITIONS = {0.05, 0.4};
+    private final double[] INTAKE_PUSHER_POSITIONS = {0.125, 0.52};
     private final double INTAKE_PUSHER_DOWN = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.DOWN.ordinal()];
     private final double INTAKE_PUSHER_UP = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.UP.ordinal()];
 
-    public static final double AUTO_INTAKE_POWER = 0.67;
+    public static final double AUTO_INTAKE_POWER = 0.70;
     public static final double INTAKE_POWER = 0.70;
+    public static final double INTAKE_VELOCITY_THRESHOLD = 30;
+    public static final double INTAKE_VELOCITY = 2000;
+    public static final double INTAKE_JAM_FIX_DURATION = 0.02;
+    private SimpleTimer fixJamTimer = new SimpleTimer();
+    public boolean intakeJammed = false;
+
     private Toggler intakeToggler = new Toggler(2);
 
     public Intake(HardwareMap intakeMap) {
-        leftIntake = intakeMap.dcMotor.get("leftIntake");
-        rightIntake = intakeMap.dcMotor.get("rightIntake");
+        leftIntake = intakeMap.get(DcMotorEx.class, "leftIntake");
+        rightIntake = intakeMap.get(DcMotorEx.class,"rightIntake");
         intakePusher = intakeMap.servo.get("intakePusher");
 
         leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -53,11 +60,38 @@ public class Intake {
         rightIntake.setPower(power);
     }
 
+    public void autoIntakeWithJamDetection(double intakePower) {
+        if (getAvgIntakeWheelVelocities() < INTAKE_VELOCITY_THRESHOLD) {
+            if (!intakeJammed) {
+                intakeJammed = true;
+                fixJamTimer.set(INTAKE_JAM_FIX_DURATION);
+            }
+        }
+        if (intakeJammed) {
+            if (!fixJamTimer.isExpired()) {
+                setMotorPowers(-intakePower);
+            } else {
+                intakeJammed = false;
+            }
+        } else {
+            setMotorPowers(intakePower);
+        }
+    }
+
     public boolean isIntakeOn() {
         return intakeToggler.currentState() == 1;
     }
 
     public void setIntakePusherPosition(IntakePusherPosition intakePusherPosition) {
         intakePusher.setPosition(INTAKE_PUSHER_POSITIONS[intakePusherPosition.ordinal()]);
+    }
+
+    public double getAvgIntakeWheelVelocities(){
+        return Math.abs((leftIntake.getVelocity() + rightIntake.getVelocity()) / 2);
+    }
+
+    public void setVelocity(double velocity){
+        leftIntake.setVelocity(velocity);
+        rightIntake.setVelocity(velocity);
     }
 }

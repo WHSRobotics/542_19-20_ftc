@@ -117,8 +117,14 @@ public class Outtake {
                 extension.setLevel(extensionLevelTog.currentState());
                 break;
             case 5:
-                extension.setLevel(CLEARANCE_LEVEL);
-                if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
+                int case5ExtensionLevel;
+                if (extensionLevelTog.currentState() > 3 && extensionLevelTog.currentState() < extensionLevelTog.howManyStates() - 2) {
+                    case5ExtensionLevel = extensionLevelTog.currentState() + 2;
+                } else {
+                    case5ExtensionLevel = CLEARANCE_LEVEL;
+                }
+                extension.setLevel(case5ExtensionLevel);
+                if (extension.getCurrentLevel() >= case5ExtensionLevel) {
                     if (capstoneTog.currentState() == 0) {
                         grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
                     } else {
