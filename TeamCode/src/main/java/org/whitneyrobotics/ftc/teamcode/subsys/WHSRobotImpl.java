@@ -2,6 +2,7 @@ package org.whitneyrobotics.ftc.teamcode.subsys;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.robot.WHSRobot;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Alliance;
@@ -63,6 +64,7 @@ public class WHSRobotImpl implements WHSRobot {
     private boolean rotateToTargetInProgress = false;
 
     private double[] encoderDeltas;
+    private double[] encoderValues;
     private double robotX;
     private double robotY;
     private double distance;
@@ -237,7 +239,6 @@ public class WHSRobotImpl implements WHSRobot {
     public void estimateHeading() {
         double currentHeading;
         currentHeading = Functions.normalizeAngle(imu.getHeading() + imu.getImuBias()); //-180 to 180 deg
-
         currentCoord.setHeading(currentHeading); //updates global variable
     }
 
@@ -247,6 +248,7 @@ public class WHSRobotImpl implements WHSRobot {
         robotX = initCoord.getX();
         robotY = initCoord.getY();
         imu.setImuBias(currentCoord.getHeading());
+        lastKnownHeading = currentCoord.getHeading();
     }
 
     @Override
@@ -258,5 +260,21 @@ public class WHSRobotImpl implements WHSRobot {
     @Override
     public Coordinate getCoordinate() {
         return currentCoord;
+    }
+
+    public void estimateCoordinate(){
+        double[] currentEncoderValues = drivetrain.getEncoderPosition();
+        encoderDeltas[0] = currentEncoderValues[0] - encoderValues[0];
+        encoderDeltas[1] = currentEncoderValues[1] - encoderValues[1];
+        double currentHeading = Functions.normalizeAngle((currentEncoderValues[1] - currentEncoderValues[0])/Drivetrain.getTrackWidth() + imu.getImuBias()); //-180 to 180 deg
+        currentCoord.setHeading(currentHeading); //updates global variable
+
+        double deltaS = drivetrain.encToMM((encoderDeltas[0] + encoderDeltas[1])/2);
+        robotX += deltaS * Functions.cosd(lastKnownHeading + (currentCoord.getHeading() - lastKnownHeading)/2);
+        robotY += deltaS * Functions.sind(lastKnownHeading + (currentCoord.getHeading() - lastKnownHeading)/2);
+
+        currentCoord.setX(robotX);
+        currentCoord.setY(robotY);
+        lastKnownHeading = currentCoord.getHeading();
     }
 }

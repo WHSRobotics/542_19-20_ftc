@@ -357,7 +357,7 @@ public class WHSAuto extends OpMode {
 
         skystoneToFoundationPositionArray[RED][0] = new Position(-870, -1030);
         skystoneToFoundationPositionArray[RED][1] = new Position(-710, -1030);
-        skystoneToFoundationPositionArray[RED][2] = new Position(-937.5s, -1030);
+        skystoneToFoundationPositionArray[RED][2] = new Position(-937.5, -1030);
         skystoneToFoundationPositionArray[RED][3] = new Position(-1620, -1000);
         skystoneToFoundationPositionArray[RED][4] = new Position(-1890, -1300);
         skystoneToFoundationPositionArray[RED][5] = new Position(-2090, -1300);

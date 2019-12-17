@@ -151,21 +151,20 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     public double getRightEncoderPosition()
     {
-        /*double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
-        return rightTotal * 0.5;*/
-        return backRight.getCurrentPosition();
+        double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
+        return rightTotal * 0.5;
+        //return backRight.getCurrentPosition();
     }
 
     public double getLeftEncoderPosition()
     {
-        /*double leftTotal = backLeft.getCurrentPosition() +frontLeft.getCurrentPosition();
-        return leftTotal * 0.5;*/
-        return frontLeft.getCurrentPosition();
+        double leftTotal = backLeft.getCurrentPosition() +frontLeft.getCurrentPosition();
+        return leftTotal * 0.5;
+        //return frontLeft.getCurrentPosition();
     }
 
-    public double getEncoderPosition() {
-        double position = frontRight.getCurrentPosition() + frontLeft.getCurrentPosition() + backRight.getCurrentPosition() + backLeft.getCurrentPosition();
-        return position * 0.25;
+    public double[] getEncoderPosition() {
+        return new double[] {getLeftEncoderPosition(), getRightEncoderPosition()};
     }
 
     public double[] getEncoderDelta() {
@@ -285,4 +284,16 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void setTargetPosition(int targetPosition, double power){
+        frontLeft.setTargetPosition(targetPosition);
+        frontRight.setTargetPosition(targetPosition);
+        backLeft.setTargetPosition(targetPosition);
+        backRight.setTargetPosition(targetPosition);
+
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
+
+    }
 }
