@@ -63,8 +63,8 @@ public class WHSRobotImpl implements WHSRobot {
     private boolean driveToTargetInProgress = false;
     private boolean rotateToTargetInProgress = false;
 
-    private double[] encoderDeltas;
-    private double[] encoderValues;
+    private double[] encoderDeltas = {0.0, 0.0};
+    private double[] encoderValues = {0.0, 0.0};
     private double robotX;
     private double robotY;
     private double distance;
@@ -266,15 +266,18 @@ public class WHSRobotImpl implements WHSRobot {
         double[] currentEncoderValues = drivetrain.getEncoderPosition();
         encoderDeltas[0] = currentEncoderValues[0] - encoderValues[0];
         encoderDeltas[1] = currentEncoderValues[1] - encoderValues[1];
-        double currentHeading = Functions.normalizeAngle((currentEncoderValues[1] - currentEncoderValues[0])/Drivetrain.getTrackWidth() + imu.getImuBias()); //-180 to 180 deg
+        double currentHeading = Functions.normalizeAngle(Math.toDegrees(drivetrain.encToMM((currentEncoderValues[1] - currentEncoderValues[0])/2/Drivetrain.getTrackWidth())) + imu.getImuBias()); //-180 to 180 deg
         currentCoord.setHeading(currentHeading); //updates global variable
 
         double deltaS = drivetrain.encToMM((encoderDeltas[0] + encoderDeltas[1])/2);
-        robotX += deltaS * Functions.cosd(lastKnownHeading + (currentCoord.getHeading() - lastKnownHeading)/2);
-        robotY += deltaS * Functions.sind(lastKnownHeading + (currentCoord.getHeading() - lastKnownHeading)/2);
+        double deltaHeading = Math.toDegrees(drivetrain.encToMM((encoderDeltas[1] - encoderDeltas[0])/Drivetrain.getTrackWidth()));
+        robotX += deltaS * Functions.cosd(lastKnownHeading + deltaHeading/2);
+        robotY += deltaS * Functions.sind(lastKnownHeading + deltaHeading/2);
 
         currentCoord.setX(robotX);
         currentCoord.setY(robotY);
+        encoderValues[0] = currentEncoderValues[0];
+        encoderValues[1] = currentEncoderValues[1];
         lastKnownHeading = currentCoord.getHeading();
     }
 }

@@ -25,7 +25,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private Toggler orientationSwitch = new Toggler(2);
     private Toggler fieldCentricSwitch = new Toggler(2);
 
-    private static final double TRACK_WIDTH = 450;
+    private static final double TRACK_WIDTH = 338;
 
     //TODO: measure actual wheel base
     private static final double WHEEL_BASE = 450;
