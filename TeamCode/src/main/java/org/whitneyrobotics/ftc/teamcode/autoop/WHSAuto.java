@@ -343,7 +343,7 @@ public class WHSAuto extends OpMode {
         // 0 = fathest from wall
         skystonePositionArray[RED][0] = new Position(-650, -550);
         skystonePositionArray[RED][1] = new Position(-935, -560);
-        skystonePositionArray[RED][2] = new Position(-1155, -560);
+        skystonePositionArray[RED][2] = new Position(-1128, -560);
         skystonePositionArray[RED][3] = new Position(-1620, -1000);
         skystonePositionArray[RED][4] = new Position(-1890, -1300);
         skystonePositionArray[RED][5] = new Position(-2090, -1300);
@@ -532,7 +532,7 @@ public class WHSAuto extends OpMode {
                                 .2,
                                 SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
                                 SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
-                                370);
+                                300);
 
                         skystoneToMidpointJerkSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
                                 SwerveConstants.StartToSkystoneSwerveConstants.kV,
@@ -602,6 +602,7 @@ public class WHSAuto extends OpMode {
                     case 2:
                         subStateDesc = "Waiting";
                         if (intakeSystoneTimer.isExpired()){
+                            jerkSkystoneTimer.set(JERK_DELAY);
                             subState++;
                         }
                         break;
@@ -622,7 +623,7 @@ public class WHSAuto extends OpMode {
                             subState++;
                         }
                         break;*/
-                    case 3:
+                   /* case 3:
                         subStateDesc = "Jerking backwards again";
                         motorPowers = skystoneToMidpointJerkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
                         robot.drivetrain.operate(motorPowers);
@@ -630,14 +631,14 @@ public class WHSAuto extends OpMode {
                             jerkSkystoneTimer.set(JERK_DELAY);
                             subState++;
                         }
-                        break;
-                    case 4:
+                        break;*/
+                    case 3:
                         subStateDesc = "waiting";
                         if (jerkSkystoneTimer.isExpired()){
                             subState++;
                         }
                         break;
-                    case 5:
+                    case 4:
                         subStateDesc = "Rotating like a neddy";
                         robot.outtake.grabStone();
                         robot.rotateToTarget(180, false);
@@ -645,7 +646,7 @@ public class WHSAuto extends OpMode {
                             subState++;
                         }
                         break;
-                    case 6:
+                    case 5:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
