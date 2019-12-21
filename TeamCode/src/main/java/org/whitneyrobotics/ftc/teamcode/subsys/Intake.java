@@ -26,7 +26,7 @@ public class Intake {
     public static final double AUTO_INTAKE_POWER = 0.60;
     public static final double INTAKE_POWER = 0.60;
     public static final double INTAKE_VELOCITY_THRESHOLD = 30;
-    public static final double INTAKE_VELOCITY = 1880;
+    public static final double INTAKE_VELOCITY = 1800;
     public static final double INTAKE_JAM_FIX_DURATION = 0.02;
     private SimpleTimer fixJamTimer = new SimpleTimer();
     public boolean intakeJammed = false;

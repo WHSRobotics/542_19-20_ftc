@@ -326,7 +326,7 @@ public class WHSAuto extends OpMode {
         startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, 90);
         startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571, -90);
 
-        skystoneMidpointArray[RED][0] = new Position(-870, -1175);
+        skystoneMidpointArray[RED][0] = new Position(-880, -1175);
         skystoneMidpointArray[RED][1] = new Position(-710, -1175);
         skystoneMidpointArray[RED][2] = new Position(-950, -1175);
         skystoneMidpointArray[RED][3] = new Position(-1205, -1175);
@@ -341,7 +341,7 @@ public class WHSAuto extends OpMode {
         skystoneMidpointArray[BLUE][5] = new Position(-1700, 600);
 
         // 0 = fathest from wall
-        skystonePositionArray[RED][0] = new Position(-650, -550);
+        skystonePositionArray[RED][0] = new Position(-570, -590);
         skystonePositionArray[RED][1] = new Position(-935, -560);
         skystonePositionArray[RED][2] = new Position(-1128, -560);
         skystonePositionArray[RED][3] = new Position(-1620, -1000);
@@ -513,6 +513,7 @@ public class WHSAuto extends OpMode {
                         subStateDesc = "dropping";
                         robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
                         if (dropIntakeTimer.isExpired()){
+                            robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
                             subState++;
                         }
                         break;
@@ -623,22 +624,21 @@ public class WHSAuto extends OpMode {
                             subState++;
                         }
                         break;*/
-                   /* case 3:
+                    case 3:
                         subStateDesc = "Jerking backwards again";
                         motorPowers = skystoneToMidpointJerkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
                         robot.drivetrain.operate(motorPowers);
                         if (!skystoneToMidpointJerkSwerve.inProgress()) {
-                            jerkSkystoneTimer.set(JERK_DELAY);
                             subState++;
                         }
-                        break;*/
-                    case 3:
+                        break;
+                    case 4:
                         subStateDesc = "waiting";
                         if (jerkSkystoneTimer.isExpired()){
                             subState++;
                         }
                         break;
-                    case 4:
+                    case 5:
                         subStateDesc = "Rotating like a neddy";
                         robot.outtake.grabStone();
                         robot.rotateToTarget(180, false);
@@ -646,7 +646,7 @@ public class WHSAuto extends OpMode {
                             subState++;
                         }
                         break;
-                    case 5:
+                    case 6:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
