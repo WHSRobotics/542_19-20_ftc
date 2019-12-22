@@ -51,7 +51,7 @@ public class Grabber {
     private final double WRIST_OUTTAKE_POSITION = WRIST_POSITIONS[WristPosition.DOWN.ordinal()];
 
     //UP, DOWN, OUTTAKE_UP, OUTTAKE_DOWN
-    private final double[] HAND_POSITIONS = {.17, .02, .68, 0.27, 0.12};//{0.240, 0.07, 0.38, 0.75};
+    private final double[] HAND_POSITIONS = {.30, .02, .68, 0.27, 0.12};//{0.240, 0.07, 0.38, 0.75};
     private final double HAND_UP_POSITION = HAND_POSITIONS[HandPosition.UP.ordinal()];
     private final double HAND_DOWN_POSITION = HAND_POSITIONS[HandPosition.DOWN.ordinal()];
 

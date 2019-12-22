@@ -9,7 +9,7 @@ public class Outtake {
 
     Extension extension;
     Grabber grabber;
-
+    
     private static final int HOVER_LEVEL = 3;
     private static final int CLEARANCE_LEVEL = 4;
 
