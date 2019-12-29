@@ -13,7 +13,7 @@ public class Extension {
     // index 0 = intook; index 3 = level 3, clearance & hover
     private int[] extensionMotorPositions = {0, 820, 1700, 2840, 3780, 4600, 5500, 6520, 7400};
     private int[] extensionFinalMotorPositions = new int[extensionMotorPositions.length];
-    private static final int UPDATE_LEVEL_DEADBAND = 125;
+    private static final int UPDATE_LEVEL_DEADBAND = 175;
     private double EXTENSION_MOTOR_POWER = 1.0;
 
     private int currentLevel = 0;

@@ -21,16 +21,21 @@ public class IntakeTest extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.right_bumper) {
-            robot.intake.autoIntakeWithJamDetection(Intake.AUTO_INTAKE_POWER);
-        } else {
-            robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger > 0.01);
+        if (!robot.intake.stoneSensed()) {
+            if (gamepad1.right_bumper) {
+                robot.intake.autoIntakeWithJamDetection(Intake.AUTO_INTAKE_POWER);
+            } else {
+                robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger > 0.01);
+            }
+            robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
+
+            intakePusherTog.changeState(gamepad1.b);
+            robot.intake.setIntakePusherPosition(intakePusherTog.currentState() == 0 ? Intake.IntakePusherPosition.DOWN : Intake.IntakePusherPosition.UP);
+
+            telemetry.addData("Avg Intake Velocity", robot.intake.getAvgIntakeWheelVelocities());
+        }else{
+            robot.drivetrain.operate(0,0);
+            robot.intake.setVelocity(0);
         }
-        robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
-
-        intakePusherTog.changeState(gamepad1.b);
-        robot.intake.setIntakePusherPosition(intakePusherTog.currentState() == 0 ? Intake.IntakePusherPosition.DOWN : Intake.IntakePusherPosition.UP);
-
-        telemetry.addData("Avg Intake Velocity", robot.intake.getAvgIntakeWheelVelocities());
     }
 }

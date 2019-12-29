@@ -1,10 +1,12 @@
 package org.whitneyrobotics.ftc.teamcode.subsys;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 
@@ -13,6 +15,7 @@ public class Intake {
     private DcMotorEx leftIntake;
     private DcMotorEx rightIntake;
     private Servo intakePusher;
+    private Rev2mDistanceSensor stoneSensor;
 
     public enum IntakePusherPosition {
         DOWN, UP
@@ -28,6 +31,7 @@ public class Intake {
     public static final double INTAKE_VELOCITY_THRESHOLD = 30;
     public static final double INTAKE_VELOCITY = 1800;
     public static final double INTAKE_JAM_FIX_DURATION = 0.02;
+    public static final double STONE_SENSOR_DEADBAND = 140;
     private SimpleTimer fixJamTimer = new SimpleTimer();
     public boolean intakeJammed = false;
 
@@ -37,6 +41,7 @@ public class Intake {
         leftIntake = intakeMap.get(DcMotorEx.class, "leftIntake");
         rightIntake = intakeMap.get(DcMotorEx.class,"rightIntake");
         intakePusher = intakeMap.servo.get("intakePusher");
+        stoneSensor = intakeMap.get(Rev2mDistanceSensor.class ,"stoneSensor");
 
         leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -93,5 +98,9 @@ public class Intake {
     public void setVelocity(double velocity){
         leftIntake.setVelocity(velocity);
         rightIntake.setVelocity(velocity);
+    }
+
+    public boolean stoneSensed(){
+        return stoneSensor.getDistance(DistanceUnit.MM) < STONE_SENSOR_DEADBAND;
     }
 }

@@ -58,7 +58,7 @@ public class SwerveConstants {
     }
 
     public static class SkystoneToUnmovedFoundationSwerveConstants {
-        public static double kP = SwerveConstants.kP/2.0;
+        public static double kP = SwerveConstants.kP;
         public static double kV = SwerveConstants.kV;
         public static double kA = SwerveConstants.kA;
 
@@ -71,7 +71,7 @@ public class SwerveConstants {
         public static double kV = SwerveConstants.kV;
         public static double kA = SwerveConstants.kA;
 
-        public static double lookaheadDistance = SwerveConstants.lookaheadDistance;
+        public static double lookaheadDistance = SwerveConstants.lookaheadDistance + 200;
         public static double velocityConstant = SwerveConstants.velocityConstant;
     }
 
