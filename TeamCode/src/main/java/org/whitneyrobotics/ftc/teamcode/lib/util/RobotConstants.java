@@ -2,16 +2,9 @@ package org.whitneyrobotics.ftc.teamcode.lib.util;
 
 //import com.acmerobotics.dashboard.config.Config;
 
-//@Config
+import com.acmerobotics.dashboard.config.Config;
+@Config
 public class RobotConstants {
-    public static double leftMultiplier = 1;
-    public static double rightMultiplier = 1;
-    public static double totalMultiplier = 1/2.54;
-    public static int canDrive = 1;
-    public static int canIntake = 1;
-    public static int canExtend = 1;
-    public static int canStoreArm = 1;
-    public static int canLift = 1;
 
     public static double DEADBAND_DRIVE_TO_TARGET = 24.5;
     public static double DEADBAND_ROTATE_TO_TARGET = 1.0;
@@ -29,6 +22,9 @@ public class RobotConstants {
     public static double A_KI = 0.0;
     public static double A_KD = 0.0;
     public static double A_KF = 0.0;
+    public static double E_KP = 0.005;
+    public static double E_KI = 0.0;
+    public static double E_KD = 0.0;
 
     public static double rotateTestAngle = 180;
     public static boolean rotateOrientation = true;

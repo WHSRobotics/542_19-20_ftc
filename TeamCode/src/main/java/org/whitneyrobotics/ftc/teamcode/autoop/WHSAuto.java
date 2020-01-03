@@ -737,8 +737,7 @@ public class WHSAuto extends OpMode {
                 switch (subState) {
                     case 0:
                         subStateDesc = "Entry";
-                        advanceState();
-                        subState++;
+                        subState = 4;
                         break;
                     case 1:
                         subStateDesc = "Grabbing foundation";

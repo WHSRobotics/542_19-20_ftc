@@ -13,7 +13,7 @@ public class Outtake {
     private static final int HOVER_LEVEL = 3;
     private static final int CLEARANCE_LEVEL = 4;
 
-    private Toggler operateOuttakeToggler = new Toggler(6);
+    private Toggler operateOuttakeToggler = new Toggler(8);
     int operateExtensionSubState = 0;
     private Toggler extensionLevelTog = new Toggler(9);
     private Toggler capstoneTog = new Toggler(2);
@@ -105,26 +105,29 @@ public class Outtake {
                         break;
                     case 2: //Goes to Target Linear Slide Position
                         grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
-                        extension.setLevel(extensionLevelTog.currentState());
+                        extension.setLevel(extensionLevelTog.currentState()+1);
                         break;
                     default:
                         break;
                 }
                 break;
-            case 4: // Releases Stone
+            case 4://hovering over the stone
+                extension.setLevel(extensionLevelTog.currentState());
+                break;
+            case 5: // Releases Stone
                 setOuttakeToIntakeTimer = true;
                 grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_RELEASED);
                 extension.setLevel(extensionLevelTog.currentState());
                 break;
-            case 5:
-                int case5ExtensionLevel;
-                if (extensionLevelTog.currentState() > 3 && extensionLevelTog.currentState() < extensionLevelTog.howManyStates() - 2) {
-                    case5ExtensionLevel = extensionLevelTog.currentState() + 2;
-                } else {
-                    case5ExtensionLevel = CLEARANCE_LEVEL;
+            case 6:
+                grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_RELEASED);
+                if (extensionLevelTog.currentState() != extensionLevelTog.howManyStates()) {
+                    extension.setLevel(extensionLevelTog.currentState() + 1);
                 }
-                extension.setLevel(case5ExtensionLevel);
-                if (extension.getCurrentLevel() >= case5ExtensionLevel) {
+                break;
+            case 7:
+                extension.setLevel(CLEARANCE_LEVEL);
+                if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
                     if (capstoneTog.currentState() == 0) {
                         grabber.setPosition(Grabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
                     } else {
