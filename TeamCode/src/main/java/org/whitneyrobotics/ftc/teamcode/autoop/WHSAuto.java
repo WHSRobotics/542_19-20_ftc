@@ -42,7 +42,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    public static final int STARTING_ALLIANCE = BLUE;
+    public static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -145,7 +145,7 @@ public class WHSAuto extends OpMode {
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.kA,
                 movedFoundationToParkingSwervePositions,
-                80,
+                120,
                 .5,
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
@@ -229,7 +229,7 @@ public class WHSAuto extends OpMode {
         stateEnabled[DRIVE_TO_FOUNDATION] = true;
         stateEnabled[OUTTAKE_SKYSTONE] = true;
         stateEnabled[SECONDARY_MOVE_FOUNDATION] = (STARTING_POSITION == SKYSTONE && !PARTNER_MOVED_FOUNDATION);
-        stateEnabled[GRAB_SECOND_SKYSTONE] = true;
+        stateEnabled[GRAB_SECOND_SKYSTONE] = false;
         stateEnabled[PARK] = true;
         stateEnabled[END] = true;
     }
@@ -333,7 +333,7 @@ public class WHSAuto extends OpMode {
         skystoneMidpointArray[RED][4] = new Position(-1890, -1300);
         skystoneMidpointArray[RED][5] = new Position(-2090, -1300);
 
-        skystoneMidpointArray[BLUE][0] = new Position(-850, 1175);
+        skystoneMidpointArray[BLUE][0] = new Position(-760, 1175);
         skystoneMidpointArray[BLUE][1] = new Position(-735, 1175);
         skystoneMidpointArray[BLUE][2] = new Position(-975, 1000);
         skystoneMidpointArray[BLUE][3] = new Position(-1205, 600);
@@ -348,7 +348,7 @@ public class WHSAuto extends OpMode {
         skystonePositionArray[RED][4] = new Position(-1890, -1300);
         skystonePositionArray[RED][5] = new Position(-2090, -1300);
 
-        skystonePositionArray[BLUE][0] = new Position(-650, 560);
+        skystonePositionArray[BLUE][0] = new Position(-495, 560);
         skystonePositionArray[BLUE][1] = new Position(-920, 560);
         skystonePositionArray[BLUE][2] = new Position(-1145, 560);
         skystonePositionArray[BLUE][3] = new Position(-1205, 600);
@@ -362,7 +362,7 @@ public class WHSAuto extends OpMode {
         skystoneToFoundationPositionArray[RED][4] = new Position(-1890, -1300);
         skystoneToFoundationPositionArray[RED][5] = new Position(-2090, -1300);
 
-        skystoneToFoundationPositionArray[BLUE][0] = new Position(-850, 970);
+        skystoneToFoundationPositionArray[BLUE][0] = new Position(-850, 910);
         skystoneToFoundationPositionArray[BLUE][1] = new Position(-710, 930);
         skystoneToFoundationPositionArray[BLUE][2] = new Position(-940, 930);
         skystoneToFoundationPositionArray[BLUE][3] = new Position(-1205, 600);
@@ -370,10 +370,10 @@ public class WHSAuto extends OpMode {
         skystoneToFoundationPositionArray[BLUE][5] = new Position(-1700, 600);
 
         foundationStartingPositionArray[RED] = new Position(1120, -515);
-        foundationStartingPositionArray[BLUE] = new Position(1120, 690);
+        foundationStartingPositionArray[BLUE] = new Position(1200, 740);
 
         foundationMovedPositionArray[RED] = new Position(590, -1100);
-        foundationMovedPositionArray[BLUE] = new Position(1120, 1000);
+        foundationMovedPositionArray[BLUE] = new Position(825, 900);
 
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1571);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
@@ -385,10 +385,10 @@ public class WHSAuto extends OpMode {
         skybridgePositionArray[BLUE][OUTSIDE] = new Position(0, 900);
 
         parkingPositions[RED] = new Position(180, -625);
-        parkingPositions[BLUE] = new Position(0, 945);
+        parkingPositions[BLUE] = new Position(300, 945);
 
         skystoneToFoundationMidpointArray[RED] = new Position(830, -1200);
-        skystoneToFoundationMidpointArray[BLUE] = new Position(760, 1230);
+        skystoneToFoundationMidpointArray[BLUE] = new Position(860, 1230);
 
         pullFoundationMidpointArray[RED] = new Position(1090, -1000);
         pullFoundationMidpointArray[BLUE] = new Position(980, 1355);
@@ -513,7 +513,6 @@ public class WHSAuto extends OpMode {
                         subStateDesc = "dropping";
                         robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
                         if (dropIntakeTimer.isExpired()){
-                            robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
                             subState++;
                         }
                         break;
@@ -590,6 +589,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Intaking";
+                        robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
                         robot.outtake.hover();
                         robot.intake.setVelocity(Intake.INTAKE_VELOCITY);
                         if (robot.intake.stoneSensed()){
@@ -673,7 +673,7 @@ public class WHSAuto extends OpMode {
                             motorPowers = skystoneToMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), STARTING_ALLIANCE == BLUE);
                         }
                         robot.drivetrain.operate(motorPowers);
-                        if (robot.getCoordinate().getX() > 100) {
+                        if (robot.getCoordinate().getX() > 300) {
                             robot.outtake.autoOuttake(1);
                         } else {
                             robot.outtake.grabStone();
@@ -883,6 +883,7 @@ public class WHSAuto extends OpMode {
         telemetry.addData("State: ", stateDesc);
         telemetry.addData("Substate: ", subStateDesc);
         telemetry.addData("IMU", robot.imu.getHeading());
+        telemetry.addData("Stone Sensed?", robot.intake.stoneSensed());
         telemetry.addData("X", robot.getCoordinate().getX());
         telemetry.addData("Y", robot.getCoordinate().getY());
         telemetry.addData("Heading", robot.getCoordinate().getHeading());
