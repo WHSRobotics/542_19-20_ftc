@@ -16,8 +16,13 @@ public class OuttakeV2Test extends OpMode {
     double correctPosition2;
 
     Toggler posTog = new Toggler(100);
+    Toggler posTog2 = new Toggler(100);
+    Toggler posTog3 = new Toggler(100);
+    Toggler togBias = new Toggler(100);
+
     @Override
     public void init() {
+        togBias.setState(50);
         grabber =new TestOuttakeV2(hardwareMap);
         posLeft=0.95;
         posRight=0.05;
@@ -32,9 +37,16 @@ public class OuttakeV2Test extends OpMode {
         posTog.changeState(gamepad1.dpad_up,gamepad1.dpad_down );
         correctPosition1= posTog.currentState()/100.0;//lowinit
         correctPosition2=1-correctPosition1;//highiit;
-        grabber.upAndDown(correctPosition2,correctPosition1);
-        grabber.testThumb(correctPosition1);
-        grabber.testWrist(correctPosition2);
+
+        posTog2.changeState(gamepad1.b, gamepad1.x); // thumb
+        posTog3.changeState(gamepad1.y, gamepad1.a); // wrist
+
+        togBias.changeState(gamepad1.left_bumper, gamepad1.left_trigger>0.01);
+        double bias = (togBias.currentState()-50.0)/100.0;
+
+        grabber.upAndDown(correctPosition2,correctPosition1+bias);
+        grabber.testThumb(posTog2.currentState()/100.0);
+        grabber.testWrist(posTog3.currentState()/100.0);
 
         //grabber.down();
         telemetry.addData("leftPosition", grabber.left.getPosition());
