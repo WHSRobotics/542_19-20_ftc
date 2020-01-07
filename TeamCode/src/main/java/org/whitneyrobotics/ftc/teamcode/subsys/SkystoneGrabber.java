@@ -7,32 +7,52 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 
 public class SkystoneGrabber {
 
-    Servo skystoneGrabber;
-    double[] positions = {0.145 ,0.31, 0.96};
+    Servo skystoneArm;
+    Servo skystoneClaw;
+
+    double[] armPositions = {0.145 ,0.31, 0.96};
+    double[] clawPositions = {0.145 ,0.31, 0.96};
     private Toggler operateSkystoneGrabberTog;
 
-    public enum SkystoneGrabberPosition{
+    public enum SkystoneArmPosition {
         REST, UP, DOWN;
     }
-
-    public SkystoneGrabber(HardwareMap skystoneGrabberMap){
-        skystoneGrabber = skystoneGrabberMap.servo.get("skystoneGrabber");
-        operateSkystoneGrabberTog = new Toggler(3);
+    public enum SkystoneClawPosition {
+        NOT_GRABBED, GRABBED;
     }
 
-    public void setPosition (SkystoneGrabberPosition position){
-        skystoneGrabber.setPosition(positions[position.ordinal()]);
-
+    public SkystoneGrabber(HardwareMap skystoneMap){
+        skystoneArm = skystoneMap.servo.get("skystoneArm");
+        skystoneClaw = skystoneMap.servo.get("skystoneClaw");
+        operateSkystoneGrabberTog = new Toggler(6);
     }
 
-    public void operate (boolean gamepadInput){
-        operateSkystoneGrabberTog.changeState(gamepadInput);
-        if(operateSkystoneGrabberTog.currentState() == 2){
-            setPosition(SkystoneGrabberPosition.UP);
-        }else if (operateSkystoneGrabberTog.currentState() == 1){
-            setPosition(SkystoneGrabberPosition.DOWN);
-        }else if (operateSkystoneGrabberTog.currentState() == 0){
-            setPosition(SkystoneGrabberPosition.REST);
+    public void setPosition (SkystoneArmPosition armPosition, SkystoneClawPosition clawPosition){
+        skystoneArm.setPosition(armPositions[armPosition.ordinal()]);
+        skystoneClaw.setPosition(clawPositions[clawPosition.ordinal()]);
+    }
+
+    public void operate (boolean gamepadInputIncrement, boolean gamepadInputDecrement){
+        operateSkystoneGrabberTog.changeState(gamepadInputIncrement, gamepadInputDecrement);
+        switch (operateSkystoneGrabberTog.currentState()) {
+            case 0:
+                setPosition(SkystoneArmPosition.REST, SkystoneClawPosition.NOT_GRABBED);
+                break;
+            case 1:
+                setPosition(SkystoneArmPosition.DOWN, SkystoneClawPosition.NOT_GRABBED);
+                break;
+            case 2:
+                setPosition(SkystoneArmPosition.DOWN, SkystoneClawPosition.GRABBED);
+                break;
+            case 3:
+                setPosition(SkystoneArmPosition.UP, SkystoneClawPosition.GRABBED);
+                break;
+            case 4:
+                setPosition(SkystoneArmPosition.DOWN, SkystoneClawPosition.GRABBED);
+                break;
+            case 5:
+                setPosition(SkystoneArmPosition.DOWN, SkystoneClawPosition.NOT_GRABBED);
+                break;
         }
     }
 }

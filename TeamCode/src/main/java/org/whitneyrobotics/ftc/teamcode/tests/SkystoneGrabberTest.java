@@ -15,11 +15,6 @@ public class SkystoneGrabberTest extends OpMode {
 
     @Override
     public void loop() {
-        if(gamepad1.a){
-            skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.UP);
-        }
-        else if(gamepad1.b){
-            skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.DOWN);
-        }
+       skystoneGrabber.operate(gamepad1.dpad_up, gamepad1.dpad_down);
     }
 }
