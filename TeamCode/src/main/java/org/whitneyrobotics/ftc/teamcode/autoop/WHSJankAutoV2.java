@@ -96,7 +96,9 @@ public class WHSJankAutoV2 extends OpMode {
                     state++;
                 }
             case 1:
+/*
                 robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.DOWN);
+*/
                 if (skystoneGrabberUpToDownTimer.isExpired()) {
                     stoneToMiddleStrafeTimer.set(stoneToMiddleStrafeDeadman);
                     state++;
@@ -123,7 +125,9 @@ public class WHSJankAutoV2 extends OpMode {
                     state++;
                 }
             case 4:
+/*
                 robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneGrabberPosition.UP);
+*/
                 if (skystoneGrabberDownToUpTimer.isExpired()) {
                     state++;
                 }

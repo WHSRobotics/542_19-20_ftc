@@ -16,6 +16,7 @@ public class WHSRobotTele implements WHSRobot {
     public FoundationPuller foundationPuller;
     public Outtake outtake;
     public SkystoneGrabber skystoneGrabber;
+    public Capstone capstone;
 
     Coordinate currentCoord;
     private double targetHeading; //field frame
@@ -80,6 +81,7 @@ public class WHSRobotTele implements WHSRobot {
         foundationPuller = new FoundationPuller(hardwareMap);
         outtake = new Outtake(hardwareMap);
         skystoneGrabber = new SkystoneGrabber(hardwareMap);
+        capstone = new Capstone(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }
