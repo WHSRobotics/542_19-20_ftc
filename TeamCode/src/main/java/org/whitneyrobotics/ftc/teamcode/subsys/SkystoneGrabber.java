@@ -1,17 +1,17 @@
 package org.whitneyrobotics.ftc.teamcode.subsys;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
-
 public class SkystoneGrabber {
 
     Servo skystoneArm;
     Servo skystoneClaw;
 
-    double[] armPositions = {0.145 ,0.31, 0.96};
-    double[] clawPositions = {0.145 ,0.31, 0.96};
+    double[] armPositions = {0.87 ,0.855, 0.30};
+    double[] clawPositions = {0.31, 0.856};
     private Toggler operateSkystoneGrabberTog;
 
     public enum SkystoneArmPosition {

@@ -19,6 +19,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.ImprovedSkystoneDetector;
 import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
+import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 import java.util.IllegalFormatCodePointException;
@@ -226,11 +227,11 @@ public class WHSAuto extends OpMode {
         stateEnabled[INITIAL_MOVE_FOUNDATION] = (STARTING_POSITION == FOUNDATION);
         stateEnabled[SCAN_SKYSTONE] = true;
         stateEnabled[INTAKE_SKYSTONE] = true;
-        stateEnabled[DRIVE_TO_FOUNDATION] = true;
-        stateEnabled[OUTTAKE_SKYSTONE] = true;
-        stateEnabled[SECONDARY_MOVE_FOUNDATION] = (STARTING_POSITION == SKYSTONE && !PARTNER_MOVED_FOUNDATION);
+        stateEnabled[DRIVE_TO_FOUNDATION] = false;
+        stateEnabled[OUTTAKE_SKYSTONE] = false;
+        stateEnabled[SECONDARY_MOVE_FOUNDATION] = /*(STARTING_POSITION == SKYSTONE && !PARTNER_MOVED_FOUNDATION);*/ false;
         stateEnabled[GRAB_SECOND_SKYSTONE] = false;
-        stateEnabled[PARK] = true;
+        stateEnabled[PARK] = false;
         stateEnabled[END] = true;
     }
 
@@ -410,19 +411,19 @@ public class WHSAuto extends OpMode {
     public void init_loop(){
         if (STARTING_ALLIANCE == BLUE) {
             if (robot.skystoneDetector.getScreenPosition().x < LEFT_MAX) {
-                skystonePosition = 0;
+                skystonePosition = LEFT;
             } else if (robot.skystoneDetector.getScreenPosition().x < CENTER_MAX) {
-                skystonePosition = 1;
+                skystonePosition = CENTER;
             } else {
-                skystonePosition = 2;
+                skystonePosition = RIGHT;
             }
         } else if (STARTING_ALLIANCE == RED) {
             if (robot.skystoneDetector.getScreenPosition().x < LEFT_MAX) {
-                skystonePosition = 2;
+                skystonePosition = RIGHT;
             } else if (robot.skystoneDetector.getScreenPosition().x < CENTER_MAX) {
-                skystonePosition = 1;
+                skystonePosition = CENTER;
             } else {
-                skystonePosition = 0;
+                skystonePosition = LEFT;
             }
         }
 
@@ -482,6 +483,7 @@ public class WHSAuto extends OpMode {
                     case 0:
                         subStateDesc = "Entry";
                         moveSkystoneGrabberTimer.set(MOVE_SKYSTONE_GRABBER_DELAY);
+                        robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneArmPosition.DOWN, SkystoneGrabber.SkystoneClawPosition.NOT_GRABBED);
                         scanSkystoneTimer.set(SCAN_SKYSTONE_DURATION);
                         subState++;
                         break;
@@ -490,19 +492,19 @@ public class WHSAuto extends OpMode {
                         if (scanSkystoneTimer.isExpired()) {
                             if (STARTING_ALLIANCE == BLUE) {
                                 if (robot.skystoneDetector.getScreenPosition().x < LEFT_MAX) {
-                                    skystonePosition = 0;
+                                    skystonePosition = LEFT;
                                 } else if (robot.skystoneDetector.getScreenPosition().x < CENTER_MAX) {
-                                    skystonePosition = 1;
+                                    skystonePosition = CENTER;
                                 } else {
-                                    skystonePosition = 2;
+                                    skystonePosition = RIGHT;
                                 }
                             } else if (STARTING_ALLIANCE == RED) {
                                 if (robot.skystoneDetector.getScreenPosition().x < LEFT_MAX) {
-                                    skystonePosition = 2;
+                                    skystonePosition = RIGHT;
                                 } else if (robot.skystoneDetector.getScreenPosition().x < CENTER_MAX) {
-                                    skystonePosition = 1;
+                                    skystonePosition = CENTER;
                                 } else {
-                                    skystonePosition = 0;
+                                    skystonePosition = LEFT;
                                 }
                             }
                             dropIntakeTimer.set(DROP_INTAKE_DELAY);
@@ -590,24 +592,29 @@ public class WHSAuto extends OpMode {
                     case 1:
                         subStateDesc = "Intaking";
                         robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
-                        robot.outtake.hover();
+                       /* robot.outtake.hover();
                         robot.intake.setVelocity(Intake.INTAKE_VELOCITY);
                         if (robot.intake.stoneSensed()){
                             robot.intake.setVelocity(0);
                         }
-                        motorPowers = startToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
+                       */ motorPowers = startToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         robot.drivetrain.operate(motorPowers);
                         if (!startToSkystoneSwerve.inProgress()) {
                             robot.intake.setVelocity(0.0);
+                            robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneArmPosition.DOWN, SkystoneGrabber.SkystoneClawPosition.GRABBED);
                             intakeSystoneTimer.set(JERK_DELAY);
                             subState++;
                         }
                         break;
                     case 2:
                         subStateDesc = "Waiting";
-                        robot.outtake.hover();
+  /*                    robot.outtake.hover();*/
+                        robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneArmPosition.DOWN, SkystoneGrabber.SkystoneClawPosition.GRABBED);
                         if (intakeSystoneTimer.isExpired()){
+                            robot.skystoneGrabber.setPosition(SkystoneGrabber.SkystoneArmPosition.UP, SkystoneGrabber.SkystoneClawPosition.GRABBED);
+/*
                             jerkSkystoneTimer.set(JERK_DELAY);
+*/
                             subState++;
                         }
                         break;
@@ -628,7 +635,7 @@ public class WHSAuto extends OpMode {
                             subState++;
                         }
                         break;*/
-                    case 3:
+                    /*case 3:
                         subStateDesc = "Jerking backwards again";
                         robot.outtake.hover();
                         motorPowers = skystoneToMidpointJerkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
@@ -636,14 +643,14 @@ public class WHSAuto extends OpMode {
                         if (!skystoneToMidpointJerkSwerve.inProgress()) {
                             subState++;
                         }
-                        break;
-                    case 4:
+                        break;*/
+                   /* case 4:
                         subStateDesc = "waiting";
                         if (jerkSkystoneTimer.isExpired()){
                             subState++;
                         }
-                        break;
-                    case 5:
+                        break;*/
+                    case 3:
                         subStateDesc = "Rotating like a neddy";
                         robot.outtake.grabStone();
                         robot.rotateToTarget(180, false);
@@ -651,7 +658,7 @@ public class WHSAuto extends OpMode {
                             subState++;
                         }
                         break;
-                    case 6:
+                    case 4:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
