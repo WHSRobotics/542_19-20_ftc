@@ -24,6 +24,7 @@ public class WHSRobotImpl implements WHSRobot {
     public FoundationPuller foundationPuller;
     public Outtake outtake;
     public SkystoneGrabber skystoneGrabber;
+    public Capstone capstone;
   //  public Vuforia vuforia;
     public ImprovedSkystoneDetector skystoneDetector;
     public OpenCvCamera webcam;
@@ -92,6 +93,7 @@ public class WHSRobotImpl implements WHSRobot {
         foundationPuller = new FoundationPuller(hardwareMap);
         outtake = new Outtake(hardwareMap);
         skystoneGrabber = new SkystoneGrabber(hardwareMap);
+        capstone = new Capstone(hardwareMap);
         //vuforia = new Vuforia(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);

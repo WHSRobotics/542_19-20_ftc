@@ -29,6 +29,8 @@ public class ImprovedSkystoneDetector extends DogeCVDetector {
     public static double START_COL_FRAC = 0.21;
     public static double END_COL_FRAC = 0.94;
 
+    public static final double RED_BIAS = 0.02;
+
     public static double BLUE_MIDDLE_LOWER_CUTOFF = 75;
     public static double BLUE_LOWER_UPPER_CUTOFF = 135;
 
@@ -80,8 +82,8 @@ public class ImprovedSkystoneDetector extends DogeCVDetector {
         // of START_ROW_FRAC and the like between when we crop RawImage and when we copy it and output it
         int startRow = (int) (input.rows() * START_ROW_FRAC);
         int endRow = (int) (input.rows() * END_ROW_FRAC);
-        int startCol = (int) (input.cols() * START_COL_FRAC);
-        int endCol = (int) (input.cols() * END_COL_FRAC);
+        int startCol = (int) (alliance == Alliance.RED ? input.cols() * (START_COL_FRAC + RED_BIAS) : input.cols() * (START_COL_FRAC));
+        int endCol = (int) (alliance == Alliance.RED ? input.cols() * (END_COL_FRAC + RED_BIAS) : input.cols() * (END_COL_FRAC));
 
         rawImage = input.submat(startRow, endRow, startCol, endCol);
         rawImage.copyTo(workingMat);
@@ -143,7 +145,7 @@ public class ImprovedSkystoneDetector extends DogeCVDetector {
     }
 
     private static String calcSkystoneState(double middleX, Alliance alliance) {
-        if (alliance ==Alliance.BLUE) {
+        /*if (alliance == Alliance.BLUE) {
             if (middleX < BLUE_MIDDLE_LOWER_CUTOFF) {
                 return "MIDDLE";
             } else if (middleX < BLUE_LOWER_UPPER_CUTOFF) {
@@ -151,7 +153,7 @@ public class ImprovedSkystoneDetector extends DogeCVDetector {
             } else {
                 return "UPPER";
             }
-        } else {
+        }*/ /*else {*/
             if (middleX < RED_LOWER_MIDDLE_CUTOFF) {
                 return "LOWER";
             } else if (middleX < RED_MIDDLE_UPPER_CUTOFF) {
@@ -159,7 +161,7 @@ public class ImprovedSkystoneDetector extends DogeCVDetector {
             } else {
                 return "UPPER";
             }
-        }
+        /*}*/
     }
 
     @Override

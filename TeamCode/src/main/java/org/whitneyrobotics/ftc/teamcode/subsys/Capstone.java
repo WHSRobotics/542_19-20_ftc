@@ -13,6 +13,14 @@ public class Capstone {
     Servo dump;
     Toggler capstoneTog = new Toggler(5);
 
+    public enum LockPosition {
+        UNLOCKED, LOCKED;
+    }
+
+    public enum DumpPosition {
+        UP, DOWN;
+    }
+
     //up,down
     final double [] INTAKE_BLOCKER_POSITIONS = {0.84, 0.10};
     final double [] LOCK_POSITIONS = {0.944, 0.465};
@@ -83,6 +91,17 @@ public class Capstone {
         }
 
     }
+
+    public void setLockPosition(LockPosition lockPosition){
+        lock.setPosition(LOCK_POSITIONS[lockPosition.ordinal()]);
+    }
+
+    public void setDumpPosition(DumpPosition dumpPosition){
+        dump.setPosition(DUMP_POSITIONS[dumpPosition.ordinal()]);
+    }
+
+
+
 
     public int getCapstoneTogglerState(){
         return capstoneTog.currentState();
