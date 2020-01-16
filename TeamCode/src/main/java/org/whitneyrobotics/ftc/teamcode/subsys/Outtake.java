@@ -105,7 +105,11 @@ public class Outtake {
                         break;
                     case 2: //Goes to Target Linear Slide Position
                         grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
-                        extension.setLevel(extensionLevelTog.currentState()+1);
+                        if(extensionLevelTog.currentState()!= extensionLevelTog.howManyStates()-1) {
+                            extension.setLevel(extensionLevelTog.currentState() + 1);
+                        }else{
+                            extension.setLevel(extensionLevelTog.currentState());
+                        }
                         break;
                     default:
                         break;
@@ -121,8 +125,10 @@ public class Outtake {
                 break;
             case 6:
                 grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_RELEASED);
-                if (extensionLevelTog.currentState() != extensionLevelTog.howManyStates()) {
+                if (extensionLevelTog.currentState() != extensionLevelTog.howManyStates()-1) {
                     extension.setLevel(extensionLevelTog.currentState() + 1);
+                }else{
+                    extension.setLevel(extensionLevelTog.currentState());
                 }
                 break;
             case 7:
