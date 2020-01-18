@@ -253,7 +253,7 @@ public class WHSAuto extends OpMode {
 
     private final double GRAB_FOUNDATION_DELAY = 1.0;
     private final double DROP_INTAKE_DELAY = 1.0;
-    private final double SCAN_SKYSTONE_DURATION = 1.2;
+    private final double SCAN_SKYSTONE_DURATION = 0.0;
     private final double STRAFE_SKYSTONE_TIME = 1.1;
     private final double STRAFE_SECOND_SKYSTONE_TIME = 1.1;
     private final double GRAB_SKYSTONE_DELAY = 1.0;
@@ -336,12 +336,12 @@ public class WHSAuto extends OpMode {
 
         skystoneMidpointArray[BLUE][0] = new Position(-760, 1175);
         skystoneMidpointArray[BLUE][1] = new Position(-735, 1175);
-        skystoneMidpointArray[BLUE][2] = new Position(-975, 1000);
+        skystoneMidpointArray[BLUE][2] = new Position(-985, 1000);
         skystoneMidpointArray[BLUE][3] = new Position(-1205, 600);
         skystoneMidpointArray[BLUE][4] = new Position(-1500, 600);
         skystoneMidpointArray[BLUE][5] = new Position(-1700, 600);
 
-        // 0 = fathest from wall
+        // 0 = farthest from wall
         skystonePositionArray[RED][0] = new Position(-495, -560);
         skystonePositionArray[RED][1] = new Position(-970, -560);
         skystonePositionArray[RED][2] = new Position(-1135, -560);
@@ -371,7 +371,7 @@ public class WHSAuto extends OpMode {
         skystoneToFoundationPositionArray[BLUE][5] = new Position(-1700, 600);
 
         foundationStartingPositionArray[RED] = new Position(1200, -705);
-        foundationStartingPositionArray[BLUE] = new Position(1200, 740);
+        foundationStartingPositionArray[BLUE] = new Position(1200, 750);
 
         foundationMovedPositionArray[RED] = new Position(785, -900);
         foundationMovedPositionArray[BLUE] = new Position(825, 900);
@@ -382,8 +382,8 @@ public class WHSAuto extends OpMode {
         skybridgePositionArray[RED][INSIDE] = new Position(0, -910);
         skybridgePositionArray[RED][OUTSIDE] = new Position(0, -900);
 
-        skybridgePositionArray[BLUE][INSIDE] = new Position(0, 910);
-        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0, 900);
+        skybridgePositionArray[BLUE][INSIDE] = new Position(0, 980);
+        skybridgePositionArray[BLUE][OUTSIDE] = new Position(0, 930);
 
         parkingPositions[RED] = new Position(180, -800);
         parkingPositions[BLUE] = new Position(300, 945);
@@ -437,7 +437,9 @@ public class WHSAuto extends OpMode {
         robot.estimatePosition();
         robot.capstone.setLockPosition(Capstone.LockPosition.LOCKED);
         robot.capstone.setDumpPosition(Capstone.DumpPosition.UP);
-        robot.drivetrain.operate(motorPowers);
+        if (!robot.driveToTargetInProgress() && !robot.rotateToTargetInProgress()) {
+            robot.drivetrain.operate(motorPowers);
+        }
 
         switch (state) {
             case INIT:
