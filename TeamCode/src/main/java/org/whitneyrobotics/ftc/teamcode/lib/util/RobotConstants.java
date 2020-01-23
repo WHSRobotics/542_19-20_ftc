@@ -12,8 +12,8 @@ public class RobotConstants {
     public static double drive_max = 1.0;//.6;
     public static double rotate_min = 0.2;
     public static double rotate_max = 1.0;
-    public static double R_KP = 0.9;//1.19;
-    public static double R_KI = 0.075;
+    public static double R_KP = 1.10;//1.19;
+    public static double R_KI = 0.07542;
     public static double R_KD = 0.15;
     public static double D_KP = 0;//1.7;
     public static double D_KI = 0;//.7

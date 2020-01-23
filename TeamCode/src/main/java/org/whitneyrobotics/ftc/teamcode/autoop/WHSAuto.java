@@ -374,7 +374,7 @@ public class WHSAuto extends OpMode {
         foundationStartingPositionArray[BLUE] = new Position(1200, 750);
 
         foundationMovedPositionArray[RED] = new Position(785, -900);
-        foundationMovedPositionArray[BLUE] = new Position(825, 900);
+        foundationMovedPositionArray[BLUE] = new Position(855, 980);
 
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1571);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
@@ -599,7 +599,7 @@ public class WHSAuto extends OpMode {
                         if (robot.intake.stoneSensed()){
                             robot.intake.setVelocity(0);
                         }else{
-                            robot.intake.setVelocity(Intake.INTAKE_VELOCITY);
+                            robot.intake.setVelocity(Intake.AUTO_INTAKE_VELOCITY);
                         }
                         motorPowers = startToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         if (!startToSkystoneSwerve.inProgress()) {

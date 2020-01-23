@@ -23,7 +23,7 @@ public class WHSJankAuto extends OpMode {
      */
 
     static final int STARTING_ALLIANCE = RED;
-    static final double STARTING_COORDINATE_X = -1000;
+    static final double STARTING_COORDINATE_X = 600;
 
     Coordinate[] startingCoordinateArray = new Coordinate[2];
     Position[] parkingWaypointPositionArray = new Position[2];
@@ -40,13 +40,13 @@ public class WHSJankAuto extends OpMode {
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
 
-        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, -90);
-        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  90);
+        startingCoordinateArray[RED] = new Coordinate(STARTING_COORDINATE_X, -1571, 90);
+        startingCoordinateArray[BLUE] = new Coordinate(STARTING_COORDINATE_X, 1571,  -90);
 
         parkingWaypointPositionArray[RED] = new Position(STARTING_COORDINATE_X, -1100);
         parkingWaypointPositionArray[BLUE] = new Position(STARTING_COORDINATE_X, 1100);
 
-        skybridgePositionArray[RED] = new Position(0,-1100);
+        skybridgePositionArray[RED] = new Position(0,-1070);
         skybridgePositionArray[BLUE] = new Position(0,1100);
 
         robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
@@ -68,7 +68,7 @@ public class WHSJankAuto extends OpMode {
 
         robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
         if (timer.isExpired()) {
-            double[] motorPowers = startToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), true);
+            double[] motorPowers = startToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
             robot.drivetrain.operate(motorPowers);
         }
 
