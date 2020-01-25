@@ -58,6 +58,8 @@ public class WHSTeleOp extends OpMode {
         //Capstone
         robot.capstone.operate(gamepad2.right_bumper, gamepad2.left_bumper);
 
+        //
+        robot.backGate.operate(gamepad2.right_trigger >0.01);
         telemetry.addData("Outtake State",robot.outtake.getCurrentState());
         telemetry.addData("Target extension level", robot.outtake.getCurrentTargetLevel());
         telemetry.addData("Current extension level", robot.outtake.getCurrentLevel());

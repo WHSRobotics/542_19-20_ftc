@@ -24,15 +24,15 @@ public class Capstone {
     //up,down
     final double [] INTAKE_BLOCKER_POSITIONS = {0.84, 0.10};
     final double [] LOCK_POSITIONS = {0.944, 0.465};
-    final double [] DUMP_POSITIONS = {0.14, 0.97};
+    final double [] DUMP_POSITIONS = {0.02, 0.9};
 
     SimpleTimer unlockToCapstoneDownTimer = new SimpleTimer();
     SimpleTimer capstoneDownToCapstoneUpTimer = new SimpleTimer();
     SimpleTimer capstoneDownToResetTimer = new SimpleTimer();
 
     private double unlockToCapstonDownDuration = 0.75;
-    private double capstoneDownToCapstoneUpDelay = 1.75;
-    private double capstondeDownToResetDelay = 0.75;
+    private double capstoneDownToCapstoneUpDelay = 1.0;
+    private double capstondeDownToResetDelay = 0.5;
 
     private boolean cycledThroughAlready = false;
     String capstoneState = "";

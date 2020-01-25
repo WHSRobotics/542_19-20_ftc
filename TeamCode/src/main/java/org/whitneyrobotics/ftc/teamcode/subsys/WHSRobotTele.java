@@ -15,9 +15,9 @@ public class WHSRobotTele implements WHSRobot {
     public Intake intake;
     public FoundationPuller foundationPuller;
     public Outtake outtake;
-    public SkystoneGrabber skystoneGrabber;
+   // public SkystoneGrabber skystoneGrabber;
     public Capstone capstone;
-
+    public BackGate backGate;
     Coordinate currentCoord;
     private double targetHeading; //field frame
     public double angleToTargetDebug;
@@ -80,8 +80,9 @@ public class WHSRobotTele implements WHSRobot {
         intake = new Intake(hardwareMap);
         foundationPuller = new FoundationPuller(hardwareMap);
         outtake = new Outtake(hardwareMap);
-        skystoneGrabber = new SkystoneGrabber(hardwareMap);
+       // skystoneGrabber = new SkystoneGrabber(hardwareMap);
         capstone = new Capstone(hardwareMap);
+        backGate = new BackGate(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }

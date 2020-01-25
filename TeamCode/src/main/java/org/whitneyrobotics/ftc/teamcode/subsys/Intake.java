@@ -30,7 +30,7 @@ public class Intake {
     public static final double INTAKE_POWER = 0.60;
     public static final double INTAKE_VELOCITY_THRESHOLD = 30;
     public static final double INTAKE_VELOCITY = 1800.0;
-    public static final double AUTO_INTAKE_VELOCITY = 1300.0;
+    public static final double AUTO_INTAKE_VELOCITY = 1500.0;
     public static final double INTAKE_JAM_FIX_DURATION = 0.02;
     public static final double STONE_SENSOR_DEADBAND = 140;
     private SimpleTimer fixJamTimer = new SimpleTimer();
