@@ -22,9 +22,9 @@ public class Capstone {
     }
 
     //up,down
-    final double [] INTAKE_BLOCKER_POSITIONS = {0.84, 0.10};
+    final double [] INTAKE_BLOCKER_POSITIONS = {0.84, 0.01};
     final double [] LOCK_POSITIONS = {0.944, 0.465};
-    final double [] DUMP_POSITIONS = {0.02, 0.9};
+    final double [] DUMP_POSITIONS = {0.02, 0.99};
 
     SimpleTimer unlockToCapstoneDownTimer = new SimpleTimer();
     SimpleTimer capstoneDownToCapstoneUpTimer = new SimpleTimer();
@@ -81,7 +81,7 @@ public class Capstone {
                         break;
                     case 2:
                         capstoneState = "Capstone dumper up";
-                        dump.setPosition((DUMP_POSITIONS[0]));
+                        //dump.setPosition((DUMP_POSITIONS[0]));
                         if (capstoneDownToResetTimer.isExpired()){
                             substate = 0;
                             capstoneTog.setState(0);

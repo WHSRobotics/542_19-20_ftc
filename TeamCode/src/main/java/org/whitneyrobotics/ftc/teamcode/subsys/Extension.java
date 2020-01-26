@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.lib.util.PIDController;
 import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
 
@@ -13,9 +12,9 @@ public class Extension {
     private DcMotor rightExtension;
 
     // index 0 = intook; index 3 = level 3, clearance & hover
-    private int[] extensionMotorPositions = {0, 180, 740, 1180, 1640, 2125, 2625, 3025, 3910};
-    private int[] extensionFinalMotorPositions = new int[extensionMotorPositions.length];
-    private static final int UPDATE_LEVEL_DEADBAND = 175;
+    private int[] extensionMotorPositions = {0, 180, 740, 1180, 1640, 2125, 2625, 3025, 3610};
+    private int[] extensionHigherMotorPositions = new int[extensionMotorPositions.length];
+    private static final int UPDATE_LEVEL_DEADBAND = 140;
     private double EXTENSION_MOTOR_POWER = 1.0;
 
     private PIDController extensionMotorController;
@@ -26,7 +25,8 @@ public class Extension {
 
     private int currentLevel = 0;
 
-    int error;
+    private int error;
+    protected int errorBias = 0;
 
     public Extension(HardwareMap extensionMap){
         leftExtension = extensionMap.dcMotor.get("leftExtension");
@@ -40,8 +40,8 @@ public class Extension {
         leftExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
 
-        for (int i = 0; i < extensionFinalMotorPositions.length; i++) {
-            extensionFinalMotorPositions[i] = extensionMotorPositions[i] - 200;
+        for (int i = 0; i < extensionHigherMotorPositions.length; i++) {
+            extensionHigherMotorPositions[i] = extensionMotorPositions[i] + 290;
         }
 
         extensionMotorController= new PIDController(RobotConstants.E_KP,RobotConstants.E_KI, RobotConstants.E_KD);
@@ -49,7 +49,7 @@ public class Extension {
     }
 
     public void setLevel(int extensionLevel){
-        error = extensionMotorPositions[extensionLevel] - getEncoderPosition();
+        error = extensionMotorPositions[extensionLevel] - getEncoderPosition() - errorBias;
 
         extensionMotorController.setConstants(RobotConstants.E_KP,RobotConstants.E_KI, RobotConstants.E_KD);
         extensionMotorController.calculate(error);
@@ -58,11 +58,14 @@ public class Extension {
         setPower(power);
     }
 
-    public void setFinalLevel(int finalExtensionLevel) {
-        leftExtension.setTargetPosition(extensionFinalMotorPositions[finalExtensionLevel]);
-        rightExtension.setTargetPosition(extensionFinalMotorPositions[finalExtensionLevel]);
-        leftExtension.setPower(EXTENSION_MOTOR_POWER);
-        rightExtension.setPower(EXTENSION_MOTOR_POWER);
+    public void setHigherLevel(int higherExtensionLevel) {
+        error = extensionHigherMotorPositions[higherExtensionLevel] - getEncoderPosition() - errorBias;
+
+        extensionMotorController.setConstants(RobotConstants.E_KP,RobotConstants.E_KI, RobotConstants.E_KD);
+        extensionMotorController.calculate(error);
+
+        double power = extensionMotorController.getOutput();
+        setPower(power);
     }
 
     public void estimateLevel() {
@@ -106,6 +109,15 @@ public class Extension {
 
     public double getPIDOutput(){
         return extensionMotorController.getOutput();
+    }
+
+    public void changeErrorBias(boolean gamepadInputUp, boolean gamepadInputDown) {
+        if (gamepadInputUp) {
+            errorBias++;
+        }
+        if (gamepadInputDown) {
+            errorBias--;
+        }
     }
 }
 

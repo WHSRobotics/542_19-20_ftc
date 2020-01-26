@@ -4,9 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
-import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
-import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
-import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
 @TeleOp(name = "WHS TeleOp", group = "a")
@@ -34,7 +31,7 @@ public class WHSTeleOp extends OpMode {
         }
 
         // Intake
-        if ((!robot.intake.stoneSensed() && robot.outtake.getCurrentState() == 1) || robot.capstone.getCapstoneTogglerState() != 0) {
+        if ((!robot.intake.stoneSensed() && robot.outtake.getCurrentState() == 1) || robot.capstone.getCapstoneTogglerState() != 0 || gamepad2.left_trigger > 0.01) {
             robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger > 0.01);
         }else if (gamepad1.right_trigger < 0.01 && gamepad1.left_trigger <0.01){
             robot.intake.setVelocity(0);
@@ -43,7 +40,12 @@ public class WHSTeleOp extends OpMode {
             robot.intake.operateIntake(false, gamepad1.left_trigger>0.01);
         }
         // Outtake
-        robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down/*, gamepad2.dpad_right*/);
+        if (robot.capstone.getCapstoneTogglerState() == 0) {
+            robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down/*, gamepad2.dpad_right*/);
+        } else {
+            robot.outtake.operate(false, false, false, false);
+        }
+        robot.outtake.changeExtensionErrorBias(gamepad2.left_stick_y > 0.05, gamepad2.left_stick_y < -0.05);
 
         /*//Skystone Grabber
         if (robot.intake.isIntakeOn()) {
@@ -65,6 +67,7 @@ public class WHSTeleOp extends OpMode {
         telemetry.addData("Current extension level", robot.outtake.getCurrentLevel());
         telemetry.addData("Field-centric", robot.drivetrain.getFieldCentric());
         telemetry.addData("Capstone State", robot.capstone.getCapstoneState());
+        telemetry.addData("Extension Error Bias", robot.outtake.getExtensionErrorBias());
 
     }
 }

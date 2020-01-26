@@ -16,6 +16,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
+import org.whitneyrobotics.ftc.teamcode.subsys.BackGate;
 import org.whitneyrobotics.ftc.teamcode.subsys.Capstone;
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.ImprovedSkystoneDetector;
@@ -42,7 +43,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    public static final int STARTING_ALLIANCE = RED;
+    public static final int STARTING_ALLIANCE = BLUE;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -66,6 +67,7 @@ public class WHSAuto extends OpMode {
     Position[][] skybridgePositionArray = new Position[2][2];
     Position[] skystoneToFoundationMidpointArray = new Position[2];
     Position[] pullFoundationMidpointArray = new Position[2];
+    Position[] parkingMidpointArray = new Position[2];
     Position[] parkingPositions = new Position[2];
 
     SwerveToTarget startToFoundationSwerve;
@@ -99,7 +101,7 @@ public class WHSAuto extends OpMode {
         Position[] foundationToWallSwervePositions = {foundationStartingPositionArray[STARTING_ALLIANCE], foundationMovedPositionArray[STARTING_ALLIANCE]};
         Position[] wallToMidpointPositions = {startingCoordinateArray[STARTING_ALLIANCE], slideOutFromFoundationMidpointArray[STARTING_ALLIANCE]};
         Position[] midpointToSkystonePositions = {skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystonePositionArray[STARTING_ALLIANCE][2]};
-        Position[] movedFoundationToParkingSwervePositions = {pullFoundationMidpointArray[STARTING_ALLIANCE], parkingPositions[STARTING_ALLIANCE]};
+        Position[] movedFoundationToParkingSwervePositions = {pullFoundationMidpointArray[STARTING_ALLIANCE],parkingMidpointArray[STARTING_ALLIANCE], parkingPositions[STARTING_ALLIANCE]};
         Position[] wallToParkingSwervePositions = {startingCoordinateArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION]};
         Position[] foundationMidpointToFoundationMidpointTwoPositions = {foundationMovedPositionArray[STARTING_ALLIANCE], pullFoundationMidpointArray[STARTING_ALLIANCE]};
         Position[] startToParkingSwervePositions = {pullFoundationMidpointArray[STARTING_ALLIANCE], parkingPositions[STARTING_ALLIANCE]};
@@ -347,12 +349,12 @@ public class WHSAuto extends OpMode {
         // 0 = farthest from wall
         skystonePositionArray[RED][0] = new Position(-495, -560);
         skystonePositionArray[RED][1] = new Position(-960, -560);
-        skystonePositionArray[RED][2] = new Position(-1135, -560);
+        skystonePositionArray[RED][2] = new Position(-1145, -560);
         skystonePositionArray[RED][3] = new Position(-1205, -600);
         skystonePositionArray[RED][4] = new Position(-1500, -600);
         skystonePositionArray[RED][5] = new Position(-1700, -600);
 
-        skystonePositionArray[BLUE][0] = new Position(-495, 560);
+        skystonePositionArray[BLUE][0] = new Position(-485, 560);
         skystonePositionArray[BLUE][1] = new Position(-920, 560);
         skystonePositionArray[BLUE][2] = new Position(-1145, 560);
         skystonePositionArray[BLUE][3] = new Position(-1205, 600);
@@ -360,7 +362,7 @@ public class WHSAuto extends OpMode {
         skystonePositionArray[BLUE][5] = new Position(-1700, 600);
 
         skystoneToFoundationPositionArray[RED][0] = new Position(-800, -960);
-        skystoneToFoundationPositionArray[RED][1] = new Position(-710, -930);
+        skystoneToFoundationPositionArray[RED][1] = new Position(-710, -910);
         skystoneToFoundationPositionArray[RED][2] = new Position(-940, -930);
         skystoneToFoundationPositionArray[RED][3] = new Position(-1205, -600);
         skystoneToFoundationPositionArray[RED][4] = new Position(-1500, -600);
@@ -373,11 +375,11 @@ public class WHSAuto extends OpMode {
         skystoneToFoundationPositionArray[BLUE][4] = new Position(-1500, 600);
         skystoneToFoundationPositionArray[BLUE][5] = new Position(-1700, 600);
 
-        foundationStartingPositionArray[RED] = new Position(1320, -640);
-        foundationStartingPositionArray[BLUE] = new Position(1220, 750);
+        foundationStartingPositionArray[RED] = new Position(1345, -665);
+        foundationStartingPositionArray[BLUE] = new Position(1345, 690);
 
-        foundationMovedPositionArray[RED] = new Position(855, -980);
-        foundationMovedPositionArray[BLUE] = new Position(855, 980);
+        foundationMovedPositionArray[RED] = new Position(825, -980);
+        foundationMovedPositionArray[BLUE] = new Position(895, 990);
 
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1571);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
@@ -385,17 +387,20 @@ public class WHSAuto extends OpMode {
         skybridgePositionArray[RED][INSIDE] = new Position(300, -910);
         skybridgePositionArray[RED][OUTSIDE] = new Position(0, -900);
 
-        skybridgePositionArray[BLUE][INSIDE] = new Position(300, 980);
+        skybridgePositionArray[BLUE][INSIDE] = new Position(320, 910);
         skybridgePositionArray[BLUE][OUTSIDE] = new Position(0, 930);
+
+        parkingMidpointArray[RED] = new Position(855,-650);
+        parkingMidpointArray[BLUE] = new Position(855, 945);
 
         parkingPositions[RED] = new Position(180, -760);
         parkingPositions[BLUE] = new Position(300, 945);
 
         skystoneToFoundationMidpointArray[RED] = new Position(920, -1180);
-        skystoneToFoundationMidpointArray[BLUE] = new Position(860, 1230);
+        skystoneToFoundationMidpointArray[BLUE] = new Position(920, 1180);
 
         pullFoundationMidpointArray[RED] = new Position(840, -1255);
-        pullFoundationMidpointArray[BLUE] = new Position(980, 1355);
+        pullFoundationMidpointArray[BLUE] = new Position(840, 1255);
 
         instantiateSwerveToTargets();
         robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
@@ -601,7 +606,7 @@ public class WHSAuto extends OpMode {
                                 0.8,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance - 110,
-                                700);
+                                600);
 
                         advanceState();
                         break;
@@ -736,10 +741,15 @@ public class WHSAuto extends OpMode {
                         break;
                     case 3:
                         subStateDesc = "rotating";
-                        robot.rotateToTarget(180,false);
-                        if (!robot.outtake.autoOuttakeInProgress() && !robot.rotateToTargetInProgress()) {
+                        if (STARTING_ALLIANCE == BLUE){
+                            robot.rotateToTarget(-160,false);
+                        }else if (STARTING_ALLIANCE == RED){
+                            robot.rotateToTarget(160, false);
+                        }
+                        if (!robot.rotateToTargetInProgress()){
                             robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
-                            operatingFoundationPullers = true;
+                        }
+                        if (!robot.rotateToTargetInProgress()){
                             subState++;
                         }
                         break;
@@ -773,7 +783,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 3:
                         subStateDesc = "Rotating like a speddy";
-                        robot.rotateToTarget(140,false);
+                        robot.rotateToTarget(100,false);
                         if (robot.getCoordinate().getHeading() < 180){
                             robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
                         }

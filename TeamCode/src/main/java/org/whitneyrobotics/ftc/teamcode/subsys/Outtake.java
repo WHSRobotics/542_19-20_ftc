@@ -108,11 +108,7 @@ public class Outtake {
                         break;
                     case 2: //Goes to Target Linear Slide Position
                         grabber.setPosition(Grabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
-                        if(extensionLevelTog.currentState()!= extensionLevelTog.howManyStates()-1) {
-                            extension.setLevel(extensionLevelTog.currentState() + 1);
-                        }else{
-                            extension.setLevel(extensionLevelTog.currentState());
-                        }
+                        extension.setHigherLevel(extensionLevelTog.currentState());
                         break;
                     default:
                         break;
@@ -452,6 +448,19 @@ public class Outtake {
 
     public boolean autoOuttakeInProgress() {
         return autoOuttakeInProgress;
+    }
+
+    public void changeExtensionErrorBias(boolean gamepadInputUp, boolean gamepadInputDown) {
+        if (gamepadInputUp) {
+            extension.errorBias += 5;
+        }
+        if (gamepadInputDown) {
+            extension.errorBias -= 5;
+        }
+    }
+
+    public int getExtensionErrorBias() {
+        return extension.errorBias;
     }
 
 }

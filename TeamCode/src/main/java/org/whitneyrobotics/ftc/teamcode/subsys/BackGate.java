@@ -7,11 +7,11 @@ import com.qualcomm.robotcore.util.Hardware;
 public class BackGate {
     Servo backGateServo;
 
-    enum BackGateServoPosition{
+    public enum BackGateServoPosition{
         UP, DOWN;
     }
     //UP, DOWN
-    private double[] backGateServoPositions = {0.725, 0.125};
+    private double[] backGateServoPositions = {0.765, 0.125};
 
     public BackGate(HardwareMap backGateMap){
         backGateServo = backGateMap.servo.get("backGateServo");
