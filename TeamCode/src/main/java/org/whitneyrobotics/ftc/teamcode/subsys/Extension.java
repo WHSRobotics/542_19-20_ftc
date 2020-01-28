@@ -14,7 +14,7 @@ public class Extension {
     // index 0 = intook; index 3 = level 3, clearance & hover
     private int[] extensionMotorPositions = {0, 180, 740, 1180, 1640, 2125, 2625, 3025, 3610};
     private int[] extensionHigherMotorPositions = new int[extensionMotorPositions.length];
-    private static final int UPDATE_LEVEL_DEADBAND = 140;
+    private static final int UPDATE_LEVEL_DEADBAND = 200;
     private double EXTENSION_MOTOR_POWER = 1.0;
 
     private PIDController extensionMotorController;

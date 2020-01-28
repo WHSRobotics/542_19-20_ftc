@@ -27,6 +27,7 @@ public class Outtake {
     private SimpleTimer autoIntakeToOuttakeTimer = new SimpleTimer();
     private SimpleTimer autoReleaseOuttakeTimer = new SimpleTimer();
     private SimpleTimer autoOuttakeToIntakeTimer = new SimpleTimer();
+    private SimpleTimer lastResortGrabStoneDeadmanTimer = new SimpleTimer();
 
     boolean autoOuttakeInProgress = false;
     boolean setOuttakeToIntakeTimer = true;
@@ -34,6 +35,7 @@ public class Outtake {
     private double intakeToOuttakeDelay = 0.75;
     private double outtakeToIntakeDelay = 0.75;
     private double releaseOuttakeDelay = 0.15;
+    private double grabStoneDeadmanDuration = 1.6;
 
     public int debugCount = 0;
 
@@ -67,11 +69,12 @@ public class Outtake {
                     } /*else {
                         grabber.setPosition(Grabber.GrabberPosition.CAPSTONE_INTAKE_UP);
                     }*/
+                    lastResortGrabStoneDeadmanTimer.set(grabStoneDeadmanDuration);
                 }
                 break;
             case 2: // Grab the stone
                 extension.setLevel(0); //Brings linear slides all the way down
-                if (extension.getCurrentLevel() == 0) {
+                if (extension.getCurrentLevel() == 0 || lastResortGrabStoneDeadmanTimer.isExpired()) {
                     // Brings down the Hand and Wrist Servos if the Extension is all the way down
                     if (capstoneTog.currentState() == 0) {
                         grabber.setPosition(Grabber.GrabberPosition.INTAKE_DOWN);

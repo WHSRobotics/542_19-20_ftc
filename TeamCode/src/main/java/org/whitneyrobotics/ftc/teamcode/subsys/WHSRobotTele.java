@@ -12,7 +12,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
 public class WHSRobotTele implements WHSRobot {
     public Drivetrain drivetrain;
     public IMU imu;
-    public Intake intake;
+    public TeleIntake intake;
     public FoundationPuller foundationPuller;
     public Outtake outtake;
    // public SkystoneGrabber skystoneGrabber;
@@ -77,7 +77,7 @@ public class WHSRobotTele implements WHSRobot {
 
         drivetrain = new Drivetrain(hardwareMap);
         imu = new IMU(hardwareMap);
-        intake = new Intake(hardwareMap);
+        intake = new TeleIntake(hardwareMap);
         foundationPuller = new FoundationPuller(hardwareMap);
         outtake = new Outtake(hardwareMap);
        // skystoneGrabber = new SkystoneGrabber(hardwareMap);

@@ -43,7 +43,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    public static final int STARTING_ALLIANCE = BLUE;
+    public static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -742,9 +742,9 @@ public class WHSAuto extends OpMode {
                     case 3:
                         subStateDesc = "rotating";
                         if (STARTING_ALLIANCE == BLUE){
-                            robot.rotateToTarget(-160,false);
+                            robot.rotateToTarget(-170,false);
                         }else if (STARTING_ALLIANCE == RED){
-                            robot.rotateToTarget(160, false);
+                            robot.rotateToTarget(170, false);
                         }
                         if (!robot.rotateToTargetInProgress()){
                             robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
