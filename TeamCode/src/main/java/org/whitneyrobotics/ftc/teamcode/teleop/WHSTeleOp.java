@@ -31,7 +31,7 @@ public class WHSTeleOp extends OpMode {
         }
 
         // Intake
-        if ((!robot.intake.stoneSensed() && robot.outtake.getCurrentState() == 1) || robot.capstone.getCapstoneTogglerState() != 0 || gamepad2.left_trigger > 0.01) {
+        if ((robot.outtake.getCurrentState() == 1) || robot.capstone.getCapstoneTogglerState() != 0 || gamepad2.left_trigger > 0.01) {
             robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger > 0.01);
         }else if (gamepad1.right_trigger < 0.01 && gamepad1.left_trigger <0.01){
             robot.intake.setVelocity(0);
