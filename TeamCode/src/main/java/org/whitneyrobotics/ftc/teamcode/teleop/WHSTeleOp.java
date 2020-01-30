@@ -13,6 +13,7 @@ public class WHSTeleOp extends OpMode {
     static final int BLUE = 1;
     static final int STARTING_ALLIANCE = WHSAuto.STARTING_ALLIANCE;
     WHSRobotTele robot;
+    int i = 0;
 
     @Override
     public void init() {
@@ -31,7 +32,7 @@ public class WHSTeleOp extends OpMode {
         }
 
         // Intake
-        if ((robot.outtake.getCurrentState() == 1) || robot.capstone.getCapstoneTogglerState() != 0 || gamepad2.left_trigger > 0.01) {
+        if (robot.intake.stoneSensed() && (robot.outtake.getCurrentState() == 1) || robot.capstone.getCapstoneTogglerState() != 0 || gamepad2.left_trigger > 0.01) {
             robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger > 0.01);
         }else if (gamepad1.right_trigger < 0.01 && gamepad1.left_trigger <0.01){
             robot.intake.setVelocity(0);
@@ -68,6 +69,7 @@ public class WHSTeleOp extends OpMode {
         telemetry.addData("Field-centric", robot.drivetrain.getFieldCentric());
         telemetry.addData("Capstone State", robot.capstone.getCapstoneState());
         telemetry.addData("Extension Error Bias", robot.outtake.getExtensionErrorBias());
-
+        telemetry.addData("i", i);
+        i++;
     }
 }
