@@ -15,7 +15,7 @@ public class TeleIntake {
     private DcMotorEx leftIntake;
     private DcMotorEx rightIntake;
     private Servo intakePusher;
-    private Rev2mDistanceSensor stoneSensor;
+    //private Rev2mDistanceSensor stoneSensor;
 
     public enum IntakePusherPosition {
         DOWN, UP
@@ -27,7 +27,7 @@ public class TeleIntake {
     private final double INTAKE_PUSHER_UP = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.UP.ordinal()];
 
     public static final double AUTO_INTAKE_POWER = 0.60;
-    public static final double INTAKE_POWER = 0.60;
+    public static final double INTAKE_POWER = 0.70;
     public static final double INTAKE_VELOCITY_THRESHOLD = 30;
     public static final double INTAKE_VELOCITY = 1800.0;
     public static final double AUTO_INTAKE_VELOCITY = 1500.0;
@@ -42,7 +42,7 @@ public class TeleIntake {
         leftIntake = intakeMap.get(DcMotorEx.class, "leftIntake");
         rightIntake = intakeMap.get(DcMotorEx.class,"rightIntake");
         intakePusher = intakeMap.servo.get("intakePusher");
-        stoneSensor = intakeMap.get(Rev2mDistanceSensor.class ,"stoneSensor");
+        //stoneSensor = intakeMap.get(Rev2mDistanceSensor.class ,"stoneSensor");
 
         leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -101,7 +101,7 @@ public class TeleIntake {
         rightIntake.setVelocity(velocity);
     }
 
-    public boolean stoneSensed(){
+    /*public boolean stoneSensed(){
         return stoneSensor.getDistance(DistanceUnit.MM) < STONE_SENSOR_DEADBAND;
-    }
+    }*/
 }
