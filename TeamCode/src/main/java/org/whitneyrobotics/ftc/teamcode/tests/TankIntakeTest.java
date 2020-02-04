@@ -23,6 +23,7 @@ public class TankIntakeTest extends OpMode {
     @Override
     public void loop() {
         drivetrain.operate(gamepad1.left_stick_y, gamepad1.right_stick_y);
-        intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.right_trigger > 0.01);
+        intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger > 0.01);
+
     }
 }
