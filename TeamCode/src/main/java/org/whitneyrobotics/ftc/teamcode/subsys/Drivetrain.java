@@ -29,6 +29,8 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     //TODO: measure actual wheel base
     private static final double WHEEL_BASE = 450;
+    public static final double L_DEAD_WHEEL_TO_ROBOT_CENTER = 178.0;
+    public static final double B_DEAD_WHEEL_TO_ROBOT_CENTER = 103.0;
     private static final double RADIUS_OF_WHEEL = 50;               //in mm
     private static final double CIRC_OF_WHEEL = RADIUS_OF_WHEEL * 2 * Math.PI;
     private static final double ENCODER_TICKS_PER_REV = 537.6;      //Orbital 20
@@ -38,6 +40,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     public static final double Y_WHEEL_TO_ROBOT_CENTER = 100.0;
 
     private double[] encoderValues = {0.0, 0.0};
+    private double[] allEncoderValues = {0.0, 0.0, 0.0, 0.0};
 
     private double vFL;
     private double vFR;
@@ -167,6 +170,21 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return new double[] {getLeftEncoderPosition(), getRightEncoderPosition()};
     }
 
+    public double[] getAllEncoderValues(){
+        double[] encoderValues = {frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
+        return encoderValues;
+    }
+
+    public double[] getAllEncoderDelta() {
+        double[] encoderDeltas = {0.0, 0.0, 0.0, 0.0};
+        double[] currentEncoderValues = getAllEncoderValues();
+        for (int i = 0; i<4; i++){
+            encoderDeltas[i] = currentEncoderValues[i] - allEncoderValues[i];
+        }
+        allEncoderValues = currentEncoderValues;
+        return encoderDeltas;
+    }
+
     public double[] getEncoderDelta() {
         double currentLeft = getLeftEncoderPosition();
         double currentRight = getRightEncoderPosition();
@@ -262,10 +280,6 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return fieldCentricSwitch.currentState() == 0 ? "Robot Centric" : "Field Centric";
     }
 
-    public double[] getAllEncoderValues(){
-        double[] encoderValues = {frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
-        return encoderValues;
-    }
 
     public double[] getMecanumEncoderDelta(){
         double currentFLBR = (frontLeft.getCurrentPosition() + backRight.getCurrentPosition())/2;
