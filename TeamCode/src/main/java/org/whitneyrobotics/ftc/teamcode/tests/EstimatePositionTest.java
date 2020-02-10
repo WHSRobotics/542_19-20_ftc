@@ -26,7 +26,9 @@ public class EstimatePositionTest extends OpMode {
         robot.drivetrain.operate(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
 //        robot.estimateHeading();
 //        robot.estimatePosition();
-        robot.estimateCoordinate();
+        //robot.estimateCoordinate();
+        robot.estimateHeading();
+        robot.deadWheelEstimatePosition();
 
         telemetry.addData("x", robot.getCoordinate().getX());
         telemetry.addData("y", robot.getCoordinate().getY());

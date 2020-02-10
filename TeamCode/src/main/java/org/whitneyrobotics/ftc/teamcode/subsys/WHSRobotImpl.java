@@ -223,10 +223,36 @@ public class WHSRobotImpl implements WHSRobot {
     }
 
     public void deadWheelEstimatePosition() {
-        encoderDeltas = drivetrain.getEncoderDelta();
+        encoderDeltas = drivetrain.getAllEncoderDelta();
+        double leftDelta = encoderDeltas[0];
+        double rightDelta = encoderDeltas[1];
+        double backDelta = encoderDeltas[2];
+
+
         double angleDelta = currentCoord.getHeading() - lastKnownHeading;
-        double deltaX = drivetrain.encToMM(encoderDeltas[0]);
-        double deltaY = drivetrain.encToMM(encoderDeltas[1]);
+        double deltaX = 0.0;
+        double deltaY = 0.0;
+
+        double X = 0.0;
+        if(Math.abs(rightDelta) > Math.abs(leftDelta)){
+            X = leftDelta/angleDelta;
+            deltaY = Functions.sind(-angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER);
+            deltaX = (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER) - (Functions.cosd(angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER));
+
+        }
+        if(Math.abs(leftDelta) > Math.abs(rightDelta)){
+            X = rightDelta/-angleDelta;
+            deltaY = Functions.sind(angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER);
+            deltaX = (Functions.cosd(angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER)) - (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER);
+
+        }
+
+        double G = backDelta - (angleDelta*drivetrain.B_DEAD_WHEEL_TO_ROBOT_CENTER);
+        double deltaY2 = Functions.sind(angleDelta)*G;
+        double deltaX2 = Functions.cosd(angleDelta)*G;
+
+        deltaX = deltaX + deltaX2;
+        deltaY = deltaY + deltaY2;
 
         Position bodyVector = new Position(deltaX, deltaY);
         Position fieldVector = Functions.body2field(bodyVector, currentCoord);
