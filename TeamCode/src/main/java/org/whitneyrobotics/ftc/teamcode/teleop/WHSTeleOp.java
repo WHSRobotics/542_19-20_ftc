@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
+import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
 @TeleOp(name = "WHS TeleOp", group = "a")
@@ -47,6 +48,7 @@ public class WHSTeleOp extends OpMode {
             robot.outtake.operate(false, false, false, false);
         }
         robot.outtake.changeExtensionErrorBias(gamepad2.left_stick_y > 0.05, gamepad2.left_stick_y < -0.05);
+
 
         /*//Skystone Grabber
         if (robot.intake.isIntakeOn()) {

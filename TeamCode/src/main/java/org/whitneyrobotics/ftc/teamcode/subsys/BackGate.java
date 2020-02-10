@@ -11,7 +11,7 @@ public class BackGate {
         UP, DOWN;
     }
     //UP, DOWN
-    private double[] backGateServoPositions = {0.8, 0.125};
+    private double[] backGateServoPositions = {0.87, 0.125};
 
     public BackGate(HardwareMap backGateMap){
         backGateServo = backGateMap.servo.get("backGateServo");
