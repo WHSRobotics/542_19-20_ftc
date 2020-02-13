@@ -6,12 +6,17 @@ public class MotionProfile {
     double MAXIMUM_ACCELERATION = 900;
     double MAXIMUM_VELOCITY = 2700;
     double increment;
+    double[] targetVelocities;
+    double initalPos;
 
-    public MotionProfile(double initialPos, double finalPos,int numToInject){
-        numOfPoints = numToInject;
-        pointArray = getPoints(initialPos, finalPos);
-        double increment = (finalPos - initialPos)/numOfPoints;
+    public MotionProfile(double initialPos, double finalPos,int numOfPoints){
+        this.numOfPoints = numOfPoints;
+        increment = (finalPos - initialPos)/ this.numOfPoints;
+        pointArray = getPoints();
+        targetVelocities = getTargetVelocities();
+        this.initalPos = initialPos;
     }
+
 
     public double[] getTargetVelocities(){
         double[] targetVelocities = new double[numOfPoints];
@@ -23,9 +28,9 @@ public class MotionProfile {
         return targetVelocities;
     }
 
-    public double[] getPoints(double initialPos, double finalPos){
+    public double[] getPoints(){
         double[] pointArray = new double[numOfPoints];
-        double previousPos = initialPos;
+        double previousPos = initalPos;
         for(int i = 0; i < numOfPoints; i++){
             pointArray[i] = previousPos + increment;
             previousPos = pointArray[i];

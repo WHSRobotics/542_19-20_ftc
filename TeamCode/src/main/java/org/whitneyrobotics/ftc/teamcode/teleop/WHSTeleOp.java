@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
 import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
+import org.whitneyrobotics.ftc.teamcode.subsys.TeleIntake;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
 @TeleOp(name = "WHS TeleOp", group = "a")
@@ -25,6 +26,7 @@ public class WHSTeleOp extends OpMode {
     public void loop() {
         // Drivetrain
         robot.estimateHeading();
+        robot.intake.setIntakePusherPosition(TeleIntake.IntakePusherPosition.UP);
         robot.drivetrain.switchFieldCentric(gamepad1.b);
         if (gamepad1.left_bumper){
             robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x/2.54, gamepad1.left_stick_y/2.54, gamepad1.right_stick_x/2.54, robot.getCoordinate().getHeading());
