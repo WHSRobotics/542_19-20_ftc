@@ -31,7 +31,7 @@ public class PIDFController {
     }
 
     public void calculate(double currentVelocity){
-        double[] differenceArray = new double[motionProfile.getPoints().length]
+        double[] differenceArray = new double[motionProfile.getPoints().length];
         for(int i = 0; i < motionProfile.getPoints().length; i++){
             differenceArray[i] = currentVelocity - motionProfile.getPoints()[i];
         }

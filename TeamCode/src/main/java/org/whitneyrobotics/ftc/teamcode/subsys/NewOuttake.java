@@ -13,7 +13,7 @@ public class NewOuttake {
     private static final int HOVER_LEVEL = 3;
     private static final int CLEARANCE_LEVEL = 4;
 
-    private Toggler operateOuttakeToggler = new Toggler(7);
+    private Toggler operateOuttakeToggler = new Toggler(6);
     int operateExtensionSubState = 0;
     private Toggler extensionLevelTog = new Toggler(9);
     private Toggler capstoneTog = new Toggler(2);
@@ -27,7 +27,8 @@ public class NewOuttake {
     private SimpleTimer autoIntakeToOuttakeTimer = new SimpleTimer();
     private SimpleTimer autoReleaseOuttakeTimer = new SimpleTimer();
     private SimpleTimer autoOuttakeToIntakeTimer = new SimpleTimer();
-    private SimpleTimer intakeUpToIntakeDown = new SimpleTimer();
+    private SimpleTimer intakeUpToIntakeDownTimer = new SimpleTimer();
+    private SimpleTimer resetSlidesTimer = new SimpleTimer();
 
     boolean autoOuttakeInProgress = false;
     boolean setOuttakeToIntakeTimer = true;
@@ -35,7 +36,8 @@ public class NewOuttake {
     private double intakeToOuttakeDelay = 0.75;
     private double outtakeToIntakeDelay = 0.75;
     private double releaseOuttakeDelay = 0.15;
-    private double grabStoneDeadmanDuration = 1.0;
+    private double grabStoneDeadmanDuration = 0.5;
+    private double resetSlidesDelay = 0.5;
 
     public int debugCount = 0;
 
@@ -54,18 +56,20 @@ public class NewOuttake {
         switch (operateOuttakeToggler.currentState()) {
             case 0:
                 setOuttakeToIntakeTimer = true;
-                extension.setLevel(0);
+                if (resetSlidesTimer.isExpired()) {
+                    extension.setLevel(0);
+                }
                 grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
                 break;
             case 1: // Wait For Stone
                 extension.setLevel(0);
                 grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
-                intakeUpToIntakeDown.set(grabStoneDeadmanDuration);
+                intakeUpToIntakeDownTimer.set(grabStoneDeadmanDuration);
                 break;
             case 2: // Grab the stone
                 extension.setLevel(0); //Brings linear slides all the way down
                 grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_RELEASED);
-                if (intakeUpToIntakeDown.isExpired()) {
+                if (intakeUpToIntakeDownTimer.isExpired()) {
                     // Brings down the Hand and Wrist Servos if the Extension is all the way down
                     grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
                 }
@@ -82,14 +86,7 @@ public class NewOuttake {
                 setOuttakeToIntakeTimer = true;
                 grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_RELEASED);
                 extension.setLevel(extensionLevelTog.currentState());
-                break;
-            case 6:
-                grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_RELEASED);
-                if (extensionLevelTog.currentState() != extensionLevelTog.howManyStates()-1) {
-                    extension.setLevel(extensionLevelTog.currentState() + 1);
-                }else{
-                    extension.setLevel(extensionLevelTog.currentState());
-                }
+                resetSlidesTimer.set(resetSlidesDelay);
                 break;
             default:
                 break;
@@ -300,55 +297,30 @@ public class NewOuttake {
 
     public void hover() {
         extension.estimateLevel();
-        extension.setLevel(CLEARANCE_LEVEL);
         grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_UP);
+        intakeUpToIntakeDownTimer.set(grabStoneDeadmanDuration);
     }
 
     public void grabStone() {
         extension.estimateLevel();
-        extension.setLevel(0);
-        if (extension.getCurrentLevel() == 0) {
+        if (intakeUpToIntakeDownTimer.isExpired()) {
             grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
+        } else {
+            grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_RELEASED);
         }
+        intakeToOuttakeTimer.set(intakeToOuttakeDelay);
     }
 
-    public void autoOuttake(int targetLevel) {
+    public void autoOuttake() {
         extension.estimateLevel();
-
         switch (autoOuttakeState) {
             case 0: //Swing around
                 autoOuttakeInProgress = true;
-                switch (autoOuttakeSubState) {
-                    case 0: //Go To clearance Position
-                        extension.setLevel(CLEARANCE_LEVEL);
-                        grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
-                        if (extension.getCurrentLevel() == CLEARANCE_LEVEL) {
-                            autoIntakeToOuttakeTimer.set(intakeToOuttakeDelay); //Sets a timer for moving the elbow servos
-                            autoOuttakeSubState++;
-                        }
-                        break;
-                    case 1: // Moves the Elbow Servos
-                        grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
-                        if (extensionLevelTog.currentState() < CLEARANCE_LEVEL) {
-                            //If the target position is below the clearance level, then do not go on until the outtake has completely swung around
-                            if (autoIntakeToOuttakeTimer.isExpired()) {
-                                autoOuttakeSubState++;
-                            }
-                        } else {
-                            autoOuttakeSubState++;
-                        }
-                        debugCount++;
-                        break;
-                    case 2: //Goes to Target Linear Slide Position
-                        extension.setLevel(targetLevel);
-                        grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN);
-                        if (extension.getCurrentLevel() == targetLevel) {
-                            autoReleaseOuttakeTimer.set(releaseOuttakeDelay);
-                            autoOuttakeSubState = 0;
-                            autoOuttakeState++;
-                        }
-                        break;
+                grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
+                if (intakeToOuttakeTimer.isExpired()) {
+                    autoOuttakeState++;
                 }
+                autoReleaseOuttakeTimer.set(releaseOuttakeDelay);
                 break;
             case 1: // Releases Stone
                 grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_RELEASED);
@@ -356,20 +328,13 @@ public class NewOuttake {
                     autoOuttakeState++;
                 }
                 break;
-            case 2: // Set extension to clearance for grabber to swing back in
-                extension.setLevel(CLEARANCE_LEVEL);
-                if (extension.getCurrentLevel() >= CLEARANCE_LEVEL) {
-                    autoOuttakeToIntakeTimer.set(outtakeToIntakeDelay);
-                    autoOuttakeState++;
-                }
-                break;
-            case 3: // Swing grabber back into robot
-                grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_UP);
+            case 2: // Swing grabber back into robot
+                grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_RELEASED);
                 if (autoOuttakeToIntakeTimer.isExpired()) {
                     autoOuttakeState++;
                 }
                 break;
-            case 4:
+            case 3:
                 extension.setLevel(0);
                 autoOuttakeInProgress = false;
                 break;

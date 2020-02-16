@@ -8,10 +8,10 @@ public class BackGate {
     Servo backGateServo;
 
     public enum BackGateServoPosition{
-        UP, DOWN;
+        UP, DOWN, INTAKING;
     }
     //UP, DOWN
-    private double[] backGateServoPositions = {0.87, 0.125};
+    private double[] backGateServoPositions = {0.895, 0.005, 0.745};
 
     public BackGate(HardwareMap backGateMap){
         backGateServo = backGateMap.servo.get("backGateServo");

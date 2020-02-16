@@ -15,7 +15,7 @@ public class Intake {
     private DcMotorEx leftIntake;
     private DcMotorEx rightIntake;
     private Servo intakePusher;
-    private Rev2mDistanceSensor stoneSensor;
+    //private Rev2mDistanceSensor stoneSensor;
 
     public enum IntakePusherPosition {
         DOWN, UP
@@ -26,7 +26,7 @@ public class Intake {
     private final double INTAKE_PUSHER_DOWN = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.DOWN.ordinal()];
     private final double INTAKE_PUSHER_UP = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.UP.ordinal()];
 
-    public static final double AUTO_INTAKE_POWER = 0.60;
+    public static final double AUTO_INTAKE_POWER = 0.45;
     public static final double INTAKE_POWER = 0.60;
     public static final double INTAKE_VELOCITY_THRESHOLD = 30;
     public static final double INTAKE_VELOCITY = 1800.0;
@@ -42,7 +42,7 @@ public class Intake {
         leftIntake = intakeMap.get(DcMotorEx.class, "leftIntake");
         rightIntake = intakeMap.get(DcMotorEx.class,"rightIntake");
         intakePusher = intakeMap.servo.get("intakePusher");
-        stoneSensor = intakeMap.get(Rev2mDistanceSensor.class ,"stoneSensor");
+        //stoneSensor = intakeMap.get(Rev2mDistanceSensor.class ,"stoneSensor");
 
         leftIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -102,6 +102,6 @@ public class Intake {
     }
 
     public boolean stoneSensed(){
-        return stoneSensor.getDistance(DistanceUnit.MM) < STONE_SENSOR_DEADBAND;
+        return false;
     }
 }

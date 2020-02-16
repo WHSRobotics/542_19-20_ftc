@@ -43,7 +43,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    public static final int STARTING_ALLIANCE = RED;
+    public static final int STARTING_ALLIANCE = BLUE;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -231,8 +231,8 @@ public class WHSAuto extends OpMode {
         stateEnabled[INITIAL_MOVE_FOUNDATION] = (STARTING_POSITION == FOUNDATION);
         stateEnabled[SCAN_SKYSTONE] = true;
         stateEnabled[INTAKE_SKYSTONE] = true;
-        stateEnabled[DRIVE_TO_FOUNDATION] = true;
-        stateEnabled[OUTTAKE_SKYSTONE] = true;
+        stateEnabled[DRIVE_TO_FOUNDATION] = false;
+        stateEnabled[OUTTAKE_SKYSTONE] = false;
         stateEnabled[SECONDARY_MOVE_FOUNDATION] = (STARTING_POSITION == SKYSTONE && !PARTNER_MOVED_FOUNDATION);
         stateEnabled[GRAB_SECOND_SKYSTONE] = false;
         stateEnabled[PARK] = true;
@@ -340,7 +340,7 @@ public class WHSAuto extends OpMode {
 
 
         skystoneMidpointArray[BLUE][0] = new Position(-760, 1175);
-        skystoneMidpointArray[BLUE][1] = new Position(-735, 1175);
+        skystoneMidpointArray[BLUE][1] = new Position(-605, 870);
         skystoneMidpointArray[BLUE][2] = new Position(-985, 1000);
         skystoneMidpointArray[BLUE][3] = new Position(-1205, 600);
         skystoneMidpointArray[BLUE][4] = new Position(-1500, 600);
@@ -354,12 +354,12 @@ public class WHSAuto extends OpMode {
         skystonePositionArray[RED][4] = new Position(-1500, -600);
         skystonePositionArray[RED][5] = new Position(-1700, -600);
 
-        skystonePositionArray[BLUE][0] = new Position(-485, 560);
-        skystonePositionArray[BLUE][1] = new Position(-920, 560);
-        skystonePositionArray[BLUE][2] = new Position(-1145, 560);
-        skystonePositionArray[BLUE][3] = new Position(-1205, 600);
-        skystonePositionArray[BLUE][4] = new Position(-1500, 600);
-        skystonePositionArray[BLUE][5] = new Position(-1700, 600);
+        skystonePositionArray[BLUE][0] = new Position(-485, 300);
+        skystonePositionArray[BLUE][1] = new Position(-900, 280);
+        skystonePositionArray[BLUE][2] = new Position(-1145, 300);
+        skystonePositionArray[BLUE][3] = new Position(-1205, 300);
+        skystonePositionArray[BLUE][4] = new Position(-1500, 300);
+        skystonePositionArray[BLUE][5] = new Position(-1700, 300);
 
         skystoneToFoundationPositionArray[RED][0] = new Position(-800, -960);
         skystoneToFoundationPositionArray[RED][1] = new Position(-710, -910);
@@ -369,7 +369,7 @@ public class WHSAuto extends OpMode {
         skystoneToFoundationPositionArray[RED][5] = new Position(-1700, -600);
 
         skystoneToFoundationPositionArray[BLUE][0] = new Position(-800, 960);
-        skystoneToFoundationPositionArray[BLUE][1] = new Position(-710, 930);
+        skystoneToFoundationPositionArray[BLUE][1] = new Position(-710, 660);
         skystoneToFoundationPositionArray[BLUE][2] = new Position(-940, 930);
         skystoneToFoundationPositionArray[BLUE][3] = new Position(-1205, 600);
         skystoneToFoundationPositionArray[BLUE][4] = new Position(-1500, 600);
@@ -460,10 +460,10 @@ public class WHSAuto extends OpMode {
                 robot.outtake.grabStone();
                 break;
             case "outtake1":
-                robot.outtake.autoOuttake(1);
+                robot.outtake.autoOuttake();
                 break;
             case "outtake2":
-                robot.outtake.autoOuttake(2);
+                robot.outtake.autoOuttake();
                 break;
             default:
                 break;
@@ -632,7 +632,7 @@ public class WHSAuto extends OpMode {
                         }
                         motorPowers = startToSkystoneSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         if (!startToSkystoneSwerve.inProgress()) {
-                            robot.intake.setVelocity(0.0);
+                            //robot.intake.setVelocity(0.0);
                             intakeSystoneTimer.set(JERK_DELAY);
                             subState++;
                         }
@@ -669,6 +669,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 4:
                         subStateDesc = "waiting";
+                        robot.intake.setVelocity(0.0);
                         if (jerkSkystoneTimer.isExpired()){
                             subState++;
                         }

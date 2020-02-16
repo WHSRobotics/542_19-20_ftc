@@ -14,7 +14,7 @@ public class WHSRobotTele implements WHSRobot {
     public IMU imu;
     public TeleIntake intake;
     public FoundationPuller foundationPuller;
-    public Outtake outtake;
+    public NewOuttake outtake;
    // public SkystoneGrabber skystoneGrabber;
     public Capstone capstone;
     public BackGate backGate;
@@ -79,7 +79,7 @@ public class WHSRobotTele implements WHSRobot {
         imu = new IMU(hardwareMap);
         intake = new TeleIntake(hardwareMap);
         foundationPuller = new FoundationPuller(hardwareMap);
-        outtake = new Outtake(hardwareMap);
+        outtake = new NewOuttake(hardwareMap);
        // skystoneGrabber = new SkystoneGrabber(hardwareMap);
         capstone = new Capstone(hardwareMap);
         backGate = new BackGate(hardwareMap);

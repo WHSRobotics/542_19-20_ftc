@@ -22,7 +22,7 @@ public class Capstone {
     }
 
     //up,down
-    final double [] INTAKE_BLOCKER_POSITIONS = {0.84, 0.01};
+    final double [] INTAKE_BLOCKER_POSITIONS = {0.95, 0.01};
     final double [] LOCK_POSITIONS = {0.944, 0.465};
     final double [] DUMP_POSITIONS = {0.02, 0.99};
 
@@ -100,7 +100,7 @@ public class Capstone {
         dump.setPosition(DUMP_POSITIONS[dumpPosition.ordinal()]);
     }
 
-
+    public void setIntakeBlockerPosition
 
 
     public int getCapstoneTogglerState(){
