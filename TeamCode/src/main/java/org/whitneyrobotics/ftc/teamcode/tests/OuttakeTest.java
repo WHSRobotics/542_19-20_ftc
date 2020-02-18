@@ -24,7 +24,7 @@ public class OuttakeTest extends OpMode {
 
 
         // Outtake
-        robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down/*, gamepad2.dpad_right*/);
+        robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.right_trigger > 0.01);
 
         /*//Skystone Grabber
         if (robot.intake.isIntakeOn()) {

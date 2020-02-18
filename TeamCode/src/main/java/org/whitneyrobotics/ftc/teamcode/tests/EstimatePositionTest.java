@@ -43,6 +43,8 @@ public class EstimatePositionTest extends OpMode {
         telemetry.addData("X heading: ", robot.imu.getThreeHeading()[0]);
         telemetry.addData("Y heading: ", robot.imu.getThreeHeading()[1]);
         telemetry.addData("Z heading: ", robot.imu.getThreeHeading()[2]);
+        telemetry.addData("Left extension", robot.outtake.getExtensionEncoderPositions()[0]);
+        telemetry.addData("Right extension", robot.outtake.getExtensionEncoderPositions()[1]);
 
     }
 }

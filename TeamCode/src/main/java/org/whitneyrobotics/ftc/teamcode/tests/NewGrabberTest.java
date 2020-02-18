@@ -18,7 +18,7 @@ public class NewGrabberTest extends OpMode {
 
     @Override
     public void loop() {
-        outtake.operate(gamepad1.y, gamepad1.a, gamepad1.dpad_up, gamepad1.dpad_down);
+        outtake.operate(gamepad1.y, gamepad1.a, gamepad1.dpad_up, gamepad1.dpad_down, gamepad2.right_trigger > 0.01);
         foundationPuller.operate(true);
     }
 }

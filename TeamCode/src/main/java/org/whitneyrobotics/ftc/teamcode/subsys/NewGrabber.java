@@ -11,7 +11,7 @@ public class NewGrabber {
     private Servo wristServo;
     private Servo handServo;
 
-    private Toggler cyclePositionsToggler = new Toggler(4);
+    private Toggler cyclePositionsToggler = new Toggler(5);
     private Toggler capstoneToggler = new Toggler(2);
 
     public enum ElbowPosition {
@@ -104,21 +104,25 @@ public class NewGrabber {
         cyclePositionsToggler.changeState(gamepadInputUp, gamepadInputDown);
         if (cyclePositionsToggler.currentState() == 0) {
             // Waiting for Stone
-            setElbowServoPosition(NewGrabber.ElbowPosition.INTAKE);
+            setElbowServoPosition(ElbowPosition.HOVER);
             setWristServoPosition(NewGrabber.WristPosition.UP);
-            setHandServoPosition(NewGrabber.HandPosition.UP);
+            setHandServoPosition(NewGrabber.HandPosition.DOWN);
         } else if (cyclePositionsToggler.currentState() == 1) {
             // Grabbing the stone
             setElbowServoPosition(NewGrabber.ElbowPosition.INTAKE);
-            setWristServoPosition(NewGrabber.WristPosition.DOWN);
+            setWristServoPosition(NewGrabber.WristPosition.UP);
             setHandServoPosition(NewGrabber.HandPosition.DOWN);
         } else if (cyclePositionsToggler.currentState() == 2) {
             // Spinning Around
+            setElbowServoPosition(NewGrabber.ElbowPosition.INTAKE);
+            setWristServoPosition(NewGrabber.WristPosition.DOWN);
+            setHandServoPosition(NewGrabber.HandPosition.DOWN);
+        } else if (cyclePositionsToggler.currentState() == 3){
+            // Let go of the stone
             setElbowServoPosition(NewGrabber.ElbowPosition.OUTTAKE);
             setWristServoPosition(NewGrabber.WristPosition.DOWN);
             setHandServoPosition(NewGrabber.HandPosition.OUTTAKE_DOWN);
-        } else if (cyclePositionsToggler.currentState() == 3){
-            // Let go of the stone
+        } else if (cyclePositionsToggler.currentState() == 4) {
             setElbowServoPosition(NewGrabber.ElbowPosition.OUTTAKE);
             setWristServoPosition(NewGrabber.WristPosition.UP);
             setHandServoPosition(NewGrabber.HandPosition.OUTTAKE_DOWN);

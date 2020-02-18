@@ -7,13 +7,16 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 import org.whitneyrobotics.ftc.teamcode.subsys.Extension;
+import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.Grabber;
+import org.whitneyrobotics.ftc.teamcode.subsys.NewGrabber;
 
 @TeleOp(name = "EncoderPositionTest")
 public class EncoderPositionTest extends OpMode {
 
     Extension extension;
-    Grabber grabber;
+    NewGrabber grabber;
+    FoundationPuller foundationPuller;
 
     int pendingTargetPosition = 0;
     int targetPosition = 0;
@@ -29,7 +32,8 @@ public class EncoderPositionTest extends OpMode {
     @Override
     public void init() {
         extension = new Extension(hardwareMap);
-        grabber = new Grabber(hardwareMap);
+        grabber = new NewGrabber(hardwareMap);
+        foundationPuller = new FoundationPuller(hardwareMap);
     }
 
     @Override
@@ -57,6 +61,8 @@ public class EncoderPositionTest extends OpMode {
         extension.setTargetEncoderPosition(targetPosition);
 
         grabber.cyclePositions(gamepad1.dpad_up, gamepad1.dpad_down, gamepad1.dpad_left);
+
+        foundationPuller.operate(gamepad1.right_bumper);
 
         telemetry.addData("Target Position", pendingTargetPosition);
         telemetry.addData("Current Position", targetPosition);

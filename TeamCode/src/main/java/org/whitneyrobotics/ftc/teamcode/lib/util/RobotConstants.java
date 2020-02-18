@@ -23,7 +23,7 @@ public class RobotConstants {
     public static double A_KD = 0.0;
     public static double A_KF = 0.0;
     public static double E_KP = 0.006;
-    public static double E_KI = 0.000;
+    public static double E_KI = 0.00000542;
     public static double E_KD = 0.0001;
 
     public static double rotateTestAngle = 180;

@@ -12,7 +12,7 @@ public class Extension {
     private DcMotor rightExtension;
 
     // index 0 = intook; index 3 = level 3, clearance & hover
-    private int[] extensionMotorPositions = {0, 180, 740, 1180, 1640, 2125, 2625, 3025, 3610};
+    private int[] extensionMotorPositions = {0, 180, 740, 1180, 1640, 2125, 2625, 3025, 3550};
     private int[] extensionHigherMotorPositions = new int[extensionMotorPositions.length];
     private static final int UPDATE_LEVEL_DEADBAND = 200;
     private double EXTENSION_MOTOR_POWER = 1.0;
@@ -34,8 +34,11 @@ public class Extension {
 
         rightExtension.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftExtension.setTargetPosition(extensionMotorPositions[0]);
-        rightExtension.setTargetPosition(extensionMotorPositions[0]);
+//        leftExtension.setTargetPosition(extensionMotorPositions[0]);
+//        rightExtension.setTargetPosition(extensionMotorPositions[0]);
+
+        leftExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightExtension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 /*
         leftExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightExtension.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
@@ -49,7 +52,7 @@ public class Extension {
     }
 
     public void setLevel(int extensionLevel){
-        error = extensionMotorPositions[extensionLevel] - getEncoderPosition() - errorBias;
+        error = extensionMotorPositions[extensionLevel] - getAvgEncoderPosition() - errorBias;
 
         extensionMotorController.setConstants(RobotConstants.E_KP,RobotConstants.E_KI, RobotConstants.E_KD);
         extensionMotorController.calculate(error);
@@ -59,7 +62,7 @@ public class Extension {
     }
 
     public void setHigherLevel(int higherExtensionLevel) {
-        error = extensionHigherMotorPositions[higherExtensionLevel] - getEncoderPosition() - errorBias;
+        error = extensionHigherMotorPositions[higherExtensionLevel] - getAvgEncoderPosition() - errorBias;
 
         extensionMotorController.setConstants(RobotConstants.E_KP,RobotConstants.E_KI, RobotConstants.E_KD);
         extensionMotorController.calculate(error);
@@ -92,7 +95,7 @@ public class Extension {
         rightExtension.setPower(EXTENSION_MOTOR_POWER);
     }
 
-    public int getEncoderPosition(){
+    public int getAvgEncoderPosition(){
         return (leftExtension.getCurrentPosition() + rightExtension.getCurrentPosition())/2;
     }
 
@@ -109,6 +112,10 @@ public class Extension {
 
     public double getPIDOutput(){
         return extensionMotorController.getOutput();
+    }
+
+    public int[] getEncoderPositions() {
+        return new int[] {leftExtension.getCurrentPosition(), rightExtension.getCurrentPosition()};
     }
 
     public void changeErrorBias(boolean gamepadInputUp, boolean gamepadInputDown) {

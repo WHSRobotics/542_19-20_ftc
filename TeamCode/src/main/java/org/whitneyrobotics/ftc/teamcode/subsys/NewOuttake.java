@@ -9,6 +9,7 @@ public class NewOuttake {
 
     Extension extension;
     NewGrabber grabber;
+    BackGate backGate;
 
     private static final int HOVER_LEVEL = 3;
     private static final int CLEARANCE_LEVEL = 4;
@@ -33,7 +34,7 @@ public class NewOuttake {
     boolean autoOuttakeInProgress = false;
     boolean setOuttakeToIntakeTimer = true;
 
-    private double intakeToOuttakeDelay = 0.75;
+    private double intakeToOuttakeDelay = 1.5;
     private double outtakeToIntakeDelay = 0.75;
     private double releaseOuttakeDelay = 0.15;
     private double grabStoneDeadmanDuration = 0.5;
@@ -44,52 +45,59 @@ public class NewOuttake {
     public NewOuttake(HardwareMap outtakeMap) {
         extension = new Extension(outtakeMap);
         grabber = new NewGrabber(outtakeMap);
+        backGate = new BackGate(outtakeMap);
         extensionLevelTog.setState(1);
     }
 
-    public void operate(boolean gamepadInputUp, boolean gamepadInputDown, boolean gamepadInputExtensionLevelUp, boolean gamepadInputExtensionLevelDown/*, boolean gamepadInputCapstone*/) {
+    public void operate(boolean gamepadInputUp, boolean gamepadInputDown, boolean gamepadInputExtensionLevelUp, boolean gamepadInputExtensionLevelDown, boolean gamepadInputBackGate) {
         extension.estimateLevel(); // Finds the closest Extension Level
         operateOuttakeToggler.changeState(gamepadInputUp, gamepadInputDown); //Changes the State in the Method
         extensionLevelTog.changeState(gamepadInputExtensionLevelUp, gamepadInputExtensionLevelDown); // Changes the target Extension Level
         //capstoneTog.changeState(gamepadInputCapstone);
 
-        switch (operateOuttakeToggler.currentState()) {
-            case 0:
-                setOuttakeToIntakeTimer = true;
-                if (resetSlidesTimer.isExpired()) {
-                    extension.setLevel(0);
-                }
-                grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
-                break;
-            case 1: // Wait For Stone
-                extension.setLevel(0);
-                grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
-                intakeUpToIntakeDownTimer.set(grabStoneDeadmanDuration);
-                break;
-            case 2: // Grab the stone
-                extension.setLevel(0); //Brings linear slides all the way down
-                grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_RELEASED);
-                if (intakeUpToIntakeDownTimer.isExpired()) {
-                    // Brings down the Hand and Wrist Servos if the Extension is all the way down
+        if (gamepadInputBackGate) {
+            backGate.setPosition(BackGate.BackGateServoPosition.DOWN);
+            extension.setLevel(3);
+        } else {
+            backGate.setPosition(BackGate.BackGateServoPosition.UP);
+            switch (operateOuttakeToggler.currentState()) {
+                case 0:
+                    setOuttakeToIntakeTimer = true;
+                    if (resetSlidesTimer.isExpired()) {
+                        extension.setLevel(0);
+                    }
                     grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
-                }
-                break;
-            case 3: //Swing around
-                extension.setHigherLevel(extensionLevelTog.currentState());
-                grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
-                break;
-            case 4://hovering over the stone
-                extension.setLevel(extensionLevelTog.currentState());
-                grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN);
-                break;
-            case 5: // Releases Stone
-                setOuttakeToIntakeTimer = true;
-                grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_RELEASED);
-                extension.setLevel(extensionLevelTog.currentState());
-                resetSlidesTimer.set(resetSlidesDelay);
-                break;
-            default:
-                break;
+                    break;
+                case 1: // Wait For Stone
+                    extension.setLevel(0);
+                    grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_UP); //Elbow = Intake, Hand = Up, Wrist = Up
+                    intakeUpToIntakeDownTimer.set(grabStoneDeadmanDuration);
+                    break;
+                case 2: // Grab the stone
+                    extension.setLevel(0); //Brings linear slides all the way down
+                    grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_RELEASED);
+                    if (intakeUpToIntakeDownTimer.isExpired()) {
+                        // Brings down the Hand and Wrist Servos if the Extension is all the way down
+                        grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
+                    }
+                    break;
+                case 3: //Swing around
+                    extension.setHigherLevel(extensionLevelTog.currentState());
+                    grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
+                    break;
+                case 4://hovering over the stone
+                    extension.setLevel(extensionLevelTog.currentState());
+                    grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN);
+                    break;
+                case 5: // Releases Stone
+                    setOuttakeToIntakeTimer = true;
+                    grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_RELEASED);
+                    extension.setLevel(extensionLevelTog.currentState());
+                    resetSlidesTimer.set(resetSlidesDelay);
+                    break;
+                default:
+                    break;
+            }
         }
     }
     public void setOperateOuttakeTogglerState(int targetState){
@@ -312,7 +320,6 @@ public class NewOuttake {
     }
 
     public void autoOuttake() {
-        extension.estimateLevel();
         switch (autoOuttakeState) {
             case 0: //Swing around
                 autoOuttakeInProgress = true;
@@ -335,7 +342,6 @@ public class NewOuttake {
                 }
                 break;
             case 3:
-                extension.setLevel(0);
                 autoOuttakeInProgress = false;
                 break;
             default:
@@ -366,6 +372,10 @@ public class NewOuttake {
         if (gamepadInputDown) {
             extension.errorBias -= 5;
         }
+    }
+
+    public int[] getExtensionEncoderPositions() {
+        return extension.getEncoderPositions();
     }
 
     public int getExtensionErrorBias() {

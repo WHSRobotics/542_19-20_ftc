@@ -13,6 +13,10 @@ public class Capstone {
     Servo dump;
     Toggler capstoneTog = new Toggler(5);
 
+    public enum IntakeBlockerPosition {
+        UP, DOWN;
+    }
+
     public enum LockPosition {
         UNLOCKED, LOCKED;
     }
@@ -23,7 +27,7 @@ public class Capstone {
 
     //up,down
     final double [] INTAKE_BLOCKER_POSITIONS = {0.95, 0.01};
-    final double [] LOCK_POSITIONS = {0.944, 0.465};
+    final double [] LOCK_POSITIONS = {0.994, 0.465};
     final double [] DUMP_POSITIONS = {0.02, 0.99};
 
     SimpleTimer unlockToCapstoneDownTimer = new SimpleTimer();
@@ -100,7 +104,9 @@ public class Capstone {
         dump.setPosition(DUMP_POSITIONS[dumpPosition.ordinal()]);
     }
 
-    public void setIntakeBlockerPosition
+    public void setIntakeBlockerPosition(IntakeBlockerPosition intakeBlockerPosition) {
+        intakeBlocker.setPosition(INTAKE_BLOCKER_POSITIONS[intakeBlockerPosition.ordinal()]);
+    }
 
 
     public int getCapstoneTogglerState(){

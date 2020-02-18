@@ -231,8 +231,8 @@ public class WHSAuto extends OpMode {
         stateEnabled[INITIAL_MOVE_FOUNDATION] = (STARTING_POSITION == FOUNDATION);
         stateEnabled[SCAN_SKYSTONE] = true;
         stateEnabled[INTAKE_SKYSTONE] = true;
-        stateEnabled[DRIVE_TO_FOUNDATION] = false;
-        stateEnabled[OUTTAKE_SKYSTONE] = false;
+        stateEnabled[DRIVE_TO_FOUNDATION] = true;
+        stateEnabled[OUTTAKE_SKYSTONE] = true;
         stateEnabled[SECONDARY_MOVE_FOUNDATION] = (STARTING_POSITION == SKYSTONE && !PARTNER_MOVED_FOUNDATION);
         stateEnabled[GRAB_SECOND_SKYSTONE] = false;
         stateEnabled[PARK] = true;
@@ -340,8 +340,8 @@ public class WHSAuto extends OpMode {
 
 
         skystoneMidpointArray[BLUE][0] = new Position(-760, 1175);
-        skystoneMidpointArray[BLUE][1] = new Position(-605, 870);
-        skystoneMidpointArray[BLUE][2] = new Position(-985, 1000);
+        skystoneMidpointArray[BLUE][1] = new Position(-595, 870);
+        skystoneMidpointArray[BLUE][2] = new Position(-855, 1000);
         skystoneMidpointArray[BLUE][3] = new Position(-1205, 600);
         skystoneMidpointArray[BLUE][4] = new Position(-1500, 600);
         skystoneMidpointArray[BLUE][5] = new Position(-1700, 600);
@@ -354,9 +354,9 @@ public class WHSAuto extends OpMode {
         skystonePositionArray[RED][4] = new Position(-1500, -600);
         skystonePositionArray[RED][5] = new Position(-1700, -600);
 
-        skystonePositionArray[BLUE][0] = new Position(-485, 300);
+        skystonePositionArray[BLUE][0] = new Position(-490, 260);
         skystonePositionArray[BLUE][1] = new Position(-900, 280);
-        skystonePositionArray[BLUE][2] = new Position(-1145, 300);
+        skystonePositionArray[BLUE][2] = new Position(-1105, 260);
         skystonePositionArray[BLUE][3] = new Position(-1205, 300);
         skystonePositionArray[BLUE][4] = new Position(-1500, 300);
         skystonePositionArray[BLUE][5] = new Position(-1700, 300);
@@ -368,9 +368,9 @@ public class WHSAuto extends OpMode {
         skystoneToFoundationPositionArray[RED][4] = new Position(-1500, -600);
         skystoneToFoundationPositionArray[RED][5] = new Position(-1700, -600);
 
-        skystoneToFoundationPositionArray[BLUE][0] = new Position(-800, 960);
+        skystoneToFoundationPositionArray[BLUE][0] = new Position(-800, 660);
         skystoneToFoundationPositionArray[BLUE][1] = new Position(-710, 660);
-        skystoneToFoundationPositionArray[BLUE][2] = new Position(-940, 930);
+        skystoneToFoundationPositionArray[BLUE][2] = new Position(-940, 630);
         skystoneToFoundationPositionArray[BLUE][3] = new Position(-1205, 600);
         skystoneToFoundationPositionArray[BLUE][4] = new Position(-1500, 600);
         skystoneToFoundationPositionArray[BLUE][5] = new Position(-1700, 600);
@@ -443,6 +443,7 @@ public class WHSAuto extends OpMode {
     public void loop() {
         robot.estimateHeading();
         robot.estimatePosition();
+        robot.capstone.setIntakeBlockerPosition(Capstone.IntakeBlockerPosition.UP);
         robot.capstone.setLockPosition(Capstone.LockPosition.LOCKED);
         robot.capstone.setDumpPosition(Capstone.DumpPosition.UP);
         robot.backGate.operate(false);
@@ -702,9 +703,6 @@ public class WHSAuto extends OpMode {
                         } else {
                             motorPowers = skystoneToMovedFoundationSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), STARTING_ALLIANCE == BLUE);
                         }
-                        if (robot.getCoordinate().getX() > 300) {
-                            outtakeState = "outtake1";
-                        }
                         if (!skystoneToUnmovedFoundationSwerve.inProgress() && !skystoneToMovedFoundationSwerve.inProgress()) {
                             subState++;
                         }
@@ -721,6 +719,7 @@ public class WHSAuto extends OpMode {
                     case 0:
                         subStateDesc = "Entry";
                         foundationPullerUpToDownTimer.set(GRAB_FOUNDATION_DELAY);
+                        outtakeState = "outtake1";
                         subState++;
                         break;
                     case 1:

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
 import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
+import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
 import org.whitneyrobotics.ftc.teamcode.subsys.TeleIntake;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
@@ -45,9 +46,9 @@ public class WHSTeleOp extends OpMode {
         }
         // Outtake
         if (robot.capstone.getCapstoneTogglerState() == 0) {
-            robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down/*, gamepad2.dpad_right*/);
+            robot.outtake.operate(gamepad2.y, gamepad2.a, gamepad2.dpad_up, gamepad2.dpad_down, gamepad2.right_trigger > 0.01);
         } else {
-            robot.outtake.operate(false, false, false, false);
+            robot.outtake.operate(false, false, false, false, false);
         }
         robot.outtake.changeExtensionErrorBias(gamepad2.left_stick_y > 0.05, gamepad2.left_stick_y < -0.05);
 
@@ -65,8 +66,6 @@ public class WHSTeleOp extends OpMode {
         //Capstone
         robot.capstone.operate(gamepad2.right_bumper, gamepad2.left_bumper);
 
-        //
-        robot.backGate.operate(gamepad2.right_trigger >0.01);
         telemetry.addData("Outtake State",robot.outtake.getCurrentState());
         telemetry.addData("Target extension level", robot.outtake.getCurrentTargetLevel());
         telemetry.addData("Current extension level", robot.outtake.getCurrentLevel());
