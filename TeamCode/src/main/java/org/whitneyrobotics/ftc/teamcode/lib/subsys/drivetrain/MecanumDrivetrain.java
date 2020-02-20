@@ -20,7 +20,7 @@ public interface MecanumDrivetrain {
 
     String getOrientation();
 
-    double[] getEncoderDelta();
+    double[] getLRAvgEncoderDelta();
 
     double encToMM(double encoderTicks);
 

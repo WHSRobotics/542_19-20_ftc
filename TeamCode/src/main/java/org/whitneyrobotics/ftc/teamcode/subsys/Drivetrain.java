@@ -5,10 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.MotorSubsystem;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.drivetrain.MecanumDrivetrain;
-import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 
 /**
@@ -36,6 +34,26 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private static final double ENCODER_TICKS_PER_REV = 537.6;      //Orbital 20
     private static final double GEAR_RATIO = 1.0;
     private static final double ENCODER_TICKS_PER_MM = ENCODER_TICKS_PER_REV / (CIRC_OF_WHEEL * GEAR_RATIO);
+
+    public class EncoderConverter {
+        private double encoderTicksPerMM = 0.0;
+        public EncoderConverter(double wheelRadius, double encoderTicksPerRev, double gearRatio){
+            double circOfWheel = wheelRadius * 2 * Math.PI;
+            encoderTicksPerMM = encoderTicksPerRev / (circOfWheel * gearRatio);
+        }
+        public double encToMM(double encoderTicks) {
+            return encoderTicks / encoderTicksPerMM;
+        }
+    }
+
+    private static final double DEAD_WHEEL_RADIUS = 24; //mm
+    private static final double LR_WHEEL_ENC_TICKS_PER_REV = 1440;
+    private static final double BACK_WHEEL_ENC_TICKS_PER_REV = 1200;
+
+    public EncoderConverter lrWheelConverter = new EncoderConverter(DEAD_WHEEL_RADIUS, LR_WHEEL_ENC_TICKS_PER_REV, 1.0);
+    public EncoderConverter backWheelConverter = new EncoderConverter(DEAD_WHEEL_RADIUS, BACK_WHEEL_ENC_TICKS_PER_REV, 1.0);
+
+
     public static final double X_WHEEL_TO_ROBOT_CENTER = 100.0;
     public static final double Y_WHEEL_TO_ROBOT_CENTER = 100.0;
 
@@ -152,32 +170,32 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return WHEEL_BASE;
     }
 
-    public double getRightEncoderPosition()
-    {
-        double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
-        return rightTotal * 0.5;
-        //return backRight.getCurrentPosition();
-    }
-
-    public double getLeftEncoderPosition()
+    public double getLAvgEncoderPosition()
     {
         double leftTotal = backLeft.getCurrentPosition() +frontLeft.getCurrentPosition();
         return leftTotal * 0.5;
         //return frontLeft.getCurrentPosition();
     }
 
-    public double[] getEncoderPosition() {
-        return new double[] {getLeftEncoderPosition(), getRightEncoderPosition()};
+    public double getRAvgEncoderPosition()
+    {
+        double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
+        return rightTotal * 0.5;
+        //return backRight.getCurrentPosition();
     }
 
-    public double[] getAllEncoderValues(){
+    public double[] getLRAvgEncoderPosition() {
+        return new double[] {getLAvgEncoderPosition(), getRAvgEncoderPosition()};
+    }
+
+    public double[] getAllEncoderPositions(){
         double[] encoderValues = {frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
         return encoderValues;
     }
 
     public double[] getAllEncoderDelta() {
         double[] encoderDeltas = {0.0, 0.0, 0.0, 0.0};
-        double[] currentEncoderValues = getAllEncoderValues();
+        double[] currentEncoderValues = getAllEncoderPositions();
         for (int i = 0; i<4; i++){
             encoderDeltas[i] = currentEncoderValues[i] - allEncoderValues[i];
         }
@@ -185,9 +203,9 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return encoderDeltas;
     }
 
-    public double[] getEncoderDelta() {
-        double currentLeft = getLeftEncoderPosition();
-        double currentRight = getRightEncoderPosition();
+    public double[] getLRAvgEncoderDelta() {
+        double currentLeft = getLAvgEncoderPosition();
+        double currentRight = getRAvgEncoderPosition();
 
         double[] encoderDistances = {currentLeft - encoderValues[0], currentRight - encoderValues[1]};
 

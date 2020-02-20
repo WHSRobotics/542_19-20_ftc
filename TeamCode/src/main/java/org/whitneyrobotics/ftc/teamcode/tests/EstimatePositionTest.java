@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
+import org.whitneyrobotics.ftc.teamcode.subsys.DeadWheelPickup;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 
@@ -23,12 +24,14 @@ public class EstimatePositionTest extends OpMode {
     @Override
     public void loop() {
 
+        robot.deadWheelPickup.setDeadWheelPickupPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
+
         robot.drivetrain.operate(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
 //        robot.estimateHeading();
 //        robot.estimatePosition();
         //robot.estimateCoordinate();
-        robot.estimateHeading();
-        robot.deadWheelEstimatePosition();
+//robot.estimateHeading();
+ robot.deadWheelEstimatePosition();
 
         telemetry.addData("x", robot.getCoordinate().getX());
         telemetry.addData("y", robot.getCoordinate().getY());

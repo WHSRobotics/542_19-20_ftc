@@ -200,7 +200,7 @@ public class WHSRobotTele implements WHSRobot {
 
     @Override
     public void estimatePosition() {
-        encoderDeltas = drivetrain.getEncoderDelta();
+        encoderDeltas = drivetrain.getLRAvgEncoderDelta();
         distance = drivetrain.encToMM((encoderDeltas[0] + encoderDeltas[1]) / 2);
         robotX += distance * Functions.cosd(getCoordinate().getHeading());
         robotY += distance * Functions.sind(getCoordinate().getHeading());
@@ -209,7 +209,7 @@ public class WHSRobotTele implements WHSRobot {
     }
 
     public void deadWheelEstimatePosition() {
-        encoderDeltas = drivetrain.getEncoderDelta();
+        encoderDeltas = drivetrain.getLRAvgEncoderDelta();
         double angleDelta = currentCoord.getHeading() - lastKnownHeading;
         double deltaX = drivetrain.encToMM(encoderDeltas[0]);
         double deltaY = drivetrain.encToMM(encoderDeltas[1]);

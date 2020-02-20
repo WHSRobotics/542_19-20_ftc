@@ -2,10 +2,8 @@ package org.whitneyrobotics.ftc.teamcode.subsys;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.robot.WHSRobot;
-import org.whitneyrobotics.ftc.teamcode.lib.util.Alliance;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.lib.util.PIDController;
@@ -29,6 +27,7 @@ public class WHSRobotImpl implements WHSRobot {
     public ImprovedSkystoneDetector skystoneDetector;
     public OpenCvCamera webcam;
     public BackGate backGate;
+    public DeadWheelPickup deadWheelPickup;
 
     Coordinate currentCoord;
     private double targetHeading; //field frame
@@ -97,6 +96,7 @@ public class WHSRobotImpl implements WHSRobot {
         capstone = new Capstone(hardwareMap);
         //vuforia = new Vuforia(hardwareMap);
         backGate = new BackGate(hardwareMap);
+        deadWheelPickup = new DeadWheelPickup(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }
@@ -214,7 +214,7 @@ public class WHSRobotImpl implements WHSRobot {
 
     @Override
     public void estimatePosition() {
-        encoderDeltas = drivetrain.getEncoderDelta();
+        encoderDeltas = drivetrain.getLRAvgEncoderDelta();
         distance = drivetrain.encToMM((encoderDeltas[0] + encoderDeltas[1]) / 2);
         robotX += distance * Functions.cosd(getCoordinate().getHeading());
         robotY += distance * Functions.sind(getCoordinate().getHeading());
@@ -224,27 +224,52 @@ public class WHSRobotImpl implements WHSRobot {
 
     public void deadWheelEstimatePosition() {
         encoderDeltas = drivetrain.getAllEncoderDelta();
-        double leftDelta = encoderDeltas[0];
-        double rightDelta = encoderDeltas[1];
-        double backDelta = encoderDeltas[2];
+        currentCoord.setHeading(Functions.normalizeAngle(Math.toDegrees(drivetrain.lrWheelConverter.encToMM(drivetrain.getAllEncoderPositions()[1]-drivetrain.getAllEncoderPositions()[0])/(Drivetrain.getTrackWidth()))) /*imu.getHeading()*/);
 
+        double deltaXWheels = drivetrain.lrWheelConverter.encToMM((encoderDeltas[0] + encoderDeltas[1])/2);
+        double deltaYWheel = drivetrain.backWheelConverter.encToMM(encoderDeltas[2]);
+        double deltaTheta = drivetrain.lrWheelConverter.encToMM(encoderDeltas[1] - encoderDeltas[0])/(Drivetrain.getTrackWidth());
 
-        double angleDelta = currentCoord.getHeading() - lastKnownHeading;
+        double movementRadius = deltaXWheels / (deltaTheta + .0001);
+        double strafeRadius = deltaYWheel / (deltaTheta + .0001);
+
+        double deltaXRobot = movementRadius * Math.sin(deltaTheta) + strafeRadius * (1 - Math.cos(deltaTheta));
+        double deltaYRobot = strafeRadius * Math.sin(deltaTheta) - movementRadius * (1 - Math.cos(deltaTheta));
+
+        Position bodyVector = new Position(deltaXRobot, deltaYRobot);
+        Position fieldVector = Functions.body2field(bodyVector, currentCoord);
+        currentCoord.addX(fieldVector.getX());
+        currentCoord.addY(fieldVector.getY());
+        //currentCoord.setPos(Functions.Positions.add(fieldVector, currentCoord));
+    }
+
+    /*public void deadWheelEstimatePosition() {
+        encoderDeltas = drivetrain.getAllEncoderDelta();
+        double leftDelta = drivetrain.lrWheelConverter.encToMM(encoderDeltas[0]);
+        double rightDelta = drivetrain.lrWheelConverter.encToMM(encoderDeltas[1]);
+        double backDelta = drivetrain.backWheelConverter.encToMM(encoderDeltas[2]);
+
+        double currentHeading = currentCoord.getHeading();
+        double angleDelta = currentHeading - lastKnownHeading;
+        lastKnownHeading = currentHeading;
         double deltaX = 0.0;
         double deltaY = 0.0;
 
         double X = 0.0;
         if(Math.abs(rightDelta) > Math.abs(leftDelta)){
-            X = leftDelta/angleDelta;
+            X = leftDelta/(angleDelta+0.001);
             deltaY = Functions.sind(-angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER);
             deltaX = (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER) - (Functions.cosd(angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER));
 
         }
-        if(Math.abs(leftDelta) > Math.abs(rightDelta)){
-            X = rightDelta/-angleDelta;
+        else if(Math.abs(leftDelta) > Math.abs(rightDelta)){
+            X = rightDelta/-(angleDelta+0.001);
             deltaY = Functions.sind(angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER);
             deltaX = (Functions.cosd(angleDelta) * (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER)) - (X + drivetrain.L_DEAD_WHEEL_TO_ROBOT_CENTER);
 
+        }
+        else {
+            deltaX = leftDelta;
         }
 
         double G = backDelta - (angleDelta*drivetrain.B_DEAD_WHEEL_TO_ROBOT_CENTER);
@@ -257,7 +282,7 @@ public class WHSRobotImpl implements WHSRobot {
         Position bodyVector = new Position(deltaX, deltaY);
         Position fieldVector = Functions.body2field(bodyVector, currentCoord);
         currentCoord.setPos(Functions.Positions.add(fieldVector, currentCoord));
-    }
+    }*/
 
     public void mecanumEstimatePosition() {
         encoderDeltas = drivetrain.getMecanumEncoderDelta();
@@ -293,7 +318,7 @@ public class WHSRobotImpl implements WHSRobot {
     }
 
     public void estimateCoordinate(){
-        double[] currentEncoderValues = drivetrain.getEncoderPosition();
+        double[] currentEncoderValues = drivetrain.getLRAvgEncoderPosition();
         encoderDeltas[0] = currentEncoderValues[0] - encoderValues[0];
         encoderDeltas[1] = currentEncoderValues[1] - encoderValues[1];
         double currentHeading = Functions.normalizeAngle(Math.toDegrees(drivetrain.encToMM((currentEncoderValues[1] - currentEncoderValues[0])/2/Drivetrain.getTrackWidth())) + imu.getImuBias()); //-180 to 180 deg
