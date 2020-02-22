@@ -8,6 +8,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.lib.util.PIDController;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
+import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 
 public class WHSRobotTele implements WHSRobot {
     public Drivetrain drivetrain;
@@ -15,6 +16,8 @@ public class WHSRobotTele implements WHSRobot {
     public TeleIntake intake;
     public FoundationPuller foundationPuller;
     public NewOuttake outtake;
+    public DeadWheelPickup deadWheelPickup;
+
    // public SkystoneGrabber skystoneGrabber;
     public Capstone capstone;
     public BackGate backGate;
@@ -58,6 +61,12 @@ public class WHSRobotTele implements WHSRobot {
     private double robotY;
     private double distance;
 
+    public boolean deadwheelRetracted = false;
+
+    boolean firstRetractionLoop = true;
+    SimpleTimer deadWheelPickupTimer = new SimpleTimer();
+    double deadWheelPickupDelay = 0.5;
+
     public WHSRobotTele(HardwareMap hardwareMap) {
         DEADBAND_DRIVE_TO_TARGET = RobotConstants.DEADBAND_DRIVE_TO_TARGET; //in mm
         DEADBAND_ROTATE_TO_TARGET = RobotConstants.DEADBAND_ROTATE_TO_TARGET; //in degrees
@@ -83,6 +92,7 @@ public class WHSRobotTele implements WHSRobot {
        // skystoneGrabber = new SkystoneGrabber(hardwareMap);
         capstone = new Capstone(hardwareMap);
         backGate = new BackGate(hardwareMap);
+        deadWheelPickup = new DeadWheelPickup(hardwareMap);
 
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
     }
@@ -250,5 +260,18 @@ public class WHSRobotTele implements WHSRobot {
     @Override
     public Coordinate getCoordinate() {
         return currentCoord;
+    }
+    public void retractDeadwheelPickup(){
+        if(firstRetractionLoop){
+            deadWheelPickupTimer.set(deadWheelPickupDelay);
+            firstRetractionLoop = false;
+        }
+        if (!deadWheelPickupTimer.isExpired()) {
+            deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.UP);
+            drivetrain.operate(-.2, -.2);
+        }else{
+            drivetrain.operate(0,0);
+            deadwheelRetracted = true;
+        }
     }
 }

@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
-import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
-import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
 import org.whitneyrobotics.ftc.teamcode.subsys.TeleIntake;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
@@ -26,9 +24,14 @@ public class WHSTeleOp extends OpMode {
     @Override
     public void loop() {
         // Drivetrain
+
         robot.estimateHeading();
         robot.intake.setIntakePusherPosition(TeleIntake.IntakePusherPosition.UP);
         robot.drivetrain.switchFieldCentric(gamepad1.b);
+
+        if(!robot.deadwheelRetracted) {
+            robot.retractDeadwheelPickup();
+        }else{
         if (gamepad1.left_bumper){
             robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x/2.54, gamepad1.left_stick_y/2.54, gamepad1.right_stick_x/2.54, robot.getCoordinate().getHeading());
         }else{
@@ -39,7 +42,7 @@ public class WHSTeleOp extends OpMode {
         if (/*robot.intake.stoneSensed() && */(robot.outtake.getCurrentState() == 1) || robot.capstone.getCapstoneTogglerState() != 0 || gamepad2.left_trigger > 0.01) {
             robot.intake.operateIntake(gamepad1.right_trigger > 0.01, gamepad1.left_trigger > 0.01);
         }else if (gamepad1.right_trigger < 0.01 && gamepad1.left_trigger <0.01){
-            robot.intake.setVelocity(0);
+            robot.intake.setMotorPowers(0);
         }
         else{
             robot.intake.operateIntake(false, gamepad1.left_trigger>0.01);
@@ -75,4 +78,4 @@ public class WHSTeleOp extends OpMode {
         telemetry.addData("i", i);
         i++;
     }
-}
+}}

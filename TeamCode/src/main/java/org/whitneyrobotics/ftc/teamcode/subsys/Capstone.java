@@ -27,7 +27,7 @@ public class Capstone {
 
     //up,down
     final double [] INTAKE_BLOCKER_POSITIONS = {0.95, 0.01};
-    final double [] LOCK_POSITIONS = {0.994, 0.465};
+    final double [] LOCK_POSITIONS = {0.994, 0.445};
     final double [] DUMP_POSITIONS = {0.02, 0.99};
 
     SimpleTimer unlockToCapstoneDownTimer = new SimpleTimer();

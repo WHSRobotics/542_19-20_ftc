@@ -23,7 +23,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private Toggler orientationSwitch = new Toggler(2);
     private Toggler fieldCentricSwitch = new Toggler(2);
 
-    private static final double TRACK_WIDTH = 338;
+    private static final double TRACK_WIDTH = 359;
 
     //TODO: measure actual wheel base
     private static final double WHEEL_BASE = 450;
@@ -37,10 +37,12 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
 
     public class EncoderConverter {
         private double encoderTicksPerMM = 0.0;
-        public EncoderConverter(double wheelRadius, double encoderTicksPerRev, double gearRatio){
+
+        public EncoderConverter(double wheelRadius, double encoderTicksPerRev, double gearRatio) {
             double circOfWheel = wheelRadius * 2 * Math.PI;
             encoderTicksPerMM = encoderTicksPerRev / (circOfWheel * gearRatio);
         }
+
         public double encToMM(double encoderTicks) {
             return encoderTicks / encoderTicksPerMM;
         }
@@ -68,9 +70,9 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     private double robotAngle;
     private double r;
 
-    private double[] lastKnownEncoderValues = {0,0,0,0};
+    private double[] lastKnownEncoderValues = {0, 0, 0, 0};
 
-    public Drivetrain (HardwareMap driveMap) {
+    public Drivetrain(HardwareMap driveMap) {
 
         frontLeft = driveMap.get(DcMotorEx.class, "driveFL");
         frontRight = driveMap.get(DcMotorEx.class, "driveFR");
@@ -131,8 +133,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
             backLeft.setPower(powers[0]);
             frontRight.setPower(powers[1]);
             backRight.setPower(powers[1]);
-        }
-        else if (powers.length == 4) {
+        } else if (powers.length == 4) {
             frontLeft.setPower(powers[0]);
             frontRight.setPower(powers[1]);
             backLeft.setPower(powers[2]);
@@ -170,25 +171,23 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return WHEEL_BASE;
     }
 
-    public double getLAvgEncoderPosition()
-    {
-        double leftTotal = backLeft.getCurrentPosition() +frontLeft.getCurrentPosition();
+    public double getLAvgEncoderPosition() {
+        double leftTotal = backLeft.getCurrentPosition() + frontLeft.getCurrentPosition();
         return leftTotal * 0.5;
         //return frontLeft.getCurrentPosition();
     }
 
-    public double getRAvgEncoderPosition()
-    {
+    public double getRAvgEncoderPosition() {
         double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
         return rightTotal * 0.5;
         //return backRight.getCurrentPosition();
     }
 
     public double[] getLRAvgEncoderPosition() {
-        return new double[] {getLAvgEncoderPosition(), getRAvgEncoderPosition()};
+        return new double[]{getLAvgEncoderPosition(), getRAvgEncoderPosition()};
     }
 
-    public double[] getAllEncoderPositions(){
+    public double[] getAllEncoderPositions() {
         double[] encoderValues = {frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()};
         return encoderValues;
     }
@@ -196,7 +195,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     public double[] getAllEncoderDelta() {
         double[] encoderDeltas = {0.0, 0.0, 0.0, 0.0};
         double[] currentEncoderValues = getAllEncoderPositions();
-        for (int i = 0; i<4; i++){
+        for (int i = 0; i < 4; i++) {
             encoderDeltas[i] = currentEncoderValues[i] - allEncoderValues[i];
         }
         allEncoderValues = currentEncoderValues;
@@ -225,9 +224,8 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return wheelVelocities;
     }
 
-    @Override
-    public double encToMM(double encoderTicks) {
-        return encoderTicks * (1/ENCODER_TICKS_PER_MM);
+    public static double encToMM(double encoderTicks) {
+        return encoderTicks * (1 / ENCODER_TICKS_PER_MM);
     }
 
     @Override
@@ -247,11 +245,11 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     }
 
     public double getAbsPowerAverage() {
-        return (Math.abs(frontLeft.getPower()) + Math.abs(frontRight.getPower()))/2;
+        return (Math.abs(frontLeft.getPower()) + Math.abs(frontRight.getPower())) / 2;
     }
 
     @Override
-    public void operateMecanumDrive(double gamepadInputX, double gamepadInputY, double gamepadInputTurn, double heading){
+    public void operateMecanumDrive(double gamepadInputX, double gamepadInputY, double gamepadInputTurn, double heading) {
         r = Math.hypot(-gamepadInputX, -gamepadInputY);
         robotAngle = (Math.atan2(-gamepadInputY, -gamepadInputX) - Math.PI / 4);
         if (fieldCentricSwitch.currentState() == 1) {
@@ -274,7 +272,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         backRight.setPower(vBR);
     }
 
-    public void operateMecanumDriveScaled(double gamepadInputX, double gamepadInputY, double gamepadInputTurn, double heading){
+    public void operateMecanumDriveScaled(double gamepadInputX, double gamepadInputY, double gamepadInputTurn, double heading) {
         double scaledY = Math.pow(gamepadInputY, 3);
         double scaledX = Math.pow(gamepadInputX, 3);
         double scaledTurn = Math.pow(gamepadInputTurn, 3);
@@ -299,9 +297,9 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     }
 
 
-    public double[] getMecanumEncoderDelta(){
-        double currentFLBR = (frontLeft.getCurrentPosition() + backRight.getCurrentPosition())/2;
-        double currentFRBL = (frontRight.getCurrentPosition() + backLeft.getCurrentPosition())/2;
+    public double[] getMecanumEncoderDelta() {
+        double currentFLBR = (frontLeft.getCurrentPosition() + backRight.getCurrentPosition()) / 2;
+        double currentFRBL = (frontRight.getCurrentPosition() + backLeft.getCurrentPosition()) / 2;
 
         double[] encoderDistances = {currentFLBR - encoderValues[0], currentFRBL - encoderValues[1]};
 
@@ -311,12 +309,12 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return encoderDistances;
     }
 
-    public void resetEncoders(){
+    public void resetEncoders() {
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setTargetPosition(int targetPosition, double power){
+    public void setTargetPosition(int targetPosition, double power) {
         frontLeft.setTargetPosition(targetPosition);
         frontRight.setTargetPosition(targetPosition);
         backLeft.setTargetPosition(targetPosition);

@@ -3,10 +3,6 @@ package org.whitneyrobotics.ftc.teamcode.tests;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
-import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
-import org.whitneyrobotics.ftc.teamcode.subsys.SkystoneGrabber;
-import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
 @TeleOp(name = "Outtake Test", group = "a")

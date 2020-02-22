@@ -9,6 +9,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.lib.util.PIDController;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
+import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 
 /**
  * Created by Jason on 10/20/2017.
@@ -28,6 +29,8 @@ public class WHSRobotImpl implements WHSRobot {
     public OpenCvCamera webcam;
     public BackGate backGate;
     public DeadWheelPickup deadWheelPickup;
+    public boolean deadwheelRetracted;
+
 
     Coordinate currentCoord;
     private double targetHeading; //field frame
@@ -70,6 +73,10 @@ public class WHSRobotImpl implements WHSRobot {
     private double robotY;
     private double distance;
 
+    boolean firstRetractionLoop = true;
+    SimpleTimer deadWheelPickupTimer = new SimpleTimer();
+    double deadWheelPickupDelay = 0.5;
+
     public WHSRobotImpl(HardwareMap hardwareMap) {
         DEADBAND_DRIVE_TO_TARGET = RobotConstants.DEADBAND_DRIVE_TO_TARGET; //in mm
         DEADBAND_ROTATE_TO_TARGET = RobotConstants.DEADBAND_ROTATE_TO_TARGET; //in degrees
@@ -88,6 +95,7 @@ public class WHSRobotImpl implements WHSRobot {
         DRIVE_KD = RobotConstants.D_KD;
 
         drivetrain = new Drivetrain(hardwareMap);
+        drivetrain.resetEncoders();
         imu = new IMU(hardwareMap);
         intake = new Intake(hardwareMap);
         foundationPuller = new FoundationPuller(hardwareMap);
@@ -97,8 +105,10 @@ public class WHSRobotImpl implements WHSRobot {
         //vuforia = new Vuforia(hardwareMap);
         backGate = new BackGate(hardwareMap);
         deadWheelPickup = new DeadWheelPickup(hardwareMap);
-
         currentCoord = new Coordinate(0.0, 0.0, 0.0);
+    }
+
+    public WHSRobotImpl() {
     }
 
     @Override
@@ -222,9 +232,22 @@ public class WHSRobotImpl implements WHSRobot {
         currentCoord.setY(robotY);
     }
 
+    public void retractDeadwheelPickup(){
+        if(firstRetractionLoop){
+            deadWheelPickupTimer.set(deadWheelPickupDelay);
+            firstRetractionLoop = false;
+        }
+        if (!deadWheelPickupTimer.isExpired()) {
+            deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.UP);
+            drivetrain.operate(-.2, -.2);
+        }else{
+            drivetrain.operate(0,0);
+            deadwheelRetracted = true;
+        }
+    }
     public void deadWheelEstimatePosition() {
         encoderDeltas = drivetrain.getAllEncoderDelta();
-        currentCoord.setHeading(Functions.normalizeAngle(Math.toDegrees(drivetrain.lrWheelConverter.encToMM(drivetrain.getAllEncoderPositions()[1]-drivetrain.getAllEncoderPositions()[0])/(Drivetrain.getTrackWidth()))) /*imu.getHeading()*/);
+        //currentCoord.setHeading(/*Functions.normalizeAngle(Math.toDegrees(drivetrain.lrWheelConverter.encToMM(drivetrain.getAllEncoderPositions()[1]-drivetrain.getAllEncoderPositions()[0])/(Drivetrain.getTrackWidth())))*/ imu.getHeading());
 
         double deltaXWheels = drivetrain.lrWheelConverter.encToMM((encoderDeltas[0] + encoderDeltas[1])/2);
         double deltaYWheel = drivetrain.backWheelConverter.encToMM(encoderDeltas[2]);

@@ -26,8 +26,8 @@ public class Intake {
     private final double INTAKE_PUSHER_DOWN = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.DOWN.ordinal()];
     private final double INTAKE_PUSHER_UP = INTAKE_PUSHER_POSITIONS[IntakePusherPosition.UP.ordinal()];
 
-    public static final double AUTO_INTAKE_POWER = 0.45;
-    public static final double INTAKE_POWER = 0.60;
+    public static final double AUTO_INTAKE_POWER = 0.60;
+    public static final double INTAKE_POWER = 0.45;
     public static final double INTAKE_VELOCITY_THRESHOLD = 30;
     public static final double INTAKE_VELOCITY = 1800.0;
     public static final double AUTO_INTAKE_VELOCITY = 1500.0;
@@ -99,6 +99,15 @@ public class Intake {
     public void setVelocity(double velocity){
         leftIntake.setVelocity(velocity);
         rightIntake.setVelocity(velocity);
+    }
+
+    public double[] getWheelVelocities() {
+        double[] wheelVelocities = {-Drivetrain.encToMM(leftIntake.getVelocity()), -Drivetrain.encToMM(rightIntake.getVelocity())};
+        return wheelVelocities;
+    }
+
+    public int[] getEncoderPositions() {
+        return new int[] {leftIntake.getCurrentPosition(), rightIntake.getCurrentPosition()};
     }
 
     public boolean stoneSensed(){

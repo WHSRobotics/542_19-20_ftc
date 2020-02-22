@@ -24,14 +24,14 @@ public class EstimatePositionTest extends OpMode {
     @Override
     public void loop() {
 
-        robot.deadWheelPickup.setDeadWheelPickupPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
 
-        robot.drivetrain.operate(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+        robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x,robot.getCoordinate().getHeading());
 //        robot.estimateHeading();
 //        robot.estimatePosition();
         //robot.estimateCoordinate();
 //robot.estimateHeading();
- robot.deadWheelEstimatePosition();
+        robot.deadWheelEstimatePosition();
+        robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
 
         telemetry.addData("x", robot.getCoordinate().getX());
         telemetry.addData("y", robot.getCoordinate().getY());
@@ -48,6 +48,8 @@ public class EstimatePositionTest extends OpMode {
         telemetry.addData("Z heading: ", robot.imu.getThreeHeading()[2]);
         telemetry.addData("Left extension", robot.outtake.getExtensionEncoderPositions()[0]);
         telemetry.addData("Right extension", robot.outtake.getExtensionEncoderPositions()[1]);
+        telemetry.addData("Left intake Velocity", robot.intake.getWheelVelocities()[0]);
+        telemetry.addData("Right intake Velocity", robot.intake.getWheelVelocities()[1]);
 
     }
 }

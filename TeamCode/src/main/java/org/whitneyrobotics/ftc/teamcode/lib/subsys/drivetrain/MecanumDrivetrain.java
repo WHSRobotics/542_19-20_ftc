@@ -22,8 +22,6 @@ public interface MecanumDrivetrain {
 
     double[] getLRAvgEncoderDelta();
 
-    double encToMM(double encoderTicks);
-
     void setRunMode(DcMotor.RunMode runMode);
 
     void operateMecanumDrive(double gamepadInputX, double gamepadInputY, double gamepadInputTurn, double heading);
