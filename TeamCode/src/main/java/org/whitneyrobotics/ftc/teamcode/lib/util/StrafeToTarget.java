@@ -1,5 +1,7 @@
 package org.whitneyrobotics.ftc.teamcode.lib.util;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
+
 import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 
 public class StrafeToTarget {
@@ -13,7 +15,7 @@ public class StrafeToTarget {
     private int lastIndex = 0;
     private double currentTValue = 0;
 
-    public Position[] smoothedPath;
+    public Coordinate[] smoothedPath;
     private double[] targetCurvatures;
     public double[] targetVelocities;
 
@@ -41,7 +43,7 @@ public class StrafeToTarget {
         trackWidth = Drivetrain.getTrackWidth();
         wheelBase = Drivetrain.getWheelBase();
         PathGenerator pathGenerator = new PathGenerator();
-        smoothedPath = pathGenerator.generatePosPath(targetPositions, spacing, weightSmooth);
+        smoothedPath = pathGenerator.generateCoordPath(targetPositions, spacing, weightSmooth);
         targetVelocities = pathGenerator.calculateTargetVelocities(velocityConstant, pathMaximumVelocity, MAXIMUM_ACCELERATION);
         lastTime = System.nanoTime() / 1E9;
     }
@@ -155,11 +157,12 @@ public class StrafeToTarget {
     private double[] calculateTargetWheelVelocities(double targetVelocity, double angleToLookaheadPoint) {
         double targetVelocityX = targetVelocity * Functions.cosd(angleToLookaheadPoint);
         double targetVelocityY = targetVelocity * Functions.sind(angleToLookaheadPoint);
+        double k = (trackWidth + wheelBase) / 2;
 
-        double vFL = targetVelocityX - targetVelocityY;
-        double vFR = targetVelocityX + targetVelocityY;
-        double vBL = targetVelocityX + targetVelocityY;
-        double vBR = targetVelocityX - targetVelocityY;
+        double vFL = targetVelocityX - targetVelocityY - k * angleToLookaheadPoint;
+        double vFR = targetVelocityX + targetVelocityY + k * angleToLookaheadPoint;
+        double vBL = targetVelocityX + targetVelocityY - k * angleToLookaheadPoint;
+        double vBR = targetVelocityX - targetVelocityY + k * angleToLookaheadPoint;
 
         return new double[]{vFL, vFR, vBL, vBR};
     }
