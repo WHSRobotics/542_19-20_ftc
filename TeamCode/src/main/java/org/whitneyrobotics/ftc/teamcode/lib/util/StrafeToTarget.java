@@ -33,6 +33,8 @@ public class StrafeToTarget {
     public Position lookaheadPoint;
     private boolean inProgress;
 
+    public double angleToLookaheadPointDebug = 0.0;
+
     public StrafeToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double pathMaximumVelocity) {
         this.pathMaximumVelocity = pathMaximumVelocity;
         this.kP = kP;
@@ -70,8 +72,8 @@ public class StrafeToTarget {
 
         Position vectorToLookaheadPoint = Functions.Positions.subtract(lookaheadPoint, currentCoord);
         vectorToLookaheadPoint = Functions.field2body(vectorToLookaheadPoint, currentCoord);
-        double angleToLookaheadPoint = Math.atan2(vectorToLookaheadPoint.getY(), vectorToLookaheadPoint.getX());
-
+        double angleToLookaheadPoint = Math.toDegrees(Math.atan2(vectorToLookaheadPoint.getY(), vectorToLookaheadPoint.getX()));
+        angleToLookaheadPointDebug = angleToLookaheadPoint;
         currentTargetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], angleToLookaheadPoint);
 
         double deltaTime = System.nanoTime() / 1E9 - lastTime;
@@ -159,10 +161,10 @@ public class StrafeToTarget {
         double targetVelocityY = targetVelocity * Functions.sind(angleToLookaheadPoint);
         double k = (trackWidth + wheelBase) / 2;
 
-        double vFL = targetVelocityX - targetVelocityY - k * angleToLookaheadPoint;
-        double vFR = targetVelocityX + targetVelocityY + k * angleToLookaheadPoint;
-        double vBL = targetVelocityX + targetVelocityY - k * angleToLookaheadPoint;
-        double vBR = targetVelocityX - targetVelocityY + k * angleToLookaheadPoint;
+        double vFL = targetVelocityX - targetVelocityY;// - k * angleToLookaheadPoint;
+        double vFR = targetVelocityX + targetVelocityY;// + k * angleToLookaheadPoint;
+        double vBL = targetVelocityX + targetVelocityY;// - k * angleToLookaheadPoint;
+        double vBR = targetVelocityX - targetVelocityY;// + k * angleToLookaheadPoint;
 
         return new double[]{vFL, vFR, vBL, vBR};
     }
