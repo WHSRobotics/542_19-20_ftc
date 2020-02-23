@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Toggler;
 
+import java.nio.channels.DatagramChannel;
+
 public class Intake {
 
     private DcMotorEx leftIntake;
@@ -86,6 +88,11 @@ public class Intake {
 
     public boolean isIntakeOn() {
         return intakeToggler.currentState() == 1;
+    }
+
+    public double[] getWheelVelocities() {
+        double[] wheelVelocities = {-Drivetrain.encToMM(leftIntake.getVelocity()), -Drivetrain.encToMM(rightIntake.getVelocity())};
+        return wheelVelocities;
     }
 
     public void setIntakePusherPosition(IntakePusherPosition intakePusherPosition) {

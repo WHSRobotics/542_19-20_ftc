@@ -242,7 +242,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     }
 
     public static double encToMM(double encoderTicks) {
-        return encoderTicks * (1 / ENCODER_TICKS_PER_MM);
+        return encoderTicks * (1/ENCODER_TICKS_PER_MM);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.whitneyrobotics.ftc.teamcode.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
@@ -7,6 +8,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.StrafeToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
+@Autonomous(name = "StrafeToTarget Test")
 public class StrafeToTargetTest extends OpMode {
     WHSRobotImpl robot;
     StrafeToTarget strafe1;
@@ -15,11 +17,11 @@ public class StrafeToTargetTest extends OpMode {
     double kV = 1.0;
     double velocityConstant = 3.0;
     double lookaheadDistance = 2.0;
-    Coordinate startingCoordinate = new Coordinate(0,0,90);
+    Coordinate startingCoordinate = new Coordinate(0,0,0);
     Position p1 = new Position(300,0);
     Position p2 = new Position(600,600);
 
-    Position[] positions = {startingCoordinate.getPos(), p1, p2};
+    Position[] positions = {startingCoordinate.getPos(), p2};
     @Override
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
@@ -29,7 +31,7 @@ public class StrafeToTargetTest extends OpMode {
     @Override
     public void loop() {
         robot.deadWheelEstimatePosition();
-        robot.drivetrain.operate(strafe1.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities()));
+        robot.drivetrain.operate(strafe1.calculateMotorPowers(robot.getCoordinate(), robot.intake.getWheelVelocities()));
 
     }
 }

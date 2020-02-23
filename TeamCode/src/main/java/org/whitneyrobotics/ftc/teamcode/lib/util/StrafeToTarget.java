@@ -81,14 +81,14 @@ public class StrafeToTarget {
         }
 
         if (indexOfClosestPoint != smoothedPath.length - 1) {
-            double[] feedBack = {currentTargetWheelVelocities[0] - currentWheelVelocities[0], currentTargetWheelVelocities[1] - currentWheelVelocities[1], currentTargetWheelVelocities[2] - currentWheelVelocities[2], currentTargetWheelVelocities[3] - currentWheelVelocities[3]};
+            double[] feedBack = {currentTargetWheelVelocities[0] - currentWheelVelocities[1], currentTargetWheelVelocities[1] - currentWheelVelocities[0], currentTargetWheelVelocities[2] - currentWheelVelocities[0], currentTargetWheelVelocities[3] - currentWheelVelocities[1]};
             for (int i = 0; i < feedBack.length; i++) {
                 feedBack[i] *= kP;
             }
 
             double[] feedForwardVel = {kV * currentTargetWheelVelocities[0], kV * currentTargetWheelVelocities[1], kV * currentTargetWheelVelocities[2], kV * currentTargetWheelVelocities[3]};
             double[] feedForwardAccel = {kA * targetWheelAccelerations[0], kA * targetWheelAccelerations[1], kA * targetWheelAccelerations[2], kA * targetWheelAccelerations[3]};
-            double[] feedForward = {feedForwardVel[0] + feedForwardAccel[0], feedForwardVel[1] + feedForwardAccel[1]};
+            double[] feedForward = {feedForwardVel[0] + feedForwardAccel[0], feedForwardVel[1] + feedForwardAccel[1], feedForwardVel[2] + feedForwardAccel[2], feedForwardVel[3] + feedForwardAccel[3]};
             double[] motorPowers = {Functions.constrain(feedBack[0] + feedForward[0], -1, 1), Functions.constrain(feedBack[1] + feedForward[1], -1, 1), Functions.constrain(feedBack[2] + feedForward[2], -1, 1), Functions.constrain(feedBack[3] + feedForward[3], -1, 1)};
             lastTargetWheelVelocities = currentTargetWheelVelocities;
             inProgress = true;
