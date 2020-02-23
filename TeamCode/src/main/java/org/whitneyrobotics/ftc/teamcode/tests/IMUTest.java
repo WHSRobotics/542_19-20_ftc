@@ -3,6 +3,7 @@ package org.whitneyrobotics.ftc.teamcode.tests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 import org.whitneyrobotics.ftc.teamcode.subsys.IMU;
 
 /**
@@ -12,23 +13,39 @@ import org.whitneyrobotics.ftc.teamcode.subsys.IMU;
 public class IMUTest extends OpMode {
 
     IMU imu;
-    double zAccel;
-    double maxZAccel = 0;
+    Drivetrain drivetrain;
+    double alpha;
+    double lastAngularVelocity = 0;
+    double lastTime;
+    double maxAlpha = 0;
 
     @Override
     public void init() {
         imu = new IMU(hardwareMap);
+        drivetrain = new Drivetrain(hardwareMap);
+    }
+
+    @Override
+    public void start() {
+        lastTime = System.nanoTime() * 1E9;
     }
 
     @Override
     public void loop() {
-        zAccel = imu.getZAcceleration();
-        if (Math.abs(zAccel) > Math.abs(maxZAccel)) {
-            maxZAccel = zAccel;
+        double currentAngularVelocity = imu.getAngularVelocity();
+        double currentTime = System.nanoTime()*1E9;
+        alpha = (currentAngularVelocity - lastAngularVelocity)/(currentTime - lastTime);
+        drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, imu.getHeading());
+
+        lastTime = currentTime;
+        lastAngularVelocity = currentAngularVelocity;
+
+        if (Math.abs(alpha) > Math.abs(maxAlpha)) {
+            maxAlpha = alpha;
         }
 
-        telemetry.addData("Current Z accel:", zAccel);
-        telemetry.addData("Max Z accel:", maxZAccel);
+        telemetry.addData("Current Z accel:", alpha);
+        telemetry.addData("Max alpha:", maxAlpha);
 
         /*
         double heading = imu.getHeading();

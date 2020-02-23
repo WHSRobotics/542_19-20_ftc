@@ -70,7 +70,6 @@ public class SwerveToTargetTest extends OpMode {
             telemetry.addData("velocity" + i, swerve1.targetVelocities[i]);
         }
         telemetry.addData("lookahead point", swerve1.lookaheadPoint.getX() + ", " + swerve1.lookaheadPoint.getY());
-
         telemetry.addData("Target Left Velcoities", swerve1.getCurrentTargetWheelVelocities()[0]);
         telemetry.addData("Target Right Velcoities ", swerve1.getCurrentTargetWheelVelocities()[1]);
         telemetry.addData("Current Velocities Left", robot.drivetrain.getAllWheelVelocities()[0]);

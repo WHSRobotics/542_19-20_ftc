@@ -217,6 +217,10 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return encoderDistances;
     }
 
+    public double getFrontRightWheelVelocity() {
+        return backRight.getVelocity();
+    }
+
     public double[] getWheelVelocities() {
         double[] wheelVelocities = {encToMM(backLeft.getVelocity()), encToMM(frontRight.getVelocity())};
         return wheelVelocities;

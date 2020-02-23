@@ -172,11 +172,11 @@ public class PathGenerator {
 
 
     public double[] calculateTargetAngularVelocities(double maxAngularAcceleration){
-        double deltaTheta = (smoothedPath[smoothedPath.length - 1].getHeading() - smoothedPath[0].getHeading())/2;
         double[] targetAngularVelocities = new double[smoothedPath.length];
         targetAngularVelocities[smoothedPath.length-1] = 0;
-        for (int i = smoothedPath.length-2; i < 0; i--){
-            targetAngularVelocities[i] = Math.sqrt((targetAngularVelocities[i+1] * targetAngularVelocities[i+1]) - 2 * maxAngularAcceleration * deltaTheta);
+        for (int i = smoothedPath.length-2; i >= 0; i--){
+            double deltaTheta = smoothedPath[i+1].getHeading() - smoothedPath[i].getHeading();
+            targetAngularVelocities[i] = (targetAngularVelocities[i+1] * targetAngularVelocities[i+1]) + 2 * maxAngularAcceleration * deltaTheta;
         }
         return targetAngularVelocities;
     }

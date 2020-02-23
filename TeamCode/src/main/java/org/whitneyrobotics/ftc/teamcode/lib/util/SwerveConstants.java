@@ -11,7 +11,10 @@ public class SwerveConstants {
     public static double kA = 0.0012;
     public static double lookaheadDistance = 350;//220;
     public static double velocityConstant = 2.0;
-    public static double MAX_ANGULAR_ACCELERATION = 15;
+    public static double MAX_ANGULAR_ACCELERATION = 6.6;
+    public static double hKP = 0.00;
+    public static double hKI = 0.0;
+    public static double hKD = 0.0;
 
     public static class StartToFoundationSwerveConstants {
         public static double kP = SwerveConstants.kP/2.54;

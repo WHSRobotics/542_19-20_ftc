@@ -19,15 +19,16 @@ public class StrafeToTargetTest extends OpMode {
     public double kA = 0.000012;
     double velocityConstant = 3.0;
     double lookaheadDistance = 200;
-    Coordinate startingCoordinate = new Coordinate(0,0,0);
-    Position p1 = new Position(500,0);
-    Position p2 = new Position(600,600);
+    Coordinate startingCoordinate = new Coordinate(0,0,180);
+    Coordinate p1 = new Coordinate(0,1200, 90);
+    Coordinate p2 = new Coordinate(0,1800,0);
 
-    Position[] positions = {startingCoordinate.getPos(), p2};
+    Coordinate[] positions = {startingCoordinate, p1, p2};
     @Override
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
-        strafe1 = new StrafeToTarget(kP, kV,kA,positions, 80, .7, 0.01, velocityConstant, lookaheadDistance, 400);
+        strafe1 = new StrafeToTarget(kP, kV,kA,positions, 80, .7, 0.01, velocityConstant, lookaheadDistance, 600, robot.imu.getAngularVelocity());
+        telemetry.log().setCapacity(35);
     }
 
     @Override
@@ -35,14 +36,26 @@ public class StrafeToTargetTest extends OpMode {
         robot.deadWheelEstimatePosition();
         robot.estimateHeading();
         robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
-        motorPowers = strafe1.calculateMotorPowers(robot.getCoordinate(), robot.intake.getWheelVelocities());
+        motorPowers = strafe1.calculateMotorPowers(robot.getCoordinate(), robot.intake.getWheelVelocities(), robot.drivetrain.getFrontRightWheelVelocity());
         robot.drivetrain.operate(motorPowers);
         telemetry.addData("Angle To Lookahead Debug", strafe1.angleToLookaheadPointDebug);
         telemetry.addData("x", robot.getCoordinate().getX());
         telemetry.addData("y", robot.getCoordinate().getY());
         telemetry.addData("heading", robot.getCoordinate().getHeading());
         telemetry.addData("lookahead point", strafe1.lookaheadPoint.getX() + ", " + strafe1.lookaheadPoint.getY());
-
+        for(int i = 0; i < strafe1.smoothedPath.length; i++) {
+            telemetry.log().add("Target Angular Velocities " + strafe1.targetAngularVelocities[i]);
+        }
+        for(int i = 0; i < strafe1.smoothedPath.length; i++){
+            telemetry.log().add("Target Headings " + strafe1.smoothedPath[i].getHeading());
+        }
+        double[] targetAngularVelocities = new double[strafe1.smoothedPath.length];
+        for (int i = strafe1.smoothedPath.length-2; i >= 0; i--){
+            double deltaTheta = strafe1.smoothedPath[i+1].getHeading() - strafe1.smoothedPath[i].getHeading();
+            telemetry.log().add("dTheta" + deltaTheta);
+            targetAngularVelocities[i] = (targetAngularVelocities[i+1] * targetAngularVelocities[i+1]) + 2 * 5.0 * deltaTheta;
+            telemetry.log().add("tAV " + targetAngularVelocities[i]);
+        }
 //        telemetry.addData("Target Left Velcoities", strafe1.getCurrentTargetWheelVelocities()[0]);
 //        telemetry.addData("Target Right Velcoities ", swerve1.getCurrentTargetWheelVelocities()[1]);
         telemetry.addData("Current Velocities Left", robot.drivetrain.getAllWheelVelocities()[0] +
