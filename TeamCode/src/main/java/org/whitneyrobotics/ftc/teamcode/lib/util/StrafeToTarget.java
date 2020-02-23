@@ -10,6 +10,7 @@ public class StrafeToTarget {
 
     private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
     private static final double MAXIMUM_VELOCITY = SwerveConstants.MAX_VELOCITY;
+    private static final double MAXIMUM_ANGULAR_ACCELERATION = SwerveConstants.MAX_ANGULAR_ACCELERATION;
     private double pathMaximumVelocity;
     public int lastClosestPointIndex = 0;
     private int lastIndex = 0;
@@ -29,7 +30,6 @@ public class StrafeToTarget {
     private double lookaheadDistance;
     private double trackWidth;
     private double wheelBase;
-
     public Position lookaheadPoint;
     private boolean inProgress;
 
@@ -37,6 +37,7 @@ public class StrafeToTarget {
 
     public StrafeToTarget(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double tolerance, double velocityConstant, double lookaheadDistance, double pathMaximumVelocity) {
         this.pathMaximumVelocity = pathMaximumVelocity;
+
         this.kP = kP;
         this.kV = 1 / MAXIMUM_VELOCITY;
         this.kA = kA;
@@ -81,7 +82,7 @@ public class StrafeToTarget {
         for (int i = 0; i < targetWheelAccelerations.length; i++) {
             targetWheelAccelerations[i] = (currentTargetWheelVelocities[i] - lastTargetWheelVelocities[i]) / deltaTime;
         }
-
+        
         if (indexOfClosestPoint != smoothedPath.length - 1) {
             double[] feedBack = {currentTargetWheelVelocities[0] - currentWheelVelocities[1], currentTargetWheelVelocities[1] - currentWheelVelocities[0], currentTargetWheelVelocities[2] - currentWheelVelocities[0], currentTargetWheelVelocities[3] - currentWheelVelocities[1]};
             for (int i = 0; i < feedBack.length; i++) {
@@ -156,7 +157,7 @@ public class StrafeToTarget {
         return lastClosestPointIndex;
     }
 
-    private double[] calculateTargetWheelVelocities(double targetVelocity, double angleToLookaheadPoint) {
+    public double[] calculateTargetWheelVelocities(double targetVelocity, double angleToLookaheadPoint) {
         double targetVelocityX = targetVelocity * Functions.cosd(angleToLookaheadPoint);
         double targetVelocityY = targetVelocity * Functions.sind(angleToLookaheadPoint);
         double k = (trackWidth + wheelBase) / 2;
@@ -168,4 +169,6 @@ public class StrafeToTarget {
 
         return new double[]{vFL, vFR, vBL, vBR};
     }
+
+
 }

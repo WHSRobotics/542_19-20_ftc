@@ -217,20 +217,6 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
         return encoderDistances;
     }
 
-    public double[] getDeadWheelEncoderDeltas() {
-        double currentLeft = getLeftDeadWheelPosition();
-        double currentRight = getRightDeadWheelPosition();
-        double currentHoriz = getHorizDeadWheelPosition();
-
-        double[] encoderDeltas = {currentLeft - deadWheelEncoderValues[0], currentRight - deadWheelEncoderValues[1], currentHoriz - deadWheelEncoderValues[2]};
-
-        deadWheelEncoderValues[0] = currentLeft;
-        deadWheelEncoderValues[1] = currentRight;
-        deadWheelEncoderValues[2] = currentHoriz;
-
-        return encoderDeltas;
-    }
-
     public double[] getWheelVelocities() {
         double[] wheelVelocities = {encToMM(backLeft.getVelocity()), encToMM(frontRight.getVelocity())};
         return wheelVelocities;

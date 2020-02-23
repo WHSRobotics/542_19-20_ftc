@@ -90,11 +90,6 @@ public class Intake {
         return intakeToggler.currentState() == 1;
     }
 
-    public double[] getWheelVelocities() {
-        double[] wheelVelocities = {-Drivetrain.encToMM(leftIntake.getVelocity()), -Drivetrain.encToMM(rightIntake.getVelocity())};
-        return wheelVelocities;
-    }
-
     public void setIntakePusherPosition(IntakePusherPosition intakePusherPosition) {
         intakePusher.setPosition(INTAKE_PUSHER_POSITIONS[intakePusherPosition.ordinal()]);
     }

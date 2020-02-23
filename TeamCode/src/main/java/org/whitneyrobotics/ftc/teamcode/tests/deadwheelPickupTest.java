@@ -14,6 +14,7 @@ public class deadwheelPickupTest extends OpMode {
 
     @Override
     public void loop() {
+        robot.deadWheelPickup.operate(gamepad1.b);
         if(robot.deadwheelRetracted) {
             robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, robot.getCoordinate().getHeading());
         }else{
