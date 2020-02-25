@@ -1,5 +1,6 @@
 package org.whitneyrobotics.ftc.teamcode.lib.util;
 
+import org.opencv.core.Mat;
 import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 
 public class StrafeToTarget {
@@ -11,6 +12,7 @@ public class StrafeToTarget {
     private static final double MAXIMUM_ANGULAR_ACCELERATION = SwerveConstants.MAX_ANGULAR_ACCELERATION;
     private double pathMaximumVelocity;
     public int lastClosestPointIndex = 0;
+    public int lastClosestHeadingIndex = 0;
     private int lastIndex = 0;
     private double currentTValue = 0;
     private static final double hKI = SwerveConstants.hKI;
@@ -23,6 +25,8 @@ public class StrafeToTarget {
     private double[] targetCurvatures;
     public double[] targetVelocities;
     public double[] targetAngularVelocities;
+
+    public boolean conditionMet = false;
 
     private double[] currentTargetWheelVelocities = {0.0, 0.0, 0.0, 0.0};
     private double[] lastTargetWheelVelocities = {0.0, 0.0, 0.0, 0.0};
@@ -87,16 +91,17 @@ public class StrafeToTarget {
         lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
+        int indexOfClosestHeading = calculateIndexOfClosestHeading(smoothedPath);
 
         Position vectorToLookaheadPoint = Functions.Positions.subtract(lookaheadPoint, currentCoord);
         vectorToLookaheadPoint = Functions.field2body(vectorToLookaheadPoint, currentCoord);
         double angleToLookaheadPoint = Math.toDegrees(Math.atan2(vectorToLookaheadPoint.getY(), vectorToLookaheadPoint.getX()));
         angleToLookaheadPointDebug = angleToLookaheadPoint;
 
-        headingController.calculate(targetAngularVelocities[indexOfClosestPoint] - angularVelocity);
+        headingController.calculate(targetAngularVelocities[indexOfClosestHeading] - angularVelocity);
         double headingFeedback = headingController.getOutput();
 
-        currentTargetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], angleToLookaheadPoint, targetAngularVelocities[indexOfClosestPoint]);
+        currentTargetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], angleToLookaheadPoint, targetAngularVelocities[indexOfClosestHeading]);
 
         double deltaTime = System.nanoTime() / 1E9 - lastTime;
         double[] targetWheelAccelerations = new double[4];
@@ -176,6 +181,24 @@ public class StrafeToTarget {
         // calculates the index of value in the array with the smallest value and returns that index
         lastClosestPointIndex = Functions.calculateIndexOfSmallestValue(distances);
         return lastClosestPointIndex;
+    }
+
+    private int calculateIndexOfClosestHeading(Position[] smoothedPath) {
+        boolean closestHeadingFound = false;
+        for (int i = lastClosestHeadingIndex; i < smoothedPath.length - 1; i++) {
+            if (!closestHeadingFound && Math.abs(currentCoord.getHeading() - smoothedPath[i+1].getHeading()) < Math.abs(currentCoord.getHeading() - smoothedPath[lastClosestHeadingIndex].getHeading())) {
+                lastClosestHeadingIndex = i + 1;
+                if (i < smoothedPath.length - 2) {
+                    if (Math.abs(smoothedPath[i + 2].getHeading() - currentCoord.getHeading()) >= Math.abs(smoothedPath[i+1].getHeading() - currentCoord.getHeading())) {
+                        conditionMet = true;
+                        closestHeadingFound = true;
+                    }
+                } else {
+                    closestHeadingFound = true;
+                }
+            }
+        }
+        return lastClosestHeadingIndex;
     }
 
     public double[] calculateTargetTranslationalWheelVelocities(double targetVelocity, double angleToLookaheadPoint) {

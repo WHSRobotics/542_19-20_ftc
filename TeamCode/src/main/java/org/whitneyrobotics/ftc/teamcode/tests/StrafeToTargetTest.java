@@ -38,6 +38,8 @@ public class StrafeToTargetTest extends OpMode {
         robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
         motorPowers = strafe1.calculateMotorPowers(robot.getCoordinate(), robot.intake.getWheelVelocities(), robot.drivetrain.getFrontRightWheelVelocity());
         robot.drivetrain.operate(motorPowers);
+        telemetry.addData("Last Closest Heading Point Index", strafe1.lastClosestHeadingIndex);
+        telemetry.addData("Condition Met?", strafe1.conditionMet);
         telemetry.addData("Angle To Lookahead Debug", strafe1.angleToLookaheadPointDebug);
         telemetry.addData("x", robot.getCoordinate().getX());
         telemetry.addData("y", robot.getCoordinate().getY());
