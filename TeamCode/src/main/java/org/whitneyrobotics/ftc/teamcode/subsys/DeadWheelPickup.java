@@ -13,7 +13,7 @@ public class DeadWheelPickup {
         UP, DOWN;
     }
 
-    double[] DEAD_WHEEL_PICKUP_POSITIONS = {0.17, 0.53};
+    double[] DEAD_WHEEL_PICKUP_POSITIONS = {0.18, 0.48};
 
     public DeadWheelPickup(HardwareMap deadWheelMap){
         deadWheelPickup = deadWheelMap.servo.get("deadWheel");

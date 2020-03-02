@@ -443,8 +443,8 @@ public class WHSAuto extends OpMode {
 
     @Override
     public void loop() {
-        robot.estimateHeading();
-        robot.deadWheelEstimatePosition();
+        //robot.estimateHeading();
+        robot.deadWheelEstimateCoordinate();
         robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
         robot.capstone.setIntakeBlockerPosition(Capstone.IntakeBlockerPosition.UP);
         robot.capstone.setLockPosition(Capstone.LockPosition.LOCKED);

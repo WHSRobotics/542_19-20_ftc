@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
-import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.StrafeToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.DeadWheelPickup;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
@@ -19,22 +18,23 @@ public class StrafeToTargetTest extends OpMode {
     public double kA = 0.000012;
     double velocityConstant = 3.0;
     double lookaheadDistance = 200;
-    Coordinate startingCoordinate = new Coordinate(0,0,180);
+    Coordinate startingCoordinate = new Coordinate(0,0,0);
     Coordinate p1 = new Coordinate(0,1200, 90);
     Coordinate p2 = new Coordinate(0,1800,0);
 
-    Coordinate[] positions = {startingCoordinate, p1, p2};
+    Coordinate[] positions = {startingCoordinate, p1};
     @Override
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
         strafe1 = new StrafeToTarget(kP, kV,kA,positions, 80, .7, 0.01, velocityConstant, lookaheadDistance, 600, robot.imu.getAngularVelocity());
         telemetry.log().setCapacity(35);
+        robot.setInitialCoordinate(startingCoordinate);
     }
 
     @Override
     public void loop() {
-        robot.deadWheelEstimatePosition();
-        robot.estimateHeading();
+        robot.deadWheelEstimateCoordinate();
+        //robot.estimateHeading();
         robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
         motorPowers = strafe1.calculateMotorPowers(robot.getCoordinate(), robot.intake.getWheelVelocities(), robot.drivetrain.getFrontRightWheelVelocity());
         robot.drivetrain.operate(motorPowers);
@@ -45,7 +45,19 @@ public class StrafeToTargetTest extends OpMode {
         telemetry.addData("y", robot.getCoordinate().getY());
         telemetry.addData("heading", robot.getCoordinate().getHeading());
         telemetry.addData("lookahead point", strafe1.lookaheadPoint.getX() + ", " + strafe1.lookaheadPoint.getY());
-        for(int i = 0; i < strafe1.smoothedPath.length; i++) {
+
+        telemetry.addData("FL Position", robot.drivetrain.frontLeft.getCurrentPosition());
+        telemetry.addData("BL Position", robot.drivetrain.backLeft.getCurrentPosition());
+        telemetry.addData("FR Position", robot.drivetrain.frontRight.getCurrentPosition());
+        telemetry.addData("BR Position", robot.drivetrain.backRight.getCurrentPosition());
+        telemetry.addData("X heading: ", robot.imu.getThreeHeading()[0]);
+        telemetry.addData("Y heading: ", robot.imu.getThreeHeading()[1]);
+        telemetry.addData("Z heading: ", robot.imu.getThreeHeading()[2]);
+        telemetry.addData("Left extension", robot.outtake.getExtensionEncoderPositions()[0]);
+        telemetry.addData("Right extension", robot.outtake.getExtensionEncoderPositions()[1]);
+        telemetry.addData("Left intake Velocity", robot.intake.getWheelVelocities()[0]);
+        telemetry.addData("Right intake Velocity", robot.intake.getWheelVelocities()[1]);
+        /*for(int i = 0; i < strafe1.smoothedPath.length; i++) {
             telemetry.log().add("Target Angular Velocities " + strafe1.targetAngularVelocities[i]);
         }
         for(int i = 0; i < strafe1.smoothedPath.length; i++){
@@ -57,7 +69,7 @@ public class StrafeToTargetTest extends OpMode {
             telemetry.log().add("dTheta" + deltaTheta);
             targetAngularVelocities[i] = (targetAngularVelocities[i+1] * targetAngularVelocities[i+1]) + 2 * 5.0 * deltaTheta;
             telemetry.log().add("tAV " + targetAngularVelocities[i]);
-        }
+        }*/
 //        telemetry.addData("Target Left Velcoities", strafe1.getCurrentTargetWheelVelocities()[0]);
 //        telemetry.addData("Target Right Velcoities ", swerve1.getCurrentTargetWheelVelocities()[1]);
         telemetry.addData("Current Velocities Left", robot.drivetrain.getAllWheelVelocities()[0] +

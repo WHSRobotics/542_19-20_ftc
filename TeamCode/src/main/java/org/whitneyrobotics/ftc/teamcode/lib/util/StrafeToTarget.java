@@ -91,7 +91,7 @@ public class StrafeToTarget {
         lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
         int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
-        int indexOfClosestHeading = calculateIndexOfClosestHeading(smoothedPath);
+        int indexOfClosestHeading = calculateIndexOfClosestHeading();
 
         Position vectorToLookaheadPoint = Functions.Positions.subtract(lookaheadPoint, currentCoord);
         vectorToLookaheadPoint = Functions.field2body(vectorToLookaheadPoint, currentCoord);
@@ -183,21 +183,25 @@ public class StrafeToTarget {
         return lastClosestPointIndex;
     }
 
-    private int calculateIndexOfClosestHeading(Position[] smoothedPath) {
+    private int calculateIndexOfClosestHeading() {
         boolean closestHeadingFound = false;
-        for (int i = lastClosestHeadingIndex; i < smoothedPath.length - 1; i++) {
-            if (!closestHeadingFound && Math.abs(currentCoord.getHeading() - smoothedPath[i+1].getHeading()) < Math.abs(currentCoord.getHeading() - smoothedPath[lastClosestHeadingIndex].getHeading())) {
-                lastClosestHeadingIndex = i + 1;
+        double currentHeading = currentCoord.getHeading();
+        double[] headingDiffs = new double[smoothedPath.length];
+        for (int i = lastClosestHeadingIndex; i < smoothedPath.length-1; i++) {
+            if (!closestHeadingFound && Math.abs(currentHeading - smoothedPath[i+1].getHeading()) < Math.abs(currentHeading - smoothedPath[lastClosestHeadingIndex].getHeading())) {
                 if (i < smoothedPath.length - 2) {
-                    if (Math.abs(smoothedPath[i + 2].getHeading() - currentCoord.getHeading()) >= Math.abs(smoothedPath[i+1].getHeading() - currentCoord.getHeading())) {
+                    if (Math.abs(smoothedPath[i + 2].getHeading() - currentHeading) >= Math.abs(smoothedPath[i+1].getHeading() - currentHeading)) {
                         conditionMet = true;
+                        lastClosestHeadingIndex = i + 1;
                         closestHeadingFound = true;
                     }
                 } else {
                     closestHeadingFound = true;
                 }
             }
+            //headingDiffs[i] = Math.abs(currentHeading - smoothedPath[i].getHeading());
         }
+        //lastClosestHeadingIndex = Functions.calculateIndexOfSmallestValue(headingDiffs);
         return lastClosestHeadingIndex;
     }
 

@@ -31,7 +31,7 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     public static final double B_DEAD_WHEEL_TO_ROBOT_CENTER = 103.0;
     private static final double RADIUS_OF_WHEEL = 50;               //in mm
     private static final double CIRC_OF_WHEEL = RADIUS_OF_WHEEL * 2 * Math.PI;
-    private static final double ENCODER_TICKS_PER_REV = 1440; // <-- omnis  537.6;      //Orbital 20
+    private static final double ENCODER_TICKS_PER_REV = 1440; // <-- omnis  (537.6;      //Orbital 20))
     private static final double GEAR_RATIO = 1.0;
     private static final double ENCODER_TICKS_PER_MM = ENCODER_TICKS_PER_REV / (CIRC_OF_WHEEL * GEAR_RATIO);
 
@@ -49,9 +49,13 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     }
 
     private static final double DEAD_WHEEL_RADIUS = 24; //mm
+    private static final double L_WHEEL_ENC_TICKS_PER_REV = 1165;   //determined experimentally
+    private static final double R_WHEEL_ENC_TICKS_PER_REV = 1440;
     private static final double LR_WHEEL_ENC_TICKS_PER_REV = 1440;
     private static final double BACK_WHEEL_ENC_TICKS_PER_REV = 1200;
 
+    public EncoderConverter lWheelConverter = new EncoderConverter(DEAD_WHEEL_RADIUS, L_WHEEL_ENC_TICKS_PER_REV, 1.0);
+    public EncoderConverter rWheelConverter = new EncoderConverter(DEAD_WHEEL_RADIUS, R_WHEEL_ENC_TICKS_PER_REV, 1.0);
     public EncoderConverter lrWheelConverter = new EncoderConverter(DEAD_WHEEL_RADIUS, LR_WHEEL_ENC_TICKS_PER_REV, 1.0);
     public EncoderConverter backWheelConverter = new EncoderConverter(DEAD_WHEEL_RADIUS, BACK_WHEEL_ENC_TICKS_PER_REV, 1.0);
 

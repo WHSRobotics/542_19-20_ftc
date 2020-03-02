@@ -26,11 +26,11 @@ public class EstimatePositionTest extends OpMode {
 
 
         robot.drivetrain.operateMecanumDrive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x,robot.getCoordinate().getHeading());
-//        robot.estimateHeading();
+        //robot.estimateHeading();
 //        robot.estimatePosition();
         //robot.estimateCoordinate();
 //robot.estimateHeading();
-        robot.deadWheelEstimatePosition();
+        robot.deadWheelEstimateCoordinate();
         robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.DOWN);
 
         telemetry.addData("IMU", robot.imu.getHeading());

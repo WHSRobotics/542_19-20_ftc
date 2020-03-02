@@ -245,14 +245,18 @@ public class WHSRobotImpl implements WHSRobot {
             deadwheelRetracted = true;
         }
     }
-    public void deadWheelEstimatePosition() {
+    public void deadWheelEstimateCoordinate() {
+        estimateHeading();
         encoderDeltas = drivetrain.getAllEncoderDelta();
         //currentCoord.setHeading(/*Functions.normalizeAngle(Math.toDegrees(drivetrain.lrWheelConverter.encToMM(drivetrain.getAllEncoderPositions()[1]-drivetrain.getAllEncoderPositions()[0])/(Drivetrain.getTrackWidth())))*/ imu.getHeading());
 
-        double deltaXWheels = drivetrain.lrWheelConverter.encToMM((encoderDeltas[0] + encoderDeltas[1])/2);
+        double deltaXWheels = (drivetrain.lWheelConverter.encToMM(encoderDeltas[0]) + drivetrain.rWheelConverter.encToMM(encoderDeltas[1]))/2;
+        double deltaYWheel = drivetrain.backWheelConverter.encToMM(encoderDeltas[2]);
+        double deltaTheta = (drivetrain.rWheelConverter.encToMM(encoderDeltas[1]) - drivetrain.lWheelConverter.encToMM(encoderDeltas[0]))/(Drivetrain.getTrackWidth());
+        /*double deltaXWheels = drivetrain.lrWheelConverter.encToMM((encoderDeltas[0] + encoderDeltas[1])/2);
         double deltaYWheel = drivetrain.backWheelConverter.encToMM(encoderDeltas[2]);
         double deltaTheta = drivetrain.lrWheelConverter.encToMM(encoderDeltas[1] - encoderDeltas[0])/(Drivetrain.getTrackWidth());
-
+*/
         double movementRadius = deltaXWheels / (deltaTheta + .0001);
         double strafeRadius = deltaYWheel / (deltaTheta + .0001);
 
@@ -266,7 +270,7 @@ public class WHSRobotImpl implements WHSRobot {
         //currentCoord.setPos(Functions.Positions.add(fieldVector, currentCoord));
     }
 
-    /*public void deadWheelEstimatePosition() {
+    /*public void deadWheelEstimateCoordinate() {
         encoderDeltas = drivetrain.getAllEncoderDelta();
         double leftDelta = drivetrain.lrWheelConverter.encToMM(encoderDeltas[0]);
         double rightDelta = drivetrain.lrWheelConverter.encToMM(encoderDeltas[1]);
