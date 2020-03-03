@@ -3,7 +3,7 @@ package org.whitneyrobotics.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.whitneyrobotics.ftc.teamcode.autoop.WHSAuto;
+import org.whitneyrobotics.ftc.teamcode.autoop.WHSSkystoneAuto;
 import org.whitneyrobotics.ftc.teamcode.subsys.TeleIntake;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotTele;
 
@@ -12,7 +12,7 @@ public class WHSTeleOp extends OpMode {
 
     static final int RED = 0;
     static final int BLUE = 1;
-    static final int STARTING_ALLIANCE = WHSAuto.STARTING_ALLIANCE;
+    static final int STARTING_ALLIANCE = WHSSkystoneAuto.STARTING_ALLIANCE;
     WHSRobotTele robot;
     int i = 0;
 
@@ -53,7 +53,8 @@ public class WHSTeleOp extends OpMode {
         } else {
             robot.outtake.operate(false, false, false, false, false);
         }
-        robot.outtake.changeExtensionErrorBias(gamepad2.left_stick_y > 0.05, gamepad2.left_stick_y < -0.05);
+        robot.outtake.changeExtensionErrorBias(-gamepad2.right_stick_y);
+        robot.outtake.changeTemporaryExtensionErrorBias(gamepad2.left_stick_y < -0.01, gamepad2.left_stick_y > 0.01);
 
 
         /*//Skystone Grabber

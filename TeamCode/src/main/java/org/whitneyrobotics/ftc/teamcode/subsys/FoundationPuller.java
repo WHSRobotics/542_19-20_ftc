@@ -31,7 +31,7 @@ public class FoundationPuller {
     }
 
     //For Use in Auto
-    public void setFoundationPullerPosition(PullerPosition pullerPosition) {
+    public void setPosition(PullerPosition pullerPosition) {
         leftServo.setPosition(LEFT_PULLER_POSITIONS[pullerPosition.ordinal()]);
         rightServo.setPosition(RIGHT_PULLER_POSITIONS[pullerPosition.ordinal()]);
     }
@@ -40,9 +40,9 @@ public class FoundationPuller {
     public void operate(boolean gamepadInput) {
         operateFoundationPullerToggler.changeState(gamepadInput);
         if (operateFoundationPullerToggler.currentState() == 0) {
-            setFoundationPullerPosition(PullerPosition.UP);
+            setPosition(PullerPosition.UP);
         } else if (operateFoundationPullerToggler.currentState() == 1) {
-            setFoundationPullerPosition(PullerPosition.DOWN);
+            setPosition(PullerPosition.DOWN);
         }
     }
 }

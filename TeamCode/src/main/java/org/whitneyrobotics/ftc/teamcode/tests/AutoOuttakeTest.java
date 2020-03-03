@@ -10,20 +10,23 @@ public class AutoOuttakeTest extends OpMode {
 
     WHSRobotTele robot;
     boolean firstLoopCycle = true;
+
     @Override
     public void init() {
         robot = new WHSRobotTele(hardwareMap);
     }
 
     @Override
-    public void start(){
+    public void start() {
     }
+
     @Override
-    public void loop()
-    { if (firstLoopCycle){
-        robot.outtake.grabStone();
-        firstLoopCycle = false;
-    }
+    public void loop() {
+        if (firstLoopCycle) {
+            robot.outtake.grabStone();
+            firstLoopCycle = false;
+        }
         robot.foundationPuller.operate(false);
-     robot.outtake.autoOuttake();
-}}
+        robot.outtake.autoOuttake();
+    }
+}

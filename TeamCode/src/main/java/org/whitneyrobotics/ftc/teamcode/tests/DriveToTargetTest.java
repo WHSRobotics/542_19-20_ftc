@@ -60,7 +60,7 @@ public class DriveToTargetTest extends OpMode {
                 break;
             case 2:
                 subStateDesc = "Grabbing foundation";
-                //robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
+                //robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
                 if (foundationPullerUpToDownTimer.isExpired()) {
                     robot.driveToTarget(startingCoordinate, false);
                     state++;
@@ -75,7 +75,7 @@ public class DriveToTargetTest extends OpMode {
                 break;
             case 4:
                 subStateDesc = "Releasing foundation";
-                //robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
+                //robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
 
                 break;
         }

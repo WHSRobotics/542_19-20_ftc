@@ -14,12 +14,13 @@ public class NewOuttake {
     private static final int HOVER_LEVEL = 3;
     private static final int CLEARANCE_LEVEL = 4;
 
-    private Toggler operateOuttakeToggler = new Toggler(6);
+    private Toggler operateOuttakeToggler = new Toggler(5);
     int operateExtensionSubState = 0;
-    private Toggler extensionLevelTog = new Toggler(9);
+    private Toggler extensionLevelTog = new Toggler(11);
     private Toggler capstoneTog = new Toggler(2);
 
     private SimpleTimer intakeToOuttakeTimer = new SimpleTimer();
+    private SimpleTimer raiseSlidesTimer = new SimpleTimer();
 
     private int autoOuttakeState = 0;
     private int autoOuttakeSubState = 0;
@@ -30,15 +31,18 @@ public class NewOuttake {
     private SimpleTimer autoOuttakeToIntakeTimer = new SimpleTimer();
     private SimpleTimer intakeUpToIntakeDownTimer = new SimpleTimer();
     private SimpleTimer resetSlidesTimer = new SimpleTimer();
+    private SimpleTimer initialIntakeUpToDownTimer = new SimpleTimer();
 
     boolean autoOuttakeInProgress = false;
     boolean setOuttakeToIntakeTimer = true;
 
     private double intakeToOuttakeDelay = 1.5;
+    private double raiseSlidesDelay = 0.75;
     private double outtakeToIntakeDelay = 0.75;
     private double releaseOuttakeDelay = 0.15;
     private double grabStoneDeadmanDuration = 0.5;
     private double resetSlidesDelay = 0.5;
+    private double INITIAL_INTAKE_UP_TO_INTAKE_DOWN_DELAY = 0.5;
 
     public int debugCount = 0;
 
@@ -66,6 +70,7 @@ public class NewOuttake {
                     if (resetSlidesTimer.isExpired()) {
                         extension.setLevel(0);
                     }
+                    extension.temporaryErrorBias = 0;
                     grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
                     break;
                 case 1: // Wait For Stone
@@ -80,16 +85,19 @@ public class NewOuttake {
                         // Brings down the Hand and Wrist Servos if the Extension is all the way down
                         grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
                     }
+                    raiseSlidesTimer.set(raiseSlidesDelay * extensionLevelTog.currentState());
                     break;
                 case 3: //Swing around
-                    extension.setHigherLevel(extensionLevelTog.currentState());
-                    grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
+                    extension.setLevel(extensionLevelTog.currentState());
+                    if (extension.getCurrentLevel() == extensionLevelTog.currentState() || raiseSlidesTimer.isExpired()) {
+                        grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
+                    }
                     break;
-                case 4://hovering over the stone
+                /*case 4://hovering over the stone
                     extension.setLevel(extensionLevelTog.currentState());
                     grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN);
-                    break;
-                case 5: // Releases Stone
+                    break;*/
+                case 4: // Releases Stone
                     setOuttakeToIntakeTimer = true;
                     grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_RELEASED);
                     extension.setLevel(extensionLevelTog.currentState());
@@ -145,7 +153,7 @@ public class NewOuttake {
                         }*/
                         extension.setLevel(CLEARANCE_LEVEL);
                         if (extension.getCurrentLevel() == CLEARANCE_LEVEL) {
-                            intakeToOuttakeTimer.set(intakeToOuttakeDelay); //Sets a timer for moving the elbow servos
+                            raiseSlidesTimer.set(raiseSlidesDelay); //Sets a timer for moving the elbow servos
                             operateExtensionSubState++;
                         }
                         break;
@@ -153,7 +161,7 @@ public class NewOuttake {
                         grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
                         if (extensionLevelTog.currentState() < CLEARANCE_LEVEL) {
                             //If the target position is below the clearance level, then do not go on until the outtake has completely swung around
-                            if (intakeToOuttakeTimer.isExpired()) {
+                            if (raiseSlidesTimer.isExpired()) {
                                 operateExtensionSubState++;
                             }
                         } else {
@@ -248,25 +256,29 @@ public class NewOuttake {
                         }*/
                         extension.setLevel(CLEARANCE_LEVEL);
                         if (extension.getCurrentLevel() == CLEARANCE_LEVEL) {
-                            intakeToOuttakeTimer.set(intakeToOuttakeDelay); //Sets a timer for moving the elbow servos
+                            raiseSlidesTimer.set(raiseSlidesDelay * extensionLevelTog.currentState()); //Sets a timer for moving the elbow servos
                             operateExtensionSubState++;
                         }
                         break;
-                    case 1: // Moves the Elbow Servos
+                    case 1: //Goes to Target Linear Slide Position
+                        grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
+                        extension.setLevel(extensionLevelTog.currentState());
+                        if(extension.getCurrentLevel() == extensionLevelTog.currentState() || raiseSlidesTimer.isExpired()){
+                            operateExtensionSubState++;
+                        }
+                        break;
+                    case 2: // Moves the Elbow Servos
                         grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
                         if (extensionLevelTog.currentState() < CLEARANCE_LEVEL) {
                             //If the target position is below the clearance level, then do not go on until the outtake has completely swung around
-                            if (intakeToOuttakeTimer.isExpired()) {
+                            if (raiseSlidesTimer.isExpired()) {
                                 operateExtensionSubState++;
                             }
                         } else {
                             operateExtensionSubState++;
                         }
                         break;
-                    case 2: //Goes to Target Linear Slide Position
-                        grabber.setPosition(NewGrabber.GrabberPosition.OUTTAKE_DOWN); //Sets the Grabber to swing out
-                        extension.setLevel(extensionLevelTog.currentState());
-                        break;
+
                     default:
                         break;
                 }
@@ -306,15 +318,20 @@ public class NewOuttake {
     public void hover() {
         extension.estimateLevel();
         grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_UP);
-        intakeUpToIntakeDownTimer.set(grabStoneDeadmanDuration);
+        initialIntakeUpToDownTimer.set(INITIAL_INTAKE_UP_TO_INTAKE_DOWN_DELAY);
     }
 
     public void grabStone() {
         extension.estimateLevel();
-        if (intakeUpToIntakeDownTimer.isExpired()) {
-            grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
-        } else {
-            grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_RELEASED);
+        if(initialIntakeUpToDownTimer.isExpired()) {
+            if (intakeUpToIntakeDownTimer.isExpired()) {
+                grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN);
+            } else {
+                grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_RELEASED);
+            }
+        }else{
+            grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_INITIAL);
+            intakeUpToIntakeDownTimer.set(grabStoneDeadmanDuration);
         }
         intakeToOuttakeTimer.set(intakeToOuttakeDelay);
     }
@@ -365,12 +382,18 @@ public class NewOuttake {
         return autoOuttakeInProgress;
     }
 
-    public void changeExtensionErrorBias(boolean gamepadInputUp, boolean gamepadInputDown) {
+    public void changeExtensionErrorBias(double gamepadInput) {
+        if(Math.abs(gamepadInput) > 0.01) {
+            extension.errorBias += gamepadInput*25;
+        }
+    }
+
+    public void changeTemporaryExtensionErrorBias(boolean gamepadInputUp, boolean gamepadInputDown) {
         if (gamepadInputUp) {
-            extension.errorBias += 5;
+            extension.temporaryErrorBias += 20;
         }
         if (gamepadInputDown) {
-            extension.errorBias -= 5;
+            extension.temporaryErrorBias -= 20;
         }
     }
 

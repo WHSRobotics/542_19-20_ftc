@@ -12,7 +12,7 @@ public class Extension {
     private DcMotor rightExtension;
 
     // index 0 = intook; index 3 = level 3, clearance & hover
-    private int[] extensionMotorPositions = {0, 180, 740, 1180, 1640, 2125, 2625, 3025, 3550};
+    private int[] extensionMotorPositions = {0, 470, 1030, 1470, 1930, 2415, 2915, 3315, 3840, 3840, 3840};
     private int[] extensionHigherMotorPositions = new int[extensionMotorPositions.length];
     private static final int UPDATE_LEVEL_DEADBAND = 200;
     private double EXTENSION_MOTOR_POWER = 1.0;
@@ -27,6 +27,7 @@ public class Extension {
 
     private int error;
     protected int errorBias = 0;
+    protected int temporaryErrorBias = 0;
 
     public Extension(HardwareMap extensionMap){
         leftExtension = extensionMap.dcMotor.get("leftExtension");
@@ -52,7 +53,7 @@ public class Extension {
     }
 
     public void setLevel(int extensionLevel){
-        error = extensionMotorPositions[extensionLevel] - getAvgEncoderPosition() - errorBias;
+        error = extensionMotorPositions[extensionLevel] - getAvgEncoderPosition() + errorBias + temporaryErrorBias;
 
         extensionMotorController.setConstants(RobotConstants.E_KP,RobotConstants.E_KI, RobotConstants.E_KD);
         extensionMotorController.calculate(error);
@@ -62,7 +63,7 @@ public class Extension {
     }
 
     public void setHigherLevel(int higherExtensionLevel) {
-        error = extensionHigherMotorPositions[higherExtensionLevel] - getAvgEncoderPosition() - errorBias;
+        error = extensionHigherMotorPositions[higherExtensionLevel] - getAvgEncoderPosition() + errorBias + temporaryErrorBias;
 
         extensionMotorController.setConstants(RobotConstants.E_KP,RobotConstants.E_KI, RobotConstants.E_KD);
         extensionMotorController.calculate(error);
@@ -118,13 +119,5 @@ public class Extension {
         return new int[] {leftExtension.getCurrentPosition(), rightExtension.getCurrentPosition()};
     }
 
-    public void changeErrorBias(boolean gamepadInputUp, boolean gamepadInputDown) {
-        if (gamepadInputUp) {
-            errorBias++;
-        }
-        if (gamepadInputDown) {
-            errorBias--;
-        }
-    }
 }
 

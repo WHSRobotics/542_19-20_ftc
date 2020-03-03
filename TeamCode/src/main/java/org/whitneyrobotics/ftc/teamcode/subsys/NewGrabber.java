@@ -27,7 +27,7 @@ public class NewGrabber {
     }
 
     public enum GrabberPosition {
-        INTAKE_UP, INTAKE_DOWN, INTAKE_DOWN_RELEASED, OUTTAKE_DOWN, OUTTAKE_RELEASED
+        INTAKE_UP, INTAKE_DOWN, INTAKE_DOWN_RELEASED, OUTTAKE_DOWN, OUTTAKE_RELEASED,INTAKE_DOWN_INITIAL
     }
 
     //INTAKE, OUTTAKE, HOVER
@@ -41,7 +41,7 @@ public class NewGrabber {
     private final double RIGHT_ELBOW_OUTTAKE_POSITION = RIGHT_ELBOW_POSITIONS[NewGrabber.ElbowPosition.OUTTAKE.ordinal()];
 
     //UP, DOWN
-    private final double[] WRIST_POSITIONS = {.08, 0.2};
+    private final double[] WRIST_POSITIONS = {.02, 0.2};
     private final double WRIST_INTAKE_POSITION = WRIST_POSITIONS[NewGrabber.WristPosition.UP.ordinal()];
     private final double WRIST_OUTTAKE_POSITION = WRIST_POSITIONS[NewGrabber.WristPosition.DOWN.ordinal()];
 
@@ -75,7 +75,7 @@ public class NewGrabber {
             // Waiting for Stone
             setElbowServoPosition(NewGrabber.ElbowPosition.HOVER);
             setWristServoPosition(NewGrabber.WristPosition.UP);
-            setHandServoPosition(HandPosition.DOWN);
+            setHandServoPosition(HandPosition.UP);
         } else if (grabberPosition == GrabberPosition.INTAKE_DOWN_RELEASED) {
             // Right before grabbing the stone
             setElbowServoPosition(NewGrabber.ElbowPosition.INTAKE);
@@ -96,6 +96,10 @@ public class NewGrabber {
             setElbowServoPosition(NewGrabber.ElbowPosition.OUTTAKE);
             setWristServoPosition(NewGrabber.WristPosition.UP);
             setHandServoPosition(NewGrabber.HandPosition.OUTTAKE_DOWN);
+        } else if (grabberPosition == NewGrabber.GrabberPosition.INTAKE_DOWN_INITIAL){
+            setElbowServoPosition(ElbowPosition.INTAKE);
+            setWristServoPosition(WristPosition.UP);
+            setHandServoPosition(HandPosition.DOWN);
         }
     }
 

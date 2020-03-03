@@ -18,6 +18,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.BackGate;
 import org.whitneyrobotics.ftc.teamcode.subsys.Capstone;
+import org.whitneyrobotics.ftc.teamcode.subsys.DeadWheelPickup;
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
 import org.whitneyrobotics.ftc.teamcode.subsys.ImprovedSkystoneDetector;
 import org.whitneyrobotics.ftc.teamcode.subsys.Intake;
@@ -26,8 +27,8 @@ import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name = "WHS Auto", group = "auto")
-public class WHSAuto extends OpMode {
+@Autonomous(name = "WHS Skystone Auto", group = "auto")
+public class WHSSkystoneAuto extends OpMode {
     WHSRobotImpl robot;
 
     static final int FOUNDATION = 0;
@@ -43,7 +44,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    public static final int STARTING_ALLIANCE = BLUE;
+    public static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -124,7 +125,7 @@ public class WHSAuto extends OpMode {
                 .5,
                 SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
                 SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance,
-                650);
+                800);
 
         wallToMidpointSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
                 SwerveConstants.WallToSkystoneSwerveConstants.kV,
@@ -253,6 +254,7 @@ public class WHSAuto extends OpMode {
     SimpleTimer dropIntakeTimer = new SimpleTimer();
     SimpleTimer intakeSystoneTimer = new SimpleTimer();
     SimpleTimer jerkSkystoneTimer = new SimpleTimer();
+    SimpleTimer pullFoundationPauseTimer = new SimpleTimer();
 
     private static final double STRAFE_TO_SKYSTONE_POWER = 0.7542;
 
@@ -264,7 +266,8 @@ public class WHSAuto extends OpMode {
     private final double GRAB_SKYSTONE_DELAY = 1.0;
     private final double OUTTAKE_SKYSTONE_DELAY = 1.0;
     private final double MOVE_SKYSTONE_GRABBER_DELAY = 1.0;
-    private  final double JERK_DELAY = 0.75;
+    private final double JERK_DELAY = 0.75;
+    private final double PULL_FOUNDATION_PAUSE_DURATION = 0;
 
     double[] motorPowers = {0.0, 0.0};
 
@@ -340,26 +343,26 @@ public class WHSAuto extends OpMode {
 
 
         skystoneMidpointArray[BLUE][0] = new Position(-760, 1175);
-        skystoneMidpointArray[BLUE][1] = new Position(-605, 870);
+        skystoneMidpointArray[BLUE][1] = new Position(-735, 1175);
         skystoneMidpointArray[BLUE][2] = new Position(-985, 1000);
         skystoneMidpointArray[BLUE][3] = new Position(-1205, 600);
         skystoneMidpointArray[BLUE][4] = new Position(-1500, 600);
         skystoneMidpointArray[BLUE][5] = new Position(-1700, 600);
 
         // 0 = farthest from wall
-        skystonePositionArray[RED][0] = new Position(-705, -560);
-        skystonePositionArray[RED][1] = new Position(-990, -560);
-        skystonePositionArray[RED][2] = new Position(-1155, -560);
+        skystonePositionArray[RED][0] = new Position(-650, -560);
+        skystonePositionArray[RED][1] = new Position(-940, -542);
+        skystonePositionArray[RED][2] = new Position(-1130, -560);
         skystonePositionArray[RED][3] = new Position(-1205, -600);
         skystonePositionArray[RED][4] = new Position(-1500, -600);
         skystonePositionArray[RED][5] = new Position(-1700, -600);
 
-        skystonePositionArray[BLUE][0] = new Position(-485, 300);
-        skystonePositionArray[BLUE][1] = new Position(-900, 280);
-        skystonePositionArray[BLUE][2] = new Position(-1145, 300);
-        skystonePositionArray[BLUE][3] = new Position(-1205, 300);
-        skystonePositionArray[BLUE][4] = new Position(-1500, 300);
-        skystonePositionArray[BLUE][5] = new Position(-1700, 300);
+        skystonePositionArray[BLUE][0] = new Position(-650, 560);
+        skystonePositionArray[BLUE][1] = new Position(-920, 560);
+        skystonePositionArray[BLUE][2] = new Position(-1145, 560);
+        skystonePositionArray[BLUE][3] = new Position(-1205, 600);
+        skystonePositionArray[BLUE][4] = new Position(-1500, 600);
+        skystonePositionArray[BLUE][5] = new Position(-1700, 600);
 
         skystoneToFoundationPositionArray[RED][0] = new Position(-800, -960);
         skystoneToFoundationPositionArray[RED][1] = new Position(-710, -910);
@@ -369,32 +372,32 @@ public class WHSAuto extends OpMode {
         skystoneToFoundationPositionArray[RED][5] = new Position(-1700, -600);
 
         skystoneToFoundationPositionArray[BLUE][0] = new Position(-800, 960);
-        skystoneToFoundationPositionArray[BLUE][1] = new Position(-710, 660);
+        skystoneToFoundationPositionArray[BLUE][1] = new Position(-710, 930);
         skystoneToFoundationPositionArray[BLUE][2] = new Position(-940, 930);
         skystoneToFoundationPositionArray[BLUE][3] = new Position(-1205, 600);
         skystoneToFoundationPositionArray[BLUE][4] = new Position(-1500, 600);
         skystoneToFoundationPositionArray[BLUE][5] = new Position(-1700, 600);
 
-        foundationStartingPositionArray[RED] = new Position(940, -655);
-        foundationStartingPositionArray[BLUE] = new Position(945, 690);
+        foundationStartingPositionArray[RED] = new Position(1230, -640);
+        foundationStartingPositionArray[BLUE] = new Position(1345, 660);
 
-        foundationMovedPositionArray[RED] = new Position(825, -980);
-        foundationMovedPositionArray[BLUE] = new Position(895, 990);
+        foundationMovedPositionArray[RED] = new Position(950, -1250);
+        foundationMovedPositionArray[BLUE] = new Position(950, 1310);
 
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1571);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
 
-        skybridgePositionArray[RED][INSIDE] = new Position(0, -930);
+        skybridgePositionArray[RED][INSIDE] = new Position(0, -860);
         skybridgePositionArray[RED][OUTSIDE] = new Position(0, -900);
 
-        skybridgePositionArray[BLUE][INSIDE] = new Position(320, 910);
+        skybridgePositionArray[BLUE][INSIDE] = new Position(320, 925);
         skybridgePositionArray[BLUE][OUTSIDE] = new Position(0, 930);
 
-        parkingMidpointArray[RED] = new Position(855,-650);
+        parkingMidpointArray[RED] = new Position(855,-780);
         parkingMidpointArray[BLUE] = new Position(855, 945);
 
-        parkingPositions[RED] = new Position(0, -965);
-        parkingPositions[BLUE] = new Position(0, 945);
+        parkingPositions[RED] = new Position(180, -820);
+        parkingPositions[BLUE] = new Position(100, 975);
 
         skystoneToFoundationMidpointArray[RED] = new Position(920, -1180);
         skystoneToFoundationMidpointArray[BLUE] = new Position(920, 1180);
@@ -442,11 +445,11 @@ public class WHSAuto extends OpMode {
     @Override
     public void loop() {
         robot.estimateHeading();
-        robot.deadWheelEstimatePosition();
+        robot.estimatePosition();
         robot.capstone.setLockPosition(Capstone.LockPosition.LOCKED);
         robot.capstone.setDumpPosition(Capstone.DumpPosition.UP);
         robot.capstone.setIntakeBlockerPosition(Capstone.IntakeBlockerPosition.UP);
-        robot.backGate.operate(false);
+        robot.deadWheelPickup.setPosition(DeadWheelPickup.DeadWheelPickupPosition.UP);
         if (!operatingFoundationPullers){
             robot.foundationPuller.operate(false);
         }
@@ -492,7 +495,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 2:
                         subStateDesc = "Grabbing foundation";
-                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
+                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
                         operatingFoundationPullers = true;
                         if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
@@ -618,6 +621,7 @@ public class WHSAuto extends OpMode {
                 switch (subState) {
                     case 0:
                         subStateDesc = "Entry";
+                        robot.backGate.setPosition(BackGate.BackGateServoPosition.INTAKING);
                         deadmanStrafeToSkystoneTimer.set(STRAFE_SKYSTONE_TIME);
                         //isStrafing = true;
                         subState++;
@@ -641,6 +645,7 @@ public class WHSAuto extends OpMode {
                     case 2:
                         subStateDesc = "Waiting";
                         if (intakeSystoneTimer.isExpired()){
+                            robot.backGate.setPosition(BackGate.BackGateServoPosition.UP);
                             jerkSkystoneTimer.set(JERK_DELAY);
                             subState++;
                         }
@@ -725,7 +730,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Moving foundation pullers";
-                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
+                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
                         operatingFoundationPullers = true;
                         outtakeState = "outtake1";
                         if (foundationPullerUpToDownTimer.isExpired()) {
@@ -738,10 +743,17 @@ public class WHSAuto extends OpMode {
                         motorPowers = foundationToWallSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                         if (!foundationToWallSwerve.inProgress()) {
                             robot.intake.setMotorPowers(0);
+                            pullFoundationPauseTimer.set(PULL_FOUNDATION_PAUSE_DURATION);
                             subState++;
                         }
                         break;
                     case 3:
+                        subStateDesc = "Waiting";
+                        if (pullFoundationPauseTimer.isExpired()) {
+                            subState++;
+                        }
+                        break;
+                    case 4:
                         subStateDesc = "rotating";
                         if (STARTING_ALLIANCE == BLUE){
                             robot.rotateToTarget(-170,false);
@@ -749,13 +761,13 @@ public class WHSAuto extends OpMode {
                             robot.rotateToTarget(170, false);
                         }
                         if (!robot.rotateToTargetInProgress()){
-                            robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
+                            robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
                         }
                         if (!robot.rotateToTargetInProgress()){
                             subState++;
                         }
                         break;
-                    case 4:
+                    case 5:
                         subStateDesc = "Exit";
                         advanceState();
                         break;
@@ -770,7 +782,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Grabbing foundation";
-                        robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.DOWN);
+                        robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.DOWN);
                         robot.intake.setMotorPowers(-Intake.AUTO_INTAKE_POWER);
                         if (foundationPullerUpToDownTimer.isExpired()) {
                             subState++;
@@ -787,7 +799,7 @@ public class WHSAuto extends OpMode {
                         subStateDesc = "Rotating like a speddy";
                         robot.rotateToTarget(100,false);
                         if (robot.getCoordinate().getHeading() < 180){
-                            robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
+                            robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
                         }
                         if (!robot.rotateToTargetInProgress()){
                             subState++;
@@ -886,7 +898,7 @@ public class WHSAuto extends OpMode {
 //                            motorPowers = movedFoundationToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(),STARTING_ALLIANCE == RED);
 //                        }
                         /*if (180 - Math.abs(robot.getCoordinate().getHeading()) < 30) {
-                            robot.foundationPuller.setFoundationPullerPosition(FoundationPuller.PullerPosition.UP);
+                            robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
                         }
                         motorPowers = startToParkingSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);*/
                         motorPowers = movedFoundationToParkSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);

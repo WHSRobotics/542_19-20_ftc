@@ -172,15 +172,15 @@ public class Drivetrain implements MecanumDrivetrain, MotorSubsystem {
     }
 
     public double getLAvgEncoderPosition() {
-        double leftTotal = backLeft.getCurrentPosition() + frontLeft.getCurrentPosition();
-        return leftTotal * 0.5;
-        //return frontLeft.getCurrentPosition();
+//        double leftTotal = backLeft.getCurrentPosition() + frontLeft.getCurrentPosition();
+//        return leftTotal * 0.5;
+        return backLeft.getCurrentPosition();
     }
 
     public double getRAvgEncoderPosition() {
-        double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
-        return rightTotal * 0.5;
-        //return backRight.getCurrentPosition();
+//        double rightTotal = backRight.getCurrentPosition() + frontRight.getCurrentPosition();
+//        return rightTotal * 0.5;
+        return frontRight.getCurrentPosition();
     }
 
     public double[] getLRAvgEncoderPosition() {
