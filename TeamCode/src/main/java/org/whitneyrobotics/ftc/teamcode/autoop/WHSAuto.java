@@ -43,7 +43,7 @@ public class WHSAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    public static final int STARTING_ALLIANCE = RED;
+    public static final int STARTING_ALLIANCE = BLUE;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -384,7 +384,7 @@ public class WHSAuto extends OpMode {
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1571);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
 
-        skybridgePositionArray[RED][INSIDE] = new Position(0, -920);
+        skybridgePositionArray[RED][INSIDE] = new Position(0, -930);
         skybridgePositionArray[RED][OUTSIDE] = new Position(0, -900);
 
         skybridgePositionArray[BLUE][INSIDE] = new Position(320, 910);
@@ -393,8 +393,8 @@ public class WHSAuto extends OpMode {
         parkingMidpointArray[RED] = new Position(855,-650);
         parkingMidpointArray[BLUE] = new Position(855, 945);
 
-        parkingPositions[RED] = new Position(0, -945);
-        parkingPositions[BLUE] = new Position(300, 945);
+        parkingPositions[RED] = new Position(0, -965);
+        parkingPositions[BLUE] = new Position(0, 945);
 
         skystoneToFoundationMidpointArray[RED] = new Position(920, -1180);
         skystoneToFoundationMidpointArray[BLUE] = new Position(920, 1180);
@@ -624,7 +624,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 1:
                         subStateDesc = "Intaking";
-                        robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
+                        //robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
                         outtakeState = "hover";
                         if (robot.intake.stoneSensed()){
                             robot.intake.setMotorPowers(0);
@@ -685,6 +685,7 @@ public class WHSAuto extends OpMode {
                         break;
                     case 6:
                         subStateDesc = "Exit";
+                        robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
                         advanceState();
                         break;
                 }
