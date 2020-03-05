@@ -21,7 +21,7 @@ public class WHSFoundationAuto extends OpMode {
     static final int INSIDE = 0;
     static final int OUTSIDE = 1;
 
-    public static final int STARTING_ALLIANCE = RED;
+    public static final int STARTING_ALLIANCE = BLUE;
     static final int SKYBRIDGE_PARKING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = 1200;
 
@@ -130,7 +130,7 @@ public class WHSFoundationAuto extends OpMode {
         parkingPositionArray[RED][OUTSIDE] = new Position(400,-1500);
 
         parkingPositionArray[BLUE][INSIDE] = new Position(0, 900);
-        parkingPositionArray[BLUE][OUTSIDE] = new Position(0,1400);
+        parkingPositionArray[BLUE][OUTSIDE] = new Position(130,1540);
 
         instantiateSwerveToTarget();
         robot.setInitialCoordinate(startingCoordinateArray[STARTING_ALLIANCE]);
@@ -186,7 +186,7 @@ public class WHSFoundationAuto extends OpMode {
                         }else{
                             rotateAngle = 180;
                         }
-                        robot.rotateToTarget(rotateAngle, true);
+                        robot.rotateToTarget(rotateAngle, STARTING_ALLIANCE == RED);
                         if (!robot.rotateToTargetInProgress()){
                             robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
                             robot.foundationPuller.setPosition(FoundationPuller.PullerPosition.UP);
@@ -217,13 +217,11 @@ public class WHSFoundationAuto extends OpMode {
                             break;
                         case 2:
                             substateDesc = "rotating like a neddy";
-                            if (SKYBRIDGE_PARKING_POSITION == INSIDE){
                                 if (STARTING_ALLIANCE == RED){
                                     robot.rotateToTarget(0, false);
                                 }else{
                                     robot.rotateToTarget(180, false);
                                 }
-                            }
                             if (!robot.rotateToTargetInProgress()){
                                 subState++;
                             }
