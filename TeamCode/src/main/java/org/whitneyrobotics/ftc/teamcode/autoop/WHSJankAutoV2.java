@@ -9,7 +9,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
-@Autonomous(name = "WHS Stone Auto", group = "a")
+@Autonomous(name = "WHS ED Auto", group = "a")
 public class WHSJankAutoV2 extends OpMode {
 
     WHSRobotImpl robot;

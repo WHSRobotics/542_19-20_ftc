@@ -333,6 +333,8 @@ public class NewOuttake {
             grabber.setPosition(NewGrabber.GrabberPosition.INTAKE_DOWN_INITIAL);
             intakeUpToIntakeDownTimer.set(grabStoneDeadmanDuration);
         }
+        autoOuttakeInProgress = true;
+        autoOuttakeState = 0;
         intakeToOuttakeTimer.set(intakeToOuttakeDelay);
     }
 
