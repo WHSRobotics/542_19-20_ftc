@@ -155,7 +155,7 @@ public class WHSSkystoneAuto extends OpMode {
                 .5,
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
                 SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
-                900);
+                950);
 
         wallToParkSwerve = new SwerveToTarget(SwerveConstants.WallToParkingSwerveConstants.kP,
                 SwerveConstants.WallToParkingSwerveConstants.kV,
@@ -610,7 +610,7 @@ public class WHSSkystoneAuto extends OpMode {
                                 0.8,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance - 110,
-                                600);
+                                800);
 
                         advanceState();
                         break;

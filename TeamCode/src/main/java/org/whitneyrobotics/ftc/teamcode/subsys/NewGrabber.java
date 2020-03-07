@@ -31,12 +31,12 @@ public class NewGrabber {
     }
 
     //INTAKE, OUTTAKE, HOVER
-    private final double[] LEFT_ELBOW_POSITION = {0.035, 0.965, 0.44};
+    private final double[] LEFT_ELBOW_POSITION = {0.035, 0.93, 0.44};
     private final double LEFT_ELBOW_INTAKE_POSITION = LEFT_ELBOW_POSITION[NewGrabber.ElbowPosition.INTAKE.ordinal()];
     private final double LEFT_ELBOW_OUTTAKE_POSITION = LEFT_ELBOW_POSITION[NewGrabber.ElbowPosition.OUTTAKE.ordinal()];
 
     //INTAKE, OUTTAKE, HOVER
-    private final double[] RIGHT_ELBOW_POSITIONS = {0.965, 0.035, 0.64};
+    private final double[] RIGHT_ELBOW_POSITIONS = {0.965, 0.07, 0.66};
     private final double RIGHT_ELBOW_INTAKE_POSITION = RIGHT_ELBOW_POSITIONS[NewGrabber.ElbowPosition.INTAKE.ordinal()];
     private final double RIGHT_ELBOW_OUTTAKE_POSITION = RIGHT_ELBOW_POSITIONS[NewGrabber.ElbowPosition.OUTTAKE.ordinal()];
 
