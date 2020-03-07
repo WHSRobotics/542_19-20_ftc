@@ -44,7 +44,7 @@ public class WHSSkystoneAuto extends OpMode {
      */
 
     static final int STARTING_POSITION = SKYSTONE;
-    public static final int STARTING_ALLIANCE = BLUE;
+    public static final int STARTING_ALLIANCE = RED;
     static final int SKYBRIDGE_CROSSING_POSITION = INSIDE;
     static final double STARTING_COORDINATE_X = -900;
     static final boolean PARTNER_MOVED_FOUNDATION = false;
@@ -448,6 +448,7 @@ public class WHSSkystoneAuto extends OpMode {
             }
         }
 
+        telemetry.addData("Alliance", STARTING_ALLIANCE);
         telemetry.addData("Skystone Position", skystonePosition);
         telemetry.addData("Skystone X position", robot.skystoneDetector.getScreenPosition().x);
     }
