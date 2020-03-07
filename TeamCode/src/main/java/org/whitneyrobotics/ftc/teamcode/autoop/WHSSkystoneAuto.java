@@ -50,7 +50,7 @@ public class WHSSkystoneAuto extends OpMode {
     static final boolean PARTNER_MOVED_FOUNDATION = false;
 
     static final double LEFT_MAX = 80;
-    static final double CENTER_MAX = 165;
+    static final double CENTER_MAX = 155;
 
     static final int LEFT = 0;
     static final int CENTER = 1;
@@ -343,7 +343,7 @@ public class WHSSkystoneAuto extends OpMode {
 
 
         skystoneMidpointArray[BLUE][0] = new Position(-760, 1175);
-        skystoneMidpointArray[BLUE][1] = new Position(-735, 1175);
+        skystoneMidpointArray[BLUE][1] = new Position(-735, 1195);
         skystoneMidpointArray[BLUE][2] = new Position(-985, 1000);
         skystoneMidpointArray[BLUE][3] = new Position(-1205, 600);
         skystoneMidpointArray[BLUE][4] = new Position(-1500, 600);
@@ -352,14 +352,14 @@ public class WHSSkystoneAuto extends OpMode {
         // 0 = farthest from wall
         skystonePositionArray[RED][0] = new Position(-650, -560);
         skystonePositionArray[RED][1] = new Position(-940, -542);
-        skystonePositionArray[RED][2] = new Position(-1130, -560);
+        skystonePositionArray[RED][2] = new Position(-1120, -560);
         skystonePositionArray[RED][3] = new Position(-1205, -600);
         skystonePositionArray[RED][4] = new Position(-1500, -600);
         skystonePositionArray[RED][5] = new Position(-1700, -600);
 
         skystonePositionArray[BLUE][0] = new Position(-650, 560);
-        skystonePositionArray[BLUE][1] = new Position(-920, 560);
-        skystonePositionArray[BLUE][2] = new Position(-1145, 560);
+        skystonePositionArray[BLUE][1] = new Position(-920, 542);
+        skystonePositionArray[BLUE][2] = new Position(-1145, 542);
         skystonePositionArray[BLUE][3] = new Position(-1205, 600);
         skystonePositionArray[BLUE][4] = new Position(-1500, 600);
         skystonePositionArray[BLUE][5] = new Position(-1700, 600);
@@ -387,7 +387,7 @@ public class WHSSkystoneAuto extends OpMode {
         slideOutFromFoundationMidpointArray[RED] = new Position(600, -1571);
         slideOutFromFoundationMidpointArray[BLUE] = new Position(600, 1571);
 
-        skybridgePositionArray[RED][INSIDE] = new Position(0, -860);
+        skybridgePositionArray[RED][INSIDE] = new Position(0, -830);
         skybridgePositionArray[RED][OUTSIDE] = new Position(0, -900);
 
         skybridgePositionArray[BLUE][INSIDE] = new Position(320, 925);
@@ -396,7 +396,7 @@ public class WHSSkystoneAuto extends OpMode {
         parkingMidpointArray[RED] = new Position(855,-780);
         parkingMidpointArray[BLUE] = new Position(855, 945);
 
-        parkingPositions[RED] = new Position(180, -820);
+        parkingPositions[RED] = new Position(180, -830);
         parkingPositions[BLUE] = new Position(100, 975);
 
         skystoneToFoundationMidpointArray[RED] = new Position(920, -1180);
@@ -610,7 +610,7 @@ public class WHSSkystoneAuto extends OpMode {
                                 0.8,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
                                 SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance - 110,
-                                800);
+                                600);
 
                         advanceState();
                         break;
