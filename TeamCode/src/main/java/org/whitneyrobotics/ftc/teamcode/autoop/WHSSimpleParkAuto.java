@@ -12,8 +12,10 @@ import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 public class WHSSimpleParkAuto extends OpMode {
 
     SimpleTimer timer = new SimpleTimer();
-    double AUTO_DELAY = 1.3;
+    double AUTO_DELAY = 20.0;
+    SimpleTimer driveTimer = new SimpleTimer();
     WHSRobotImpl robot;
+    int state = 0;
     @Override
     public void init() {
         robot = new WHSRobotImpl(hardwareMap);
@@ -26,14 +28,20 @@ public class WHSSimpleParkAuto extends OpMode {
 
     @Override
     public void loop() {
-        if(!timer.isExpired()) {
-            robot.drivetrain.operate(0.4, 0.4);
-            robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
-        }
-        else{
-            robot.drivetrain.operate(0.0, 0.0);
-            robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.DOWN);
-
+        switch (state) {
+            case 0:
+                if(timer.isExpired()) {
+                    driveTimer.set(1.3);
+                    robot.drivetrain.operate(0.4, 0.4);
+                    robot.intake.setIntakePusherPosition(Intake.IntakePusherPosition.UP);
+                    state++;
+                }
+                break;
+            case 1:
+                if (driveTimer.isExpired()) {
+                    robot.drivetrain.operate(0.0, 0.0);
+                }
+                break;
         }
     }
 }

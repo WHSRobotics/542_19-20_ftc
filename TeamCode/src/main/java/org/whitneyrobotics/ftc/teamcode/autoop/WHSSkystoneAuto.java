@@ -358,7 +358,7 @@ public class WHSSkystoneAuto extends OpMode {
         skystonePositionArray[RED][5] = new Position(-1700, -600);
 
         skystonePositionArray[BLUE][0] = new Position(-650, 560);
-        skystonePositionArray[BLUE][1] = new Position(-920, 542);
+        skystonePositionArray[BLUE][1] = new Position(-938, 542);
         skystonePositionArray[BLUE][2] = new Position(-1145, 542);
         skystonePositionArray[BLUE][3] = new Position(-1205, 600);
         skystonePositionArray[BLUE][4] = new Position(-1500, 600);
@@ -397,7 +397,7 @@ public class WHSSkystoneAuto extends OpMode {
         parkingMidpointArray[BLUE] = new Position(855, 945);
 
         parkingPositions[RED] = new Position(180, -830);
-        parkingPositions[BLUE] = new Position(100, 975);
+        parkingPositions[BLUE] = new Position(100, 1010);
 
         skystoneToFoundationMidpointArray[RED] = new Position(920, -1180);
         skystoneToFoundationMidpointArray[BLUE] = new Position(920, 1180);

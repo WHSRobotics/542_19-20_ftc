@@ -21,8 +21,10 @@ public class WHSFoundationAuto extends OpMode {
     static final int INSIDE = 0;
     static final int OUTSIDE = 1;
 
-    public static final int STARTING_ALLIANCE = BLUE;
-    static final int SKYBRIDGE_PARKING_POSITION = INSIDE;
+    SimpleTimer strafeTimer = new SimpleTimer();
+
+    public static final int STARTING_ALLIANCE = RED;
+    static final int SKYBRIDGE_PARKING_POSITION = OUTSIDE;
     static final double STARTING_COORDINATE_X = 1200;
 
     Coordinate[] startingCoordinateArray = new Coordinate[2];
@@ -44,7 +46,7 @@ public class WHSFoundationAuto extends OpMode {
                 5,
                 SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
                 SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance,
-                1000);
+                600);
 
         Position[] foundationToWallSwervePositions = {foundationUnmovedPositionArray[STARTING_ALLIANCE], foundationMovedPositionArray[STARTING_ALLIANCE]};
         foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
@@ -127,9 +129,9 @@ public class WHSFoundationAuto extends OpMode {
         foundationMovedPositionArray[BLUE] = new Position(950, 1310);
 
         parkingPositionArray[RED][INSIDE] = new Position(0, -900);
-        parkingPositionArray[RED][OUTSIDE] = new Position(400,-1500);
+        parkingPositionArray[RED][OUTSIDE] = new Position(320,-1625);
 
-        parkingPositionArray[BLUE][INSIDE] = new Position(0, 900);
+        parkingPositionArray[BLUE][INSIDE] = new Position(0, 940);
         parkingPositionArray[BLUE][OUTSIDE] = new Position(130,1540);
 
         instantiateSwerveToTarget();
@@ -213,10 +215,11 @@ public class WHSFoundationAuto extends OpMode {
                             motorPowers = wallToParkingSwerve.calculateMotorPowers(robot.getCoordinate(), robot.drivetrain.getWheelVelocities(), false);
                             if (!wallToParkingSwerve.inProgress()) {
                                 subState++;
+                                strafeTimer.set(2);
                             }
                             break;
                         case 2:
-                            substateDesc = "rotating like a neddy";
+                            /*substateDesc = "rotating like a neddy";
                                 if (STARTING_ALLIANCE == RED){
                                     robot.rotateToTarget(0, false);
                                 }else{
@@ -224,11 +227,17 @@ public class WHSFoundationAuto extends OpMode {
                                 }
                             if (!robot.rotateToTargetInProgress()){
                                 subState++;
+                            }*/
+                            robot.drivetrain.operate(new double[] {-1, 1, 1, -1});
+                            if (strafeTimer.isExpired()) {
+                                subState++;
+                                robot.drivetrain.operate(0, 0);
                             }
                             break;
                         case 3:
                             substateDesc = "exit";
                             advanceState();
+                            break;
                     }
                 break;
                 case END:
