@@ -25,6 +25,7 @@ public class SkystoneGrabber {
         skystoneArm = skystoneMap.servo.get("skystoneArm");
         skystoneClaw = skystoneMap.servo.get("skystoneClaw");
         operateSkystoneGrabberTog = new Toggler(6);
+        //setPosition(SkystoneArmPosition.DOWN);
     }
 
     public void setPosition (SkystoneArmPosition armPosition, SkystoneClawPosition clawPosition){
