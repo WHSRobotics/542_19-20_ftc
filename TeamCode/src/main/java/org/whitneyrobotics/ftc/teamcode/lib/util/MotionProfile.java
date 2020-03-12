@@ -7,18 +7,19 @@ public class MotionProfile {
     double MAXIMUM_VELOCITY = 2700;
     double increment;
     double[] targetVelocities;
+    double[] targetAccelerations;
     double initalPos;
 
-    public MotionProfile(double initialPos, double finalPos,int numOfPoints){
+    public MotionProfile(double initialPos, double finalPos, int numOfPoints){
         this.numOfPoints = numOfPoints;
         increment = (finalPos - initialPos)/ this.numOfPoints;
         pointArray = getPoints();
-        targetVelocities = getTargetVelocities();
+        targetVelocities = generateTargetVelocities();
         this.initalPos = initialPos;
     }
 
 
-    public double[] getTargetVelocities(){
+    public double[] generateTargetVelocities(){
         double[] targetVelocities = new double[numOfPoints];
         targetVelocities[numOfPoints-1] = 0;
         for (int i =numOfPoints - 2; i < 0; i--){
@@ -26,6 +27,17 @@ public class MotionProfile {
             targetVelocities[i] = Functions.constrain(targetVelocities[i], -1, 1 );
         }
         return targetVelocities;
+    }
+
+    public double[] generateTargetAccelerations(){
+
+    }
+
+    public double[] getTargetVelocities() {
+        return targetVelocities;
+    }
+    public double[] getTargetAccelerations() {
+        return targetAccelerations;
     }
 
     public double[] getPoints(){

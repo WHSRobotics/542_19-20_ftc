@@ -16,10 +16,10 @@ public class PIDFController {
         this.motionProfile = motionProfile;
     }
 
-    public void setConsants(double kA, double kV, double kP, double kI, double kD){
+    public void setConstants(double kA, double kV, double kP, double kI, double kD){
         this.kA = kA;
         this.kV = kV;
-        this.kP = kD;
+        this.kP = kP;
         this.kI = kI;
         this.kD = kD;
     }
