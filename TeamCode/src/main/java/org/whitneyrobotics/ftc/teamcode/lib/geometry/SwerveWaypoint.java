@@ -1,14 +1,12 @@
 package org.whitneyrobotics.ftc.teamcode.lib.geometry;
 
-public class Waypoint {
+public class SwerveWaypoint {
 
     Position position;
-    double angularVelocity;
     double tangentialVelocity;
 
-    public Waypoint(Position position, double angularVelocity, double tangentialVelocity){
+    public SwerveWaypoint(Position position, double tangentialVelocity){
         this.position = position;
-        this.angularVelocity = angularVelocity;
         this.tangentialVelocity = tangentialVelocity;
     }
 
@@ -19,14 +17,6 @@ public class Waypoint {
 
     public void setPosition(Position position) {
         this.position = position;
-    }
-
-    public double getAngularVelocity() {
-        return angularVelocity;
-    }
-
-    public void setAngularVelocity(double angularVelocity) {
-        this.angularVelocity = angularVelocity;
     }
 
     public double getTangentialVelocity() {

@@ -2,33 +2,41 @@ package org.whitneyrobotics.ftc.teamcode.lib.purepursuit;
 
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.StrafeWaypoint;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.SwerveWaypoint;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 
 import java.util.ArrayList;
 
 public class PathGenerator {
 
-    public static Path generatePath(ArrayList<Position> targetPositions, double spacing, double weightSmooth) {
-        boolean coordinatePath = false;
-        ArrayList<Position> positionList;
-        for (Position pos : targetPositions) {
-            if (pos instanceof Coordinate) {
-                coordinatePath = true;
-                break;
-            }
+    public static SwervePath generateSwervePath(ArrayList<Position> targetPositions, SwerveConstants constants) {
+        ArrayList<Position> positionList = generatePosPath(targetPositions, constants.getSpacing(), constants.getWeightSmooth());
+        double[] targetTangentialVelocities = calculateTargetTangentialVelocities(constants.getTurnSpeed(), constants.getPathMaxVelocity(), constants.getMaxAcceleration(), positionList);
+        ArrayList<SwerveWaypoint> waypoints = new ArrayList<SwerveWaypoint>();
+        for (int i = 0; i < positionList.size(); i++) {
+            waypoints.add(new SwerveWaypoint(positionList.get(i), targetTangentialVelocities[i]));
         }
-        if (coordinatePath) {
-            positionList = generateCoordPath(targetPositions, spacing, weightSmooth);
-        } else {
-            positionList = generatePosPath(targetPositions, spacing, weightSmooth);
+        return new SwervePath(waypoints);
+    }
+
+    public static StrafePath generateStrafePath(ArrayList<Position> targetPositions, StrafeConstants constants) {
+        ArrayList<Position> positionList = generatePosPath(targetPositions, constants.getSpacing(), constants.getWeightSmooth());
+        ArrayList<Coordinate> coordinateList = generateCoordPath(targetPositions, constants.getSpacing(), constants.getWeightSmooth());
+        double[] targetTangentialVelocities = calculateTargetTangentialVelocities(constants.getTurnSpeed(), constants.getPathMaxVelocity(), constants.getMaxAcceleration(), positionList);
+        double[] targetAngularVelocties = calculateTargetAngularVelocities(constants.getMaxAngularAcceleration(), coordinateList);
+        ArrayList<StrafeWaypoint> waypoints = new ArrayList<StrafeWaypoint>();
+        for (int i = 0; i < coordinateList.size(); i++) {
+            waypoints.add(new StrafeWaypoint(coordinateList.get(i), targetTangentialVelocities[i], targetAngularVelocties[i]));
         }
+        return new StrafePath(waypoints);
     }
 
     private static ArrayList<Position> generatePosPath(ArrayList<Position> targetPositions, double spacing, double weightSmooth) {
         return smoothPath(injectPoints(targetPositions, spacing), weightSmooth);
     }
 
-    private static ArrayList<Position> generateCoordPath(ArrayList<Position> targetPositions, double spacing, double weightSmooth) {
+    private static ArrayList<Coordinate> generateCoordPath(ArrayList<Position> targetPositions, double spacing, double weightSmooth) {
         ArrayList<Position> smoothedPosPath = smoothPath(injectPoints(targetPositions, spacing), weightSmooth);
         double[] distanceAtPoint = calculateDistanceAtPoint(smoothedPosPath);
 
@@ -57,7 +65,12 @@ public class PathGenerator {
             }
         }
 
-        return smoothedPosPath;
+        ArrayList<Coordinate> smoothedCoordPath = new ArrayList<Coordinate>();
+        for (Position pos : smoothedPosPath) {
+            smoothedCoordPath.add((Coordinate) pos);
+        }
+
+        return smoothedCoordPath;
     }
 
     private static ArrayList<Position> injectPoints(ArrayList<Position> orig, double spacing) {
@@ -153,7 +166,7 @@ public class PathGenerator {
         return curvatureArray;
     }
 
-    private static double[] calculateTargetVelocities(double k, double pathMaxVelocity, double maxAcceleration, ArrayList<Position> smoothedPath) {
+    private static double[] calculateTargetTangentialVelocities(double turnSpeed, double pathMaxVelocity, double maxAcceleration, ArrayList<Position> smoothedPath) {
         double[] targetCurvatures = calculateTargetCurvatures(smoothedPath);
 
         // creates array that holds all of the target velocities
@@ -167,18 +180,18 @@ public class PathGenerator {
             double distance = Functions.distanceFormula(smoothedPath.get(i).getX(), smoothedPath.get(i).getY(), smoothedPath.get(i + 1).getX(), smoothedPath.get(i + 1).getY());
 
             // finds the smaller value between the velocity constant / the curvature and a new target velocity
-            double targetVelocity = Math.min(Math.min(pathMaxVelocity, k / targetCurvatures[i]), Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * maxAcceleration * distance));
+            double targetVelocity = Math.min(Math.min(pathMaxVelocity, turnSpeed / targetCurvatures[i]), Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * maxAcceleration * distance));
             targetVelocities[i] = targetVelocity;
         }
         return targetVelocities;
     }
 
 
-    private static double[] calculateTargetAngularVelocities(double maxAngularAcceleration, ArrayList<Position> smoothedPath) {
+    private static double[] calculateTargetAngularVelocities(double maxAngularAcceleration, ArrayList<Coordinate> smoothedPath) {
         double[] targetAngularVelocities = new double[smoothedPath.size()];
         targetAngularVelocities[smoothedPath.size() - 1] = 0;
         for (int i = smoothedPath.size() - 2; i >= 0; i--) {
-            double deltaTheta = ((Coordinate) smoothedPath.get(i + 1)).getHeading() - ((Coordinate) smoothedPath.get(i)).getHeading();
+            double deltaTheta = smoothedPath.get(i + 1).getHeading() - smoothedPath.get(i).getHeading();
             targetAngularVelocities[i] = (targetAngularVelocities[i + 1] * targetAngularVelocities[i + 1]) + 2 * maxAngularAcceleration * deltaTheta;
         }
         return targetAngularVelocities;
