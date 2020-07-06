@@ -1,5 +1,8 @@
 package org.whitneyrobotics.ftc.teamcode.lib.util;
 
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
+
 /**
  * General purpose functions class
  */

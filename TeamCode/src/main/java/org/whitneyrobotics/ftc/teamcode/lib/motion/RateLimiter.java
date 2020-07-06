@@ -1,4 +1,6 @@
-package org.whitneyrobotics.ftc.teamcode.lib.util;
+package org.whitneyrobotics.ftc.teamcode.lib.motion;
+
+import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 
 public class RateLimiter {
     public double lastKnownOutput;

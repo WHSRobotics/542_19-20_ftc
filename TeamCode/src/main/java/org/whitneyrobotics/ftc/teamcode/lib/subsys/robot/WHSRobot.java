@@ -1,8 +1,8 @@
 package org.whitneyrobotics.ftc.teamcode.lib.subsys.robot;
 
 
-import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
-import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
 
 /**
  * WHSRobot interface, containing methods for autonomous navigation.

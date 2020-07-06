@@ -1,12 +1,9 @@
 package org.whitneyrobotics.ftc.teamcode.tests;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 

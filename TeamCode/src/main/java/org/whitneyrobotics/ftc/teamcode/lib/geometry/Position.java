@@ -1,4 +1,4 @@
-package org.whitneyrobotics.ftc.teamcode.lib.util;
+package org.whitneyrobotics.ftc.teamcode.lib.geometry;
 
 /**
  * Class for storing positions on the field
@@ -39,10 +39,10 @@ public class Position {
     public double getY() {
         return yPos;
     }
-
+/*
     public double getHeading() {
         return Double.NaN;
-    }
+    }*/
 
     public void setX(double x) {
         xPos = x;

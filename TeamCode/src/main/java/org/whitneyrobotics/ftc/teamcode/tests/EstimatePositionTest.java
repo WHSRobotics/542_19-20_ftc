@@ -3,7 +3,7 @@ package org.whitneyrobotics.ftc.teamcode.tests;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.subsys.DeadWheelPickup;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 

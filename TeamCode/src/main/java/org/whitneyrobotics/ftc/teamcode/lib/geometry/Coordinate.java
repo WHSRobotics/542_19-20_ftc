@@ -1,4 +1,4 @@
-package org.whitneyrobotics.ftc.teamcode.lib.util;
+package org.whitneyrobotics.ftc.teamcode.lib.geometry;
 
 /**
  * Class for carrying coordinate values
@@ -19,11 +19,7 @@ public class Coordinate extends Position {
         orientation = heading;
     }
 
-    public Coordinate returnCoord() {
-        return this;
-    }
 
-    @Override
     public double getHeading() {
         return orientation;
     }

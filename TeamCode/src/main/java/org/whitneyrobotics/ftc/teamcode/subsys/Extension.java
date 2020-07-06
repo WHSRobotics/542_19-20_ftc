@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.whitneyrobotics.ftc.teamcode.lib.util.PIDController;
+import org.whitneyrobotics.ftc.teamcode.lib.control.PIDController;
 import org.whitneyrobotics.ftc.teamcode.lib.util.RobotConstants;
 
 public class Extension {

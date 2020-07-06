@@ -3,10 +3,10 @@ package org.whitneyrobotics.ftc.teamcode.autoop;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.whitneyrobotics.ftc.teamcode.lib.util.Coordinate;
-import org.whitneyrobotics.ftc.teamcode.lib.util.Position;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
+import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
-import org.whitneyrobotics.ftc.teamcode.lib.util.SwerveToTarget;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 @Autonomous(name = "WHS Stone Auto", group = "a")

@@ -1,4 +1,4 @@
-package org.whitneyrobotics.ftc.teamcode.lib.util;
+package org.whitneyrobotics.ftc.teamcode.lib.control;
 
 public class PIDController {
 
