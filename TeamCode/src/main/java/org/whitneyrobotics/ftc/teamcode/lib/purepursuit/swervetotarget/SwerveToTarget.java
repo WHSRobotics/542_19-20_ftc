@@ -1,8 +1,9 @@
-package org.whitneyrobotics.ftc.teamcode.lib.purepursuit;
+package org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget;
 
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.motion.RateLimiter;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.PathGenerator;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 
@@ -10,8 +11,8 @@ public class SwerveToTarget {
 
     private Coordinate currentCoord;
 
-    private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
-    private static final double MAXIMUM_VELOCITY = SwerveConstants.MAX_VELOCITY;
+    private static final double MAXIMUM_ACCELERATION = SwervePathGenerationConstants.MAX_ACCELERATION; // mm/s^2
+    private static final double MAXIMUM_VELOCITY = SwervePathGenerationConstants.MAX_VELOCITY;
     private double pathMaximumVelocity;
     public int lastClosestPointIndex = 0;
     private int lastIndex = 0;

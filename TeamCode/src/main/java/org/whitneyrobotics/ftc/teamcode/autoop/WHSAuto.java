@@ -14,8 +14,8 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.Alliance;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
-import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.SwerveConstants;
-import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.SwerveToTarget;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwervePathGenerationConstants;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.Capstone;
 import org.whitneyrobotics.ftc.teamcode.subsys.DeadWheelPickup;
 import org.whitneyrobotics.ftc.teamcode.subsys.FoundationPuller;
@@ -106,84 +106,84 @@ public class WHSAuto extends OpMode {
         Position[] foundationMidpointToFoundationMidpointTwoPositions = {foundationMovedPositionArray[STARTING_ALLIANCE], pullFoundationMidpointArray[STARTING_ALLIANCE]};
         Position[] startToParkingSwervePositions = {pullFoundationMidpointArray[STARTING_ALLIANCE], parkingPositions[STARTING_ALLIANCE]};
 
-        startToFoundationSwerve = new SwerveToTarget(SwerveConstants.StartToFoundationSwerveConstants.kP,
-                SwerveConstants.StartToFoundationSwerveConstants.kV,
-                SwerveConstants.StartToFoundationSwerveConstants.kA,
+        startToFoundationSwerve = new SwerveToTarget(SwervePathGenerationConstants.StartToFoundationSwerveConstants.kP,
+                SwervePathGenerationConstants.StartToFoundationSwerveConstants.kV,
+                SwervePathGenerationConstants.StartToFoundationSwerveConstants.kA,
                 startToFoundationSwervePositions,
                 80,
                 .5,
-                SwerveConstants.StartToFoundationSwerveConstants.velocityConstant,
-                SwerveConstants.StartToFoundationSwerveConstants.lookaheadDistance,
+                SwervePathGenerationConstants.StartToFoundationSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.StartToFoundationSwerveConstants.lookaheadDistance,
                 600);
 
-        foundationToWallSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
-                SwerveConstants.FoundationToWallSwerveConstants.kV,
-                SwerveConstants.FoundationToWallSwerveConstants.kA,
+        foundationToWallSwerve = new SwerveToTarget(SwervePathGenerationConstants.FoundationToWallSwerveConstants.kP,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.kV,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.kA,
                 foundationToWallSwervePositions,
                 80,
                 .5,
-                SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance + 40,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.lookaheadDistance + 40,
                 650);
 
-        wallToMidpointSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
-                SwerveConstants.WallToSkystoneSwerveConstants.kV,
-                SwerveConstants.WallToSkystoneSwerveConstants.kA,
+        wallToMidpointSwerve = new SwerveToTarget(SwervePathGenerationConstants.WallToSkystoneSwerveConstants.kP,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.kV,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.kA,
                 wallToMidpointPositions,
                 80,
                 .8,
-                SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
                 1000);
 
-        midpointToSkystoneSwerve = new SwerveToTarget(SwerveConstants.WallToSkystoneSwerveConstants.kP,
-                SwerveConstants.WallToSkystoneSwerveConstants.kV,
-                SwerveConstants.WallToSkystoneSwerveConstants.kA,
+        midpointToSkystoneSwerve = new SwerveToTarget(SwervePathGenerationConstants.WallToSkystoneSwerveConstants.kP,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.kV,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.kA,
                 midpointToSkystonePositions,
                 80,
                 .8,
-                SwerveConstants.WallToSkystoneSwerveConstants.velocityConstant,
-                SwerveConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.WallToSkystoneSwerveConstants.lookaheadDistance,
                 1000);
 
-        movedFoundationToParkSwerve = new SwerveToTarget(SwerveConstants.MovedFoundationToParkingSwerveConstants.kP,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.kV,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.kA,
+        movedFoundationToParkSwerve = new SwerveToTarget(SwervePathGenerationConstants.MovedFoundationToParkingSwerveConstants.kP,
+                SwervePathGenerationConstants.MovedFoundationToParkingSwerveConstants.kV,
+                SwervePathGenerationConstants.MovedFoundationToParkingSwerveConstants.kA,
                 movedFoundationToParkingSwervePositions,
                 120,
                 .5,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
-                SwerveConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
+                SwervePathGenerationConstants.MovedFoundationToParkingSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.MovedFoundationToParkingSwerveConstants.lookaheadDistance,
                 900);
 
-        wallToParkSwerve = new SwerveToTarget(SwerveConstants.WallToParkingSwerveConstants.kP,
-                SwerveConstants.WallToParkingSwerveConstants.kV,
-                SwerveConstants.WallToParkingSwerveConstants.kA,
+        wallToParkSwerve = new SwerveToTarget(SwervePathGenerationConstants.WallToParkingSwerveConstants.kP,
+                SwervePathGenerationConstants.WallToParkingSwerveConstants.kV,
+                SwervePathGenerationConstants.WallToParkingSwerveConstants.kA,
                 wallToParkingSwervePositions,
                 80,
                 .5,
-                SwerveConstants.WallToParkingSwerveConstants.velocityConstant,
-                SwerveConstants.WallToParkingSwerveConstants.lookaheadDistance,
+                SwervePathGenerationConstants.WallToParkingSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.WallToParkingSwerveConstants.lookaheadDistance,
                 700);
 
 
-        startToParkingSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
-                SwerveConstants.FoundationToWallSwerveConstants.kV,
-                SwerveConstants.FoundationToWallSwerveConstants.kA,
+        startToParkingSwerve = new SwerveToTarget(SwervePathGenerationConstants.FoundationToWallSwerveConstants.kP,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.kV,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.kA,
                 startToParkingSwervePositions,
                 80,
                 .9,
-                SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.lookaheadDistance,
                 600);
-        foundationMidpointToFoundationMidpointTwoSwerve = new SwerveToTarget(SwerveConstants.FoundationToWallSwerveConstants.kP,
-                SwerveConstants.FoundationToWallSwerveConstants.kV,
-                SwerveConstants.FoundationToWallSwerveConstants.kA,
+        foundationMidpointToFoundationMidpointTwoSwerve = new SwerveToTarget(SwervePathGenerationConstants.FoundationToWallSwerveConstants.kP,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.kV,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.kA,
                 foundationMidpointToFoundationMidpointTwoPositions,
                 80,
                 .9,
-                SwerveConstants.FoundationToWallSwerveConstants.velocityConstant,
-                SwerveConstants.FoundationToWallSwerveConstants.lookaheadDistance,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.velocityConstant,
+                SwervePathGenerationConstants.FoundationToWallSwerveConstants.lookaheadDistance,
                 650);
     }
 
@@ -562,54 +562,54 @@ public class WHSAuto extends OpMode {
 
                         Position[] skystoneToMovedFoundationSwervePositions = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
                         Position[] skystoneToUnmovedFoundationSwervePositions = {skystoneToFoundationPositionArray[STARTING_ALLIANCE][skystonePosition], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], pullFoundationMidpointArray[STARTING_ALLIANCE], foundationStartingPositionArray[STARTING_ALLIANCE]};
-                        startToSkystoneSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
-                                SwerveConstants.StartToSkystoneSwerveConstants.kV,
-                                SwerveConstants.StartToSkystoneSwerveConstants.kA,
+                        startToSkystoneSwerve = new SwerveToTarget(SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kP,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kV,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kA,
                                 startToSkystoneSwervePositions,
                                 80,
                                 .2,
-                                SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
-                                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.velocityConstant,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
                                 300);
 
-                        skystoneToMidpointJerkSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
-                                SwerveConstants.StartToSkystoneSwerveConstants.kV,
-                                SwerveConstants.StartToSkystoneSwerveConstants.kA,
+                        skystoneToMidpointJerkSwerve = new SwerveToTarget(SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kP,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kV,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kA,
                                 skystoneToMidpointJerkSwervePositions,
                                 80,
                                 .5,
-                                SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
-                                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.velocityConstant,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
                                 650);
 
-                        midPointToSkyStoneJerkSwerve = new SwerveToTarget(SwerveConstants.StartToSkystoneSwerveConstants.kP,
-                                SwerveConstants.StartToSkystoneSwerveConstants.kV,
-                                SwerveConstants.StartToSkystoneSwerveConstants.kA,
+                        midPointToSkyStoneJerkSwerve = new SwerveToTarget(SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kP,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kV,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.kA,
                                 midPointToSkystoneJerkSwervePositions,
                                 80,
                                 .5,
-                                SwerveConstants.StartToSkystoneSwerveConstants.velocityConstant,
-                                SwerveConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.velocityConstant,
+                                SwervePathGenerationConstants.StartToSkystoneSwerveConstants.lookaheadDistance,
                                 800);
 
-                        skystoneToMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kP,
-                                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kV,
-                                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.kA,
+                        skystoneToMovedFoundationSwerve = new SwerveToTarget(SwervePathGenerationConstants.SkystoneToMovedFoundationSwerveConstants.kP,
+                                SwervePathGenerationConstants.SkystoneToMovedFoundationSwerveConstants.kV,
+                                SwervePathGenerationConstants.SkystoneToMovedFoundationSwerveConstants.kA,
                                 skystoneToMovedFoundationSwervePositions,
                                 80,
                                 0.8,
-                                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
-                                SwerveConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
+                                SwervePathGenerationConstants.SkystoneToMovedFoundationSwerveConstants.velocityConstant,
+                                SwervePathGenerationConstants.SkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
                                 800);
 
-                        skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
+                        skystoneToUnmovedFoundationSwerve = new SwerveToTarget(SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
                                 skystoneToUnmovedFoundationSwervePositions,
                                 20,
                                 0.8,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant - 0.3,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance - 80,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant - 0.3,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance - 80,
                                 600);
 
                         advanceState();
@@ -806,24 +806,24 @@ public class WHSAuto extends OpMode {
                     case 0:
                         subStateDesc = "Initializing new swerves";
                         Position[] movedFoundationToSecondSkystonePosition = {foundationMovedPositionArray[STARTING_ALLIANCE], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], skystoneMidpointArray[STARTING_ALLIANCE][skystonePosition + 3], skystonePositionArray[STARTING_ALLIANCE][skystonePosition + 3]};
-                        movedFoundationToSecondSkystoneSwerve = new SwerveToTarget(SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
+                        movedFoundationToSecondSkystoneSwerve = new SwerveToTarget(SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.kP,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.kV,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.kA,
                                 movedFoundationToSecondSkystonePosition,
                                 80,
                                 0.8,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
-                                SwerveConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.velocityConstant,
+                                SwervePathGenerationConstants.SkystoneToUnmovedFoundationSwerveConstants.lookaheadDistance,
                                 600);
                         Position[] secondSkystoneToMovedFoundationPosition = {skystonePositionArray[STARTING_ALLIANCE][skystonePosition + 3], skybridgePositionArray[STARTING_ALLIANCE][SKYBRIDGE_CROSSING_POSITION], foundationMovedPositionArray[STARTING_ALLIANCE]};
-                        secondSkystonetoMovedFoundationSwerve = new SwerveToTarget(SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kP,
-                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kV,
-                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.kA,
+                        secondSkystonetoMovedFoundationSwerve = new SwerveToTarget(SwervePathGenerationConstants.secondSkystoneToMovedFoundationSwerveConstants.kP,
+                                SwervePathGenerationConstants.secondSkystoneToMovedFoundationSwerveConstants.kV,
+                                SwervePathGenerationConstants.secondSkystoneToMovedFoundationSwerveConstants.kA,
                                 secondSkystoneToMovedFoundationPosition,
                                 80,
                                 0.8,
-                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.velocityConstant,
-                                SwerveConstants.secondSkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
+                                SwervePathGenerationConstants.secondSkystoneToMovedFoundationSwerveConstants.velocityConstant,
+                                SwervePathGenerationConstants.secondSkystoneToMovedFoundationSwerveConstants.lookaheadDistance,
                                 600);
                         subState++;
                         break;

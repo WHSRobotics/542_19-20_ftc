@@ -1,25 +1,17 @@
-package org.whitneyrobotics.ftc.teamcode.lib.purepursuit;
+package org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget;
 import com.acmerobotics.dashboard.config.Config;
 
 @Config
-public class SwerveConstants {
+public class SwervePathGenerationConstants {
 
     // Path Generation
-    private double spacing, weightSmooth, turnSpeed, pathMaxVelocity, maxAcceleration;
-    // Follower
-    private double lookaheadDistance;
-    // Based on robot physical properties
-    private double kV, kA;
+    private double spacing, weightSmooth, turnSpeed, pathMaxVelocity;
 
-    public SwerveConstants(double spacing, double weightSmooth, double turnSpeed, double pathMaxVelocity, double maxAcceleration, double lookaheadDistance, double kV, double kA) {
+    public SwervePathGenerationConstants(double spacing, double weightSmooth, double turnSpeed, double pathMaxVelocity) {
         this.spacing = spacing;
         this.weightSmooth = weightSmooth;
         this.turnSpeed = turnSpeed;
         this.pathMaxVelocity = pathMaxVelocity;
-        this.maxAcceleration = maxAcceleration;
-        this.lookaheadDistance = lookaheadDistance;
-        this.kV = kV;
-        this.kA = kA;
     }
 
 
@@ -39,22 +31,6 @@ public class SwerveConstants {
         return pathMaxVelocity;
     }
 
-    public double getMaxAcceleration() {
-        return maxAcceleration;
-    }
-
-    public double getLookaheadDistance() {
-        return lookaheadDistance;
-    }
-
-    public double getkV() {
-        return kV;
-    }
-
-    public double getkA() {
-        return kA;
-    }
-
     public void setSpacing(double spacing) {
         this.spacing = spacing;
     }
@@ -71,21 +47,7 @@ public class SwerveConstants {
         this.pathMaxVelocity = pathMaxVelocity;
     }
 
-    public void setMaxAcceleration(double maxAcceleration) {
-        this.maxAcceleration = maxAcceleration;
-    }
 
-    public void setLookaheadDistance(double lookaheadDistance) {
-        this.lookaheadDistance = lookaheadDistance;
-    }
-
-    public void setkV(double kV) {
-        this.kV = kV;
-    }
-
-    public void setkA(double kA) {
-        this.kA = kA;
-    }
     /*//real constants
     public static double MAX_ACCELERATION = 800.0; // mm/s^2
     public static double MAX_VELOCITY = 1400.0;

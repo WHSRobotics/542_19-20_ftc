@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
-import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.SwerveConstants;
-import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.SwerveToTarget;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwervePathGenerationConstants;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwerveToTarget;
 import org.whitneyrobotics.ftc.teamcode.subsys.WHSRobotImpl;
 
 
@@ -40,7 +40,7 @@ public class SwerveToTargetTest extends OpMode {
         robot = new WHSRobotImpl(hardwareMap);
         robot.drivetrain.resetEncoders();
         robot.setInitialCoordinate(startingCoordinate);
-        swerve1 = new SwerveToTarget(SwerveConstants.kP, SwerveConstants.kV, SwerveConstants.kA, positions1, 10, 0.99, 3, SwerveConstants.lookaheadDistance, 1000);
+        swerve1 = new SwerveToTarget(SwervePathGenerationConstants.kP, SwervePathGenerationConstants.kV, SwervePathGenerationConstants.kA, positions1, 10, 0.99, 3, SwervePathGenerationConstants.lookaheadDistance, 1000);
 
         TelemetryPacket packet = new TelemetryPacket();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

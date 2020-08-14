@@ -4,32 +4,36 @@ import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.StrafeWaypoint;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.SwerveWaypoint;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.strafetotarget.StrafePathGenerationConstants;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.strafetotarget.StrafePath;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwervePathGenerationConstants;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwervePath;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 
 import java.util.ArrayList;
 
 public class PathGenerator {
 
-    public static SwervePath generateSwervePath(ArrayList<Position> targetPositions, SwerveConstants constants) {
+    public static SwervePath generateSwervePath(ArrayList<Position> targetPositions, FollowerConstants lookaheadDistance, SwervePathGenerationConstants constants) {
         ArrayList<Position> positionList = generatePosPath(targetPositions, constants.getSpacing(), constants.getWeightSmooth());
-        double[] targetTangentialVelocities = calculateTargetTangentialVelocities(constants.getTurnSpeed(), constants.getPathMaxVelocity(), constants.getMaxAcceleration(), positionList);
+        double[] targetTangentialVelocities = calculateTargetTangentialVelocities(constants.getTurnSpeed(), constants.getPathMaxVelocity(), PurePursuitRobotConstants.MAX_ACCELERATION, positionList);
         ArrayList<SwerveWaypoint> waypoints = new ArrayList<SwerveWaypoint>();
         for (int i = 0; i < positionList.size(); i++) {
             waypoints.add(new SwerveWaypoint(positionList.get(i), targetTangentialVelocities[i]));
         }
-        return new SwervePath(waypoints);
+        return new SwervePath(waypoints, lookaheadDistance);
     }
 
-    public static StrafePath generateStrafePath(ArrayList<Position> targetPositions, StrafeConstants constants) {
+    public static StrafePath generateStrafePath(ArrayList<Position> targetPositions, FollowerConstants lookaheadDistance, StrafePathGenerationConstants constants) {
         ArrayList<Position> positionList = generatePosPath(targetPositions, constants.getSpacing(), constants.getWeightSmooth());
         ArrayList<Coordinate> coordinateList = generateCoordPath(targetPositions, constants.getSpacing(), constants.getWeightSmooth());
-        double[] targetTangentialVelocities = calculateTargetTangentialVelocities(constants.getTurnSpeed(), constants.getPathMaxVelocity(), constants.getMaxAcceleration(), positionList);
+        double[] targetTangentialVelocities = calculateTargetTangentialVelocities(constants.getTurnSpeed(), constants.getPathMaxVelocity(), PurePursuitRobotConstants.MAX_ACCELERATION, positionList);
         double[] targetAngularVelocties = calculateTargetAngularVelocities(constants.getMaxAngularAcceleration(), coordinateList);
         ArrayList<StrafeWaypoint> waypoints = new ArrayList<StrafeWaypoint>();
         for (int i = 0; i < coordinateList.size(); i++) {
             waypoints.add(new StrafeWaypoint(coordinateList.get(i), targetTangentialVelocities[i], targetAngularVelocties[i]));
         }
-        return new StrafePath(waypoints);
+        return new StrafePath(waypoints, lookaheadDistance);
     }
 
     private static ArrayList<Position> generatePosPath(ArrayList<Position> targetPositions, double spacing, double weightSmooth) {

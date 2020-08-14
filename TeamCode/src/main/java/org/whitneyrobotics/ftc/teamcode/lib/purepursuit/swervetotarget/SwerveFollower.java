@@ -1,75 +1,46 @@
-package org.whitneyrobotics.ftc.teamcode.lib.purepursuit;
+package org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget;
 
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.motion.RateLimiter;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.PurePursuitRobotConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 
 public class SwerveFollower {
 
-    private Coordinate currentCoord;
+    SwervePath path;
 
-    private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
-    private static final double MAXIMUM_VELOCITY = SwerveConstants.MAX_VELOCITY;
-    private double pathMaximumVelocity;
     public int lastClosestPointIndex = 0;
     private int lastIndex = 0;
     private double currentTValue = 0;
 
-    public Position[] smoothedPath;
-    private double[] targetCurvatures;
-    public double[] targetVelocities;
-
-    private double[] currentTargetWheelVelocities = {0.0, 0.0};
     private double[] lastTargetWheelVelocities = {0.0, 0.0};
+    private double[] currentTargetWheelVelocities = {0.0,0.0};
+
     private double lastTime;
     private RateLimiter targetVelocityRateLimiter;
-    private double kP;
-    private double kV;
-    private double kA;
-    private double lookaheadDistance;
-    private double trackWidth;
 
-    public Position lookaheadPoint;
+    private final double KP = PurePursuitRobotConstants.SWERVE_KP;
+    private final double KV = PurePursuitRobotConstants.SWERVE_KV;
+    private final double KA = PurePursuitRobotConstants.SWERVE_KA;
+
+    private double trackWidth = Drivetrain.getTrackWidth();
+
     private boolean inProgress = false;
-
-    /**
-     *
-     * @param kP                   Proportional constant for feedback loop
-     * @param kV                   Velocity constant for feedforward loop
-     * @param kA                   Acceleration constant for feedforward loop
-     * @param targetPositions      Array of Positions to follow
-     * @param spacing              Space between each injected point on the path (in mm)
-     * @param weightSmooth         Determines the extent of smoothing done on the path (from 0-1)
-     * @param turnSpeed            Determines the speed of the robot around turns (recommended 1-5)
-     * @param lookaheadDistance    How far ahead along the path the robot will be "looking" (in mm)
-     */
-    public SwerveFollower(double kP, double kV, double kA, Position[] targetPositions, double spacing, double weightSmooth, double turnSpeed, double lookaheadDistance, double pathMaximumVelocity) {
-        this.pathMaximumVelocity = pathMaximumVelocity;
-        this.kP = kP;
-        this.kV = 1 / MAXIMUM_VELOCITY;
-        this.kA = kA;
-        this.lookaheadDistance = lookaheadDistance;
-        targetVelocityRateLimiter = new RateLimiter(MAXIMUM_ACCELERATION, 0);
-        trackWidth = Drivetrain.getTrackWidth();
-        PathGenerator pathGenerator = new PathGenerator();
-        smoothedPath = pathGenerator.generatePosPath(targetPositions, spacing, weightSmooth);
-        targetCurvatures = calculateTargetCurvatures(smoothedPath);
-        targetVelocities = calculateTargetVelocities(smoothedPath, turnSpeed);
+    public SwerveFollower(SwervePath path) {
+        this.path = path;
+        targetVelocityRateLimiter = new RateLimiter(PurePursuitRobotConstants.MAX_ACCELERATION, 0);
         lastTime = System.nanoTime() / 1E9;
     }
 
-    public double[] calculateMotorPowers(Coordinate currentCoord, double[] currentWheelVelocities, boolean backwards) {
-        if (backwards) {
-            this.currentCoord = new Coordinate(currentCoord.getPos(), Functions.normalizeAngle(currentCoord.getHeading() + 180));
-        } else {
-            this.currentCoord = currentCoord;
-        }
+    public double[] calculateMotorPowers(Coordinate currentCoord, double[] currentWheelVelocities) {
+        Position lookaheadPoint;
+        if (path.backwards()) currentCoord.setHeading(Functions.normalizeAngle(currentCoord.getHeading() + 180));
 
         boolean tFound = false;
-        for (int i = lastIndex; i < smoothedPath.length - 1; i++) {
-            Double nextTValue = new Double(calculateT(smoothedPath[i], smoothedPath[i + 1], lookaheadDistance));
+        for (int i = lastIndex; i < path.size() - 1; i++) {
+            Double nextTValue = new Double(calculateT(path.getPositionAtIndex(i), path.getPositionAtIndex(i + 1), path.getFollowerConstants(), currentCoord));
 
             if (!tFound && !nextTValue.isNaN() && (nextTValue + i) > (currentTValue + lastIndex)) {
                 tFound = true;
@@ -78,33 +49,33 @@ public class SwerveFollower {
             }
         }
 
-        Position calculatedTStartPoint = smoothedPath[lastIndex];
-        Position calculatedTEndPoint = smoothedPath[lastIndex + 1];
+        Position calculatedTStartPoint = path.getPositionAtIndex(lastIndex);
+        Position calculatedTEndPoint = path.getPositionAtIndex(lastIndex + 1);
         lookaheadPoint = Functions.Positions.add(calculatedTStartPoint, Functions.Positions.scale(currentTValue, Functions.Positions.subtract(calculatedTEndPoint, calculatedTStartPoint)));
 
-        int indexOfClosestPoint = calculateIndexOfClosestPoint(smoothedPath);
-        double curvature = calculateCurvature(lookaheadDistance, lookaheadPoint);
-        currentTargetWheelVelocities = calculateTargetWheelVelocities(targetVelocities[indexOfClosestPoint], curvature);
-        if (backwards) {
+        int indexOfClosestPoint = calculateIndexOfClosestPoint(path,currentCoord);
+        double curvature = calculateCurvature(path.getFollowerConstants(), lookaheadPoint, currentCoord);
+        currentTargetWheelVelocities = calculateTargetWheelVelocities(path.getTargetVelocityAtIndex(indexOfClosestPoint), curvature);
+        if (path.backwards()) {
             currentWheelVelocities = new double[] {-currentWheelVelocities[1], -currentWheelVelocities[0]};
         }
 
         double deltaTime = System.nanoTime() / 1E9 - lastTime;
         double[] targetWheelAccelerations = {(currentTargetWheelVelocities[0] - lastTargetWheelVelocities[0]) / deltaTime, (currentTargetWheelVelocities[1] - lastTargetWheelVelocities[1]) / deltaTime};
 
-        if (indexOfClosestPoint != smoothedPath.length - 1) {
+        if (indexOfClosestPoint != path.size() - 1) {
             double[] feedBack = {currentTargetWheelVelocities[0] - currentWheelVelocities[0], currentTargetWheelVelocities[1] - currentWheelVelocities[1]};
             for (int i = 0; i < feedBack.length; i++) {
-                feedBack[i] *= kP;
+                feedBack[i] *= KP;
             }
 
-            double[] feedForwardVel = {kV * currentTargetWheelVelocities[0], kV * currentTargetWheelVelocities[1]};
-            double[] feedForwardAccel = {kA * targetWheelAccelerations[0], kA * targetWheelAccelerations[1]};
+            double[] feedForwardVel = {KV * currentTargetWheelVelocities[0], KV * currentTargetWheelVelocities[1]};
+            double[] feedForwardAccel = {KA * targetWheelAccelerations[0], KA * targetWheelAccelerations[1]};
             double[] feedForward = {feedForwardVel[0] + feedForwardAccel[0], feedForwardVel[1] + feedForwardAccel[1]};
             double[] motorPowers = {Functions.constrain(feedBack[0] + feedForward[0], -1, 1), Functions.constrain(feedBack[1] + feedForward[1], -1, 1)};
             lastTargetWheelVelocities = currentTargetWheelVelocities;
             inProgress = true;
-            if (backwards) {
+            if (path.backwards()) {
                 return new double[] {-motorPowers[1], -motorPowers[0]};
             }
             return motorPowers;
@@ -152,25 +123,7 @@ public class SwerveFollower {
         return curvatureArray;
     }
 
-    private double[] calculateTargetVelocities(Position[] smoothedPath, double k) {
-        // creates array that holds all of the target velocities
-        double[] targetVelocities = new double[smoothedPath.length];
-
-        // calculates the target velocities for each point
-        targetVelocities[smoothedPath.length - 1] = 0; // last point target velocity is zero
-        for (int i = smoothedPath.length - 2; i >= 0; i--) { // works backwards as we need to know last point's velocity to calculate current point's
-
-            // distance from this current point to next point
-            double distance = Functions.Positions.subtract(smoothedPath[i+1], smoothedPath[i]).getMagnitude();
-
-            // finds the smaller value between the velocity constant / the curvature and a new target velocity
-            double targetVelocity = Math.min(Math.min(pathMaximumVelocity, k / targetCurvatures[i]), Math.sqrt(Math.pow(targetVelocities[i + 1], 2) + 2 * MAXIMUM_ACCELERATION * distance));
-            targetVelocities[i] = targetVelocity;
-        }
-        return targetVelocities;
-    }
-
-    private double calculateT(Position lineStart, Position lineEnd, double lookaheadDistance) {
+    private double calculateT(Position lineStart, Position lineEnd, double lookaheadDistance, Coordinate currentCoord) {
         // constants used throughout the method
         Position d = Functions.Positions.subtract(lineEnd, lineStart);
         Position f = Functions.Positions.subtract(lineStart, currentCoord);
@@ -213,11 +166,11 @@ public class SwerveFollower {
         return Double.NaN;
     }
 
-    private int calculateIndexOfClosestPoint(Position[] smoothedPath) {
+    private int calculateIndexOfClosestPoint(SwervePath path, Coordinate currentCoord) {
         // creates array in which we store the current distance to each point in our path
-        double[] distances = new double[smoothedPath.length];
-        for (int i = 0/*lastClosestPointIndex*/; i < smoothedPath.length; i++) {
-            distances[i] = Functions.Positions.subtract(smoothedPath[i], currentCoord).getMagnitude();
+        double[] distances = new double[path.size()];
+        for (int i = 0/*lastClosestPointIndex*/; i < distances.length; i++) {
+            distances[i] = Functions.Positions.subtract(path.getPositionAtIndex(i), currentCoord).getMagnitude();
         }
 
         // calculates the index of value in the array with the smallest value and returns that index
@@ -225,7 +178,7 @@ public class SwerveFollower {
         return lastClosestPointIndex;
     }
 
-    private double calculateCurvature(double lookaheadDistance, Position lookaheadPoint) {
+    private double calculateCurvature(double lookaheadDistance, Position lookaheadPoint, Coordinate currentCoord) {
         // robot line: ax + by + c = 0
         double a = -Functions.tand(currentCoord.getHeading());
         double b = 1;
@@ -265,4 +218,5 @@ public class SwerveFollower {
     public double[] getCurrentTargetWheelVelocities() {
         return currentTargetWheelVelocities;
     }
+
 }

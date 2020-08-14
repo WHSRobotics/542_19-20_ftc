@@ -1,9 +1,11 @@
-package org.whitneyrobotics.ftc.teamcode.lib.purepursuit;
+package org.whitneyrobotics.ftc.teamcode.lib.purepursuit.strafetotarget;
 
 import org.whitneyrobotics.ftc.teamcode.lib.control.PIDController;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Position;
 import org.whitneyrobotics.ftc.teamcode.lib.motion.RateLimiter;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.PathGenerator;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwervePathGenerationConstants;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
 import org.whitneyrobotics.ftc.teamcode.subsys.Drivetrain;
 
@@ -11,17 +13,17 @@ public class StrafeToTarget {
 
     private Coordinate currentCoord;
 
-    private static final double MAXIMUM_ACCELERATION = SwerveConstants.MAX_ACCELERATION; // mm/s^2
-    private static final double MAXIMUM_VELOCITY = SwerveConstants.MAX_VELOCITY;
-    private static final double MAXIMUM_ANGULAR_ACCELERATION = SwerveConstants.MAX_ANGULAR_ACCELERATION;
+    private static final double MAXIMUM_ACCELERATION = SwervePathGenerationConstants.MAX_ACCELERATION; // mm/s^2
+    private static final double MAXIMUM_VELOCITY = SwervePathGenerationConstants.MAX_VELOCITY;
+    private static final double MAXIMUM_ANGULAR_ACCELERATION = SwervePathGenerationConstants.MAX_ANGULAR_ACCELERATION;
     private double pathMaximumVelocity;
     public int lastClosestPointIndex = 0;
     public int lastClosestHeadingIndex = 0;
     private int lastIndex = 0;
     private double currentTValue = 0;
-    private static final double hKI = SwerveConstants.hKI;
-    private static final double hKP = SwerveConstants.hKP;
-    private static final double hKD = SwerveConstants.hKD;
+    private static final double hKI = SwervePathGenerationConstants.hKI;
+    private static final double hKP = SwervePathGenerationConstants.hKP;
+    private static final double hKD = SwervePathGenerationConstants.hKD;
 
     PIDController headingController = new PIDController(hKP, hKI, hKD);
 

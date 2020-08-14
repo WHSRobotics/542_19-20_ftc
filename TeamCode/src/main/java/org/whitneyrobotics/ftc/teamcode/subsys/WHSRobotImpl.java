@@ -3,6 +3,10 @@ package org.whitneyrobotics.ftc.teamcode.subsys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.openftc.easyopencv.OpenCvCamera;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.PurePursuitRobotConstants;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.strafetotarget.StrafePath;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwerveFollower;
+import org.whitneyrobotics.ftc.teamcode.lib.purepursuit.swervetotarget.SwervePath;
 import org.whitneyrobotics.ftc.teamcode.lib.subsys.robot.WHSRobot;
 import org.whitneyrobotics.ftc.teamcode.lib.geometry.Coordinate;
 import org.whitneyrobotics.ftc.teamcode.lib.util.Functions;
@@ -15,7 +19,7 @@ import org.whitneyrobotics.ftc.teamcode.lib.util.SimpleTimer;
  * Created by Jason on 10/20/2017.
  */
 
-public class WHSRobotImpl implements WHSRobot {
+public class WHSRobotImpl{
 
     public Drivetrain drivetrain;
     public IMU imu;
@@ -31,6 +35,8 @@ public class WHSRobotImpl implements WHSRobot {
     public DeadWheelPickup deadWheelPickup;
     public boolean deadwheelRetracted;
 
+    SwervePath  currentSwervePath;
+    SwerveFollower swerveFollower;
 
     Coordinate currentCoord;
     private double targetHeading; //field frame
@@ -111,7 +117,6 @@ public class WHSRobotImpl implements WHSRobot {
     public WHSRobotImpl() {
     }
 
-    @Override
     public void driveToTarget(Position targetPos, boolean backwards) {
         Position vectorToTarget = Functions.Positions.subtract(targetPos, currentCoord.getPos()); //field frame
         vectorToTarget = Functions.field2body(vectorToTarget, currentCoord); //body frame
@@ -167,7 +172,6 @@ public class WHSRobotImpl implements WHSRobot {
         }
     }
 
-    @Override
     public void rotateToTarget(double targetHeading, boolean backwards) {
 
         double angleToTarget = targetHeading - currentCoord.getHeading();
@@ -212,17 +216,14 @@ public class WHSRobotImpl implements WHSRobot {
         }
     }
 
-    @Override
     public boolean driveToTargetInProgress() {
         return driveToTargetInProgress;
     }
 
-    @Override
     public boolean rotateToTargetInProgress() {
         return rotateToTargetInProgress;
     }
 
-    @Override
     public void estimatePosition() {
         encoderDeltas = drivetrain.getLRAvgEncoderDelta();
         distance = drivetrain.encToMM((encoderDeltas[0] + encoderDeltas[1]) / 2);
@@ -317,14 +318,12 @@ public class WHSRobotImpl implements WHSRobot {
 
     }
 
-    @Override
     public void estimateHeading() {
         double currentHeading;
         currentHeading = Functions.normalizeAngle(imu.getHeading() + imu.getImuBias()); //-180 to 180 deg
         currentCoord.setHeading(currentHeading); //updates global variable
     }
 
-    @Override
     public void setInitialCoordinate(Coordinate initCoord) {
         currentCoord = initCoord;
         robotX = initCoord.getX();
@@ -333,13 +332,11 @@ public class WHSRobotImpl implements WHSRobot {
         lastKnownHeading = currentCoord.getHeading();
     }
 
-    @Override
     public void setCoordinate(Coordinate coord) {
         currentCoord = coord;
         imu.setImuBias(currentCoord.getHeading());
     }
 
-    @Override
     public Coordinate getCoordinate() {
         return currentCoord;
     }
@@ -361,5 +358,19 @@ public class WHSRobotImpl implements WHSRobot {
         encoderValues[0] = currentEncoderValues[0];
         encoderValues[1] = currentEncoderValues[1];
         lastKnownHeading = currentCoord.getHeading();
+    }
+    public void updatePath (SwervePath path){
+        swerveFollower = new SwerveFollower(path);
+    }
+
+    public void updatePath (StrafePath path){
+
+    }
+    public void swerveToTarget(){
+        drivetrain.operate(swerveFollower.calculateMotorPowers(getCoordinate(),drivetrain.getWheelVelocities()));
+    }
+
+    public boolean swerveInProgress(){
+        return swerveFollower.inProgress();
     }
 }
